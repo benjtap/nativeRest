@@ -1,0 +1,28 @@
+[
+  {
+    "ContainingType": "WebBoobs.Controllers.WebBoobsController",
+    "Method": "CreateDiscountCoupon",
+    "RelativePath": "WebBoobs",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "post",
+        "Type": "WebBoobs.Models.BlogPost",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "WebBoobs.Controllers.WebBoobsController",
+    "Method": "GetBlogPost",
+    "RelativePath": "WebBoobs",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  }
+]

@@ -1,0 +1,6 @@
+@WebBoobs_HostAddress = http://localhost:5034
+
+GET {{WebBoobs_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
