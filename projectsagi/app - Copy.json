@@ -1,0 +1,62 @@
+{
+  "expo": {
+    "name": "projectsagi",
+    "slug": "projectsagi",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "jsEngine": "hermes",
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#ffffff"
+      
+        },
+      "splash": {
+         "resizeMode": "contain",
+        "backgroundColor": "#191015"
+      }
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.updatesapidemo",
+      "splash": {
+        "resizeMode": "contain",
+        "backgroundColor": "#191015"
+      }
+    },
+    "extra": {
+      "criticalIndex": 0,
+      "message": "",
+      "updates": {
+        "assetPatternsToBeBundled": [
+          "app/includedImages/*"
+        ]
+      }
+    },
+    "plugins": [
+      "expo-localization",
+      [
+        "expo-build-properties",
+        {
+          "ios": {
+            "newArchEnabled": false
+          },
+          "android": {
+            "newArchEnabled": false
+          }
+        }
+      ],
+      "expo-font"
+    ],
+    "experiments": {
+      "tsconfigPaths": true
+    }
+  }
+}
