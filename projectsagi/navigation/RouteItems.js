@@ -8,6 +8,7 @@ export const screens = {
   Test1: 'test1',
   Test2: 'test2',
   Test3: 'test3',
+  Test4: 'test4',
   GroupMembers: 'GroupMembers',
   BookStack: 'BookStack',
   Book: 'Book',
@@ -69,6 +70,15 @@ export const routes = [
     name: screens.Test3,
     focusedRoute: screens.HomeStack,
     title: 'test3',
+    showInTab: false,
+    showInDrawer: true,
+    icon: (focused) =>
+      <Icon name="home" size={30} color={focused ? '#551E18' : '#000'} />,
+  },
+  {
+    name: screens.Test4,
+    focusedRoute: screens.HomeStack,
+    title: 'test4',
     showInTab: false,
     showInDrawer: true,
     icon: (focused) =>

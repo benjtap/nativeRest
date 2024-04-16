@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useContext } from 'react';
-import { StyleSheet, View, TextInput, TouchableOpacity, Text, FlatList, Image } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { StyleSheet, View, TextInput, TouchableOpacity, Text, FlatList, Button } from 'react-native';
 import {useRoute} from '@react-navigation/native';
 import { COLORS, FONT, SIZES } from "../constants";
 
@@ -18,103 +18,207 @@ const GroupMembers = (props) => {
 //   // 0 is user, 1 is group.
   const [selectedType, setSelectedType] = useState(0);
 //   // data that will be shown on the list, data could be the list of users, or the list of groups.
-//  const [data, setData] = useState([]);
-//  const [title, setTitle] = useState("");
-//  const [loading, setLoading] = useState(false)
-//  const [error, setError] = useState([]);
+  const [data, setData] = useState([]);
+   const [title, setTitle] = useState("");
+const [loading, setLoading] = useState(false)
+const [error, setError] = useState("");
 
- const oparam = route.params?.id ? route.params.id : {};
 
- 
 
-  //setTitle(oparam)
- 
-//  async function runQuerycontact() {
-//   // Set the loading true.
-//   setLoading(true)
+
+
+  const oparamname = route.params?.name ? route.params.name : {};
+
   
-//   setLoading(false)
-//   setData(rescontact.data.contacts)
-// }
-
-// async function runQuerygroup() {
-//   // Set the loading true.
-//   setLoading(true)
-  
-//  console.log(resgroup.data.groups)
-
-//   // Reset the loading state.
-//   setLoading(false)
-//   setData(resgroup.data.groups)
-// }
 
 
+  function handlecreatecontactgroupsDataForPosts() {
+    createcontactgroupsDataForPosts();
+  }
+
+  function handledeleteallcontactgroupsDataForPosts() {
+    deleteallcontactgroupsDataForPosts();
+  }
 
 
- 
+  const RenderViewButton = () => {
+    if (selectedType === 0){
+    return(
 
-  const searchContacts = () => {
-    const limit = 30;
-       //fetchcontactsDataForPosts();
-   };
+      <View style={styles.Viewitem}>
+     <View style={styles.fixToText}>
+      <Text style={styles.title}>
+      This action copy all the client contact to this groups.
+    </Text>
+    </View>
+    <View style={styles.fixToText}>
+      <Button   style={styles.button}  title="Run"  
+      onPress={() => handlecreatecontactgroupsDataForPosts()}
+     />
+    </View>
+    </View>
+    );
+    } else if(selectedType === 2){
+      return(
 
-  const requestOptions=  {
-    method: 'GET',
-    mode: 'cors', //no-
-    headers: { 'Content-Type': 'application/json' },
- 
-};
-
-  const fetchcontactsDataForPosts = async () => {
-    try {
-      
-      const response = await fetch(
-        `http://192.168.1.104/Restapi/Webhttp/getcontacts`, requestOptions
-      )
-      .then(function(response){
-        if (response.ok){
-          
-          return response.json()
-          
-        }
-    })
-    .then(function(myjson){
-           
-      
-          //setData(myjson)
-      })
-
-    } catch (err) {
-      //setError(err.message);
-      //setData(null);
-    } finally {
-      //setLoading(false);
+        <View style={styles.Viewitem}>
+       <View style={styles.fixToText}>
+        <Text style={styles.title}>
+        This action delete all the client contact of this groups.
+      </Text>
+      </View>
+      <View style={styles.fixToText}>
+        <Button   style={styles.button}  title="Run"  
+        onPress={() => handledeleteallcontactgroupsDataForPosts()}
+       />
+      </View>
+      </View>
+      );
     }
-  };
+    
+  }
+ 
+
+
+  const renderItems = ({ item }) => {
+
+   
+    return (
+      <TouchableOpacity style={styles.listItem} >
+               <Text style={styles.listItemLabel}>{item.name}</Text>
+               {/* <Text style={styles.listItemLabel}>-----</Text> */}
+                <Text style={styles.listItemLabel}>{item.phone}</Text> 
+      </TouchableOpacity>
+    );
+  
+  }
 
 
 
-  const fetchgroupsDataForPosts = async () => {
+
+
+useEffect(() => {
+  
+
+
+  const oparamname = route.params?.name ? route.params.name : {};
+  setTitle(oparamname);
+
+  fetchgroupsDataForPosts();
+
+}, [title]);
+ 
+
+ 
+//bulkdeletegroupcontacts
+
+   const fetchgroupsDataForPosts = async() => {
+    const limit = 30;
+    
+     const oparamid = route.params?.id ? route.params.id : {};
+  
+      let creategroupcontactsPost =  {
+        id:oparamid
+          }
+      const requestOptions=  {
+        method: 'POST',
+        mode: 'cors', //no-
+        headers: { 'Content-Type': 'application/json' },
+         body: JSON.stringify(creategroupcontactsPost)
+     };
+      try {
+       
+       const response = await fetch(
+          `http://192.168.1.104/Restapi/Webhttp/getgroupcontacts`, requestOptions
+        )
+        .then(function(response){
+          if (response.ok){
+            
+            return response.json()
+            
+          }
+      })
+      .then(function(myjson){
+            
+           setData(myjson)
+        })
+  
+      } catch (err) {
+        setError(err.message);
+        console.log(err.messages)
+        setData(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+  
+    const deleteallcontactgroupsDataForPosts= async () => {
+      const oparamid = route.params?.id ? route.params.id : {};
+  
+      let creategroupcontactsPost =  {
+        id:oparamid
+          }
+      const requestOptions=  {
+        method: 'POST',
+        mode: 'cors', //no-
+        headers: { 'Content-Type': 'application/json' },
+         body: JSON.stringify(creategroupcontactsPost)
+     };
+      try {
+       
+       const response = await fetch(
+          `http://192.168.1.104/Restapi/Webhttp/bulkdeletegroupcontacts`, requestOptions
+        )
+        .then(function(response){
+          if (response.ok){
+            
+            fetchgroupsDataForPosts();
+            
+          }
+      })
+     
+  
+      } catch (err) {
+        setError(err.message);
+        console.log(err.messages)
+        setData(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+  
+
+
+
+  const createcontactgroupsDataForPosts = async () => {
+    const oparamid = route.params?.id ? route.params.id : {};
+
+    let creategroupcontactsPost =  {
+      id:oparamid
+        }
+    const requestOptions=  {
+      method: 'POST',
+      mode: 'cors', //no-
+      headers: { 'Content-Type': 'application/json' },
+       body: JSON.stringify(creategroupcontactsPost)
+   };
     try {
-      
-      const response = await fetch(
-        `http://192.168.1.104/Restapi/Webhttp/getgroups`, requestOptions
+     
+     const response = await fetch(
+        `http://192.168.1.104/Restapi/Webhttp/bulkgroupcontacts`, requestOptions
       )
       .then(function(response){
         if (response.ok){
           
-          return response.json()
+          fetchgroupsDataForPosts();
           
         }
     })
-    .then(function(myjson){
-           
-      
-          setData(myjson)
-      })
+   
 
     } catch (err) {
       setError(err.message);
+      console.log(err.messages)
       setData(null);
     } finally {
       setLoading(false);
@@ -122,31 +226,16 @@ const GroupMembers = (props) => {
   };
 
 
-  const searchGroups = () => {
-    const limit = 30;
-    
-    //fetchgroupsDataForPosts();
-  };
-
   const onKeywordChanged = (keyword) => {
    // setKeyword(() => keyword);
   };
 
   const updateSelectedType = (selectedType) => () => {
-   // setSelectedType(() => selectedType);
+   setSelectedType(() => selectedType);
   };
 
  
 
-  const selectItem = (item) => () => {
-   
-    // if (selectedType != 0)
-    // navigation.navigate('', {
-    //   id: item.id
-    // })
-  };
-
- 
 
  
   
@@ -155,7 +244,7 @@ const GroupMembers = (props) => {
   return (
     // <View style={styles.container}>
   <View style={styles.container}>
-    <View><Text style={styles.title}>rrrr</Text>
+    <View style={styles.Viewitem}><Text style={styles.title}>{title}</Text>
  </View>
  <View style={styles.inputContainer}>
         <TextInput
@@ -173,15 +262,23 @@ const GroupMembers = (props) => {
         <TouchableOpacity style={[styles.searchActionBtn, styles.searchRightActionBtn, selectedType === 1 && styles.searchActionBtnActive]} onPress={updateSelectedType(1)}>
           <Text style={[styles.searchActionLabel, selectedType === 1 && styles.searchActionLabelActive]}>Import from file</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={[styles.searchActionBtn, styles.searchRightActionBtn, selectedType === 1 && styles.searchActionBtnActive]} onPress={updateSelectedType(1)}>
+        <TouchableOpacity style={[styles.searchActionBtn, styles.searchRightActionBtn, selectedType === 2 && styles.searchActionBtnActive]} onPress={updateSelectedType(2)}>
           <Text style={[styles.searchActionLabel, selectedType === 2 && styles.searchActionLabelActive]}>Delete All Members</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={[styles.searchActionBtn, styles.searchRightActionBtn, selectedType === 1 && styles.searchActionBtnActive]} onPress={updateSelectedType(1)}>
+        <TouchableOpacity style={[styles.searchActionBtn, styles.searchRightActionBtn, selectedType === 3&& styles.searchActionBtnActive]} onPress={updateSelectedType(3)}>
           <Text style={[styles.searchActionLabel, selectedType === 3 && styles.searchActionLabelActive]}>Delete</Text>
         </TouchableOpacity>
       </View>
-      <View>
-      <Text style={styles.title}>Hi</Text>
+     
+      <RenderViewButton />
+     
+     
+      <View style={styles.list}>
+        <FlatList
+          data={data}
+          renderItem={renderItems}
+          keyExtractor={(item, index) => item.id}
+        />
       </View>
     </View>
    
@@ -200,10 +297,45 @@ const styles = StyleSheet.create({
   inputContainer: {
     marginTop: 8,
   },
+  button: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 32,
+    paddingHorizontal: 32,
+    borderRadius: 4,
+    elevation: 3,
+    backgroundColor: 'black',
+    // alignItems: 'center',
+    // justifyContent: 'center',
+    // paddingVertical: 12,
+    // paddingHorizontal: 32,
+    // borderRadius: 4,
+    // elevation: 3,
+    // backgroundColor: 'black',
+  },
+  
+  fixToText: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    justifyContent: 'space-between',
+    marginLeft:10,
+    marginRight:10
+  },
+  Viewitem: {
+   
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignContent:'center',
+    alignItems: 'center',
+    borderBottomWidth: 1,
+     
+  },
   title: {
     fontFamily:FONT.regular,
     fontSize: SIZES.large,
-    color: COLORS.secondary,
+    color: COLORS.secondary
+    
   },
   input: {
     borderColor: '#000',
@@ -241,12 +373,12 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   searchActionLabel: {
-    color: '#000',
+    color: '#ccf',
     fontSize: 16,
     textAlign: 'center',
   },
   searchActionLabelActive: {
-    color: '#fff',
+    color: '#ffa',
   },
   list: {
     flex: 1,
@@ -265,6 +397,7 @@ const styles = StyleSheet.create({
     marginRight:10
      
   },
+ 
   listItemImage: {
     width: 32,
     height: 32,

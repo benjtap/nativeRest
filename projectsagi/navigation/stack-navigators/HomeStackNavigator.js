@@ -5,7 +5,7 @@ import {createNativeStackNavigator} from  '@react-navigation/native-stack'
 import { routes,screens } from '../RouteItems'
 
 import { COLORS, icons, images, SIZES } from "../constants";
-import {  Home,ScreenHeaderBtn,Test1,Test2,Test3,GroupMembers } from "../componentsagi";
+import {  Home,ScreenHeaderBtn,Test1,Test2,Test3,Test4,GroupMembers } from "../componentsagi";
 
  //,JobDetails,ScreenHeaderBtn,
 
@@ -100,6 +100,27 @@ const HomeStackNavigator = () => {
       
       />
        <Stack.Screen name={screens.Test3} component={Test3} 
+      options={{
+        headerStyle: { backgroundColor: COLORS.lightWhite },
+        headerShadowVisible: false,
+        headerBackVisible: false,
+        headerLeft: () => (
+          <ScreenHeaderBtn
+            iconUrl={icons.left}
+            dimension='60%'
+            handlePress={() => alert('toto')}
+          />
+        ),
+        headerRight: () => (
+          <ScreenHeaderBtn iconUrl={icons.share} dimension='60%' />
+        ),
+        headerTitle: "",
+      }}
+   
+      
+      />
+
+<Stack.Screen name={screens.Test4} component={Test4} 
       options={{
         headerStyle: { backgroundColor: COLORS.lightWhite },
         headerShadowVisible: false,

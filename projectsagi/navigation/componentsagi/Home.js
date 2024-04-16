@@ -143,7 +143,7 @@ async function runQuerygroup() {
     if (selectedType != 0){
       console.log('selectedType=' +selectedType)
       navigation.navigate('GroupMembers', {
-        id: item.id
+        id: item.id ,name: item.name
       })
     }
     
@@ -152,7 +152,6 @@ async function runQuerygroup() {
  
 
   const renderItems = ({ item }) => {
-
 
     if (selectedType === 0) {
     return (

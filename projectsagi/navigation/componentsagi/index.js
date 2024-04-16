@@ -10,6 +10,7 @@ import Home from "./Home.js";
 import Test1 from "../test/test1.js";
 import Test2 from "../test/test2.js";
 import Test3 from "../test/test3.js";
+import Test4 from "../test/test4.js";
 import GroupMembers  from "../test/GroupMembers";      
 // job details screen
 //import Company from "./jobdetails/company/Company";
@@ -28,6 +29,7 @@ export {
    Test1,
    Test2,
    Test3,
+   Test4,
    GroupMembers
   // JobDetails,
   // Nearbyjobs,
