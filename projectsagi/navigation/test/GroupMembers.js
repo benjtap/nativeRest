@@ -110,7 +110,6 @@ useEffect(() => {
  
 
  
-//bulkdeletegroupcontacts
 
    const fetchgroupsDataForPosts = async() => {
     const limit = 30;

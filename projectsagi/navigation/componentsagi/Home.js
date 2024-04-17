@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { StyleSheet, View, TextInput, TouchableOpacity, Text, FlatList, Image } from 'react-native';
+import { api }  from "../client"; 
 
 
 
@@ -67,9 +68,10 @@ async function runQuerygroup() {
 
   const fetchcontactsDataForPosts = async () => {
     try {
-      
-      const response = await fetch(
-        `http://192.168.1.104/Restapi/Webhttp/getcontacts`, requestOptions
+     // http://192.168.1.104/Restapi
+     //console.log( api.BASE_URL)http://192.168.1.104/Restapi
+     const response = await fetch(
+      api.BASE_URL+`/Webhttp/getcontacts`, requestOptions
       )
       .then(function(response){
         if (response.ok){
@@ -85,6 +87,7 @@ async function runQuerygroup() {
       })
 
     } catch (err) {
+      console.log(err)
       setError(err.message);
       setData(null);
     } finally {
@@ -98,7 +101,7 @@ async function runQuerygroup() {
     try {
       
       const response = await fetch(
-        `http://192.168.1.104/Restapi/Webhttp/getgroups`, requestOptions
+        api.BASE_URL+`/Webhttp/getgroups`, requestOptions
       )
       .then(function(response){
         if (response.ok){
@@ -114,6 +117,7 @@ async function runQuerygroup() {
       })
 
     } catch (err) {
+      console.log(rr)
       setError(err.message);
       setData(null);
     } finally {
