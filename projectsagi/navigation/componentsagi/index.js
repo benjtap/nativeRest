@@ -4,35 +4,29 @@ import ScreenHeaderBtn from "./common/header/ScreenHeaderBtn";
 //import Welcome from "./home/welcome/Welcome";
 //import Nearbyjobs from "./home/nearby/Nearbyjobs";
 //import Popularjobs from "./home/popular/Popularjobs";
-import Home from "./Home.js";
-//import JobDetails from "./jobdetails.js";
+import Contact from "./Contact.js";
+import Audio from "./Audio";
+import Audiodetails from "../action/Audiodetails.js";
 
-import Test1 from "../test/test1.js";
-import Test2 from "../test/test2.js";
-import Test3 from "../test/test3.js";
-import Test4 from "../test/test4.js";
-import GroupMembers  from "../test/GroupMembers";      
-// job details screen
-//import Company from "./jobdetails/company/Company";
-//import { default as JobTabs } from "./jobdetails/tabs/Tabs";
-//import { default as JobAbout } from "./jobdetails/about/About";
-//import { default as JobFooter } from "./jobdetails/footer/Footer";
-//import Specifics from "./jobdetails/specifics/Specifics";
-
-// common
-//import NearbyJobCard from "./common/cards/nearby/NearbyJobCard";
+import Action1  from "../action/action1.js";
+import Action2 from "../action/action2.js";
+import Action3 from "../action/action3.js";
+import Action4 from "../action/action4.js";
+import GroupMembers  from "../action/GroupMembers";      
+import AudioGroupMembers  from "../action/AudioGroupMembers"; 
 
 export {
   ScreenHeaderBtn,
   // Welcome,
-   Home,
-   Test1,
-   Test2,
-   Test3,
-   Test4,
-   GroupMembers
-  // JobDetails,
-  // Nearbyjobs,
+  Contact,
+   Action1,
+   Action2,
+   Action3,
+   Action4,
+   GroupMembers,
+   Audio,
+   Audiodetails,
+   AudioGroupMembers,
   // Popularjobs,
   // Company,
   // JobTabs,

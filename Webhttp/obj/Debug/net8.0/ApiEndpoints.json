@@ -1,0 +1,237 @@
+[
+  {
+    "ContainingType": "WebApplication1.Controllers.WeatherForecastController",
+    "Method": "Get",
+    "RelativePath": "WeatherForecast",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.IEnumerable\u00601[[WebApplication1.WeatherForecast, Webhttp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "Webhttp.Controllers.WebhttpController",
+    "Method": "bulkcontacts",
+    "RelativePath": "Webhttp/bulkcontacts",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "post",
+        "Type": "System.Collections.Generic.List\u00601[[Webhttp.Models.createcontactsPost, Webhttp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Webhttp.Controllers.WebhttpController",
+    "Method": "bulkdeletegroupcontacts",
+    "RelativePath": "Webhttp/bulkdeletegroupcontacts",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "post",
+        "Type": "Webhttp.Models.createcontactsgroupPost",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Webhttp.Controllers.WebhttpController",
+    "Method": "bulkgroupcontacts",
+    "RelativePath": "Webhttp/bulkgroupcontacts",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "post",
+        "Type": "Webhttp.Models.createcontactsgroupPost",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Webhttp.Controllers.WebhttpController",
+    "Method": "createAudiogroups",
+    "RelativePath": "Webhttp/createAudiogroups",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "post",
+        "Type": "Webhttp.Models.createAudiogroupPost",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Webhttp.Controllers.WebhttpController",
+    "Method": "createcontacts",
+    "RelativePath": "Webhttp/createcontacts",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "post",
+        "Type": "Webhttp.Models.createcontactsPost",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Webhttp.Controllers.WebhttpController",
+    "Method": "creategroups",
+    "RelativePath": "Webhttp/creategroups",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "post",
+        "Type": "Webhttp.Models.creategroupsPost",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Webhttp.Controllers.WebhttpController",
+    "Method": "deleteAudiorecordPost",
+    "RelativePath": "Webhttp/deleteAudiorecord",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "post",
+        "Type": "Webhttp.Models.deleteAudioPost",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Webhttp.Controllers.WebhttpController",
+    "Method": "getaudiogroup",
+    "RelativePath": "Webhttp/getaudiogroup",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "post",
+        "Type": "Webhttp.Models.getAudiobyidReq",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Webhttp.Controllers.WebhttpController",
+    "Method": "getaudios",
+    "RelativePath": "Webhttp/getaudios",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Webhttp.Controllers.WebhttpController",
+    "Method": "getcontacts",
+    "RelativePath": "Webhttp/getcontacts",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Webhttp.Controllers.WebhttpController",
+    "Method": "getgroupcontacts",
+    "RelativePath": "Webhttp/getgroupcontacts",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "post",
+        "Type": "Webhttp.Models.createcontactsgroupPost",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Webhttp.Controllers.WebhttpController",
+    "Method": "getgroups",
+    "RelativePath": "Webhttp/getgroups",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Webhttp.Controllers.WebhttpController",
+    "Method": "Test",
+    "RelativePath": "Webhttp/test",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "System.String",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "Webhttp.Controllers.WebhttpController",
+    "Method": "uploadAudio",
+    "RelativePath": "Webhttp/uploadAudio",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "Audioname",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "fileAudioname",
+        "Type": "Microsoft.AspNetCore.Http.IFormFile",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  }
+]

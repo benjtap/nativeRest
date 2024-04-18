@@ -35,15 +35,21 @@ const CustomDrawerContent = (props) => {
     </DrawerContentScrollView>
   )
 }
-
+// backgroundColor: '#AAAAEE',
+//           height: 50,
 const DrawerNavigator = ({ nav }) => {
   return (
     <Drawer.Navigator
+    
       screenOptions={({ navigation }) => ({
         headerStyle: {
-          backgroundColor: '#551E18',
+          backgroundColor: '#AAAAEE',
           height: 50,
         },
+        drawerStyle: {
+            width: 200,
+            height:300
+          },
         headerLeft: () => (
           <TouchableOpacity onPress={() => navigation.toggleDrawer()} style={styles.headerLeft}>
             <Icon name="bars" size={20} color="#fff" />
@@ -53,8 +59,8 @@ const DrawerNavigator = ({ nav }) => {
       drawerContent={(props) => <CustomDrawerContent {...props} nav={nav} />}
     >
       <Drawer.Screen name={screens.HomeTab} component={BottomTabNavigator} options={{
-        title: 'Home',
-        headerTitle: () => <Image source={require('../assets/hotel_logo.jpg')} />,
+        // title: 'Home',
+        headerTitle: () => <Image source={require('../assets/favicon.png')} />,
         headerRight: () => (
           <View style={styles.headerRight}>
             <Icon name="bell" size={20} color="#fff" />

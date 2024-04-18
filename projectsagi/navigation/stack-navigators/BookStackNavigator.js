@@ -5,21 +5,22 @@ import { View, Text } from 'react-native'
 import {createNativeStackNavigator} from  '@react-navigation/native-stack'
 
 import { screens } from '../RouteItems'
-
+import {  Audio,Audiodetails,AudioGroupMembers,Action4 } from "../componentsagi";
 const Stack = createNativeStackNavigator()
 
-const Book = () => (
-  <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-    <Text>Book screen!</Text>
-  </View>
-)
+
 
 const BookStackNavigator = () => {
   return (
     <Stack.Navigator screenOptions={{
       headerShown: false,
     }}>
-      <Stack.Screen name={screens.Book} component={Book} />
+      <Stack.Screen name={screens.Audio} component={Audio} />
+      <Stack.Screen name={screens.Audiodetails} component={Audiodetails} />
+      <Stack.Screen name={screens.AudioGroupMembers} component={AudioGroupMembers} />
+      <Stack.Screen name={screens.Action4} component={Action4} />
+      
+      
     </Stack.Navigator>
   )
 }

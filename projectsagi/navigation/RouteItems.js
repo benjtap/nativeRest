@@ -1,19 +1,22 @@
 import * as React from 'react'
 import Icon from 'react-native-vector-icons/FontAwesome'
+// import { Audiodetails } from './componentsagi'
 
 export const screens = {
   HomeTab: 'HomeTab',
   HomeStack: 'HomeStack',
-  Home: 'Home',
-  Test1: 'test1',
-  Test2: 'test2',
-  Test3: 'test3',
-  Test4: 'test4',
+  Contact: 'Contact',
+  Action1: 'Action1',
+  Action2: 'Action2',
+  Action3: 'Action3',
+  Action4: 'Action4',
   GroupMembers: 'GroupMembers',
   BookStack: 'BookStack',
-  Book: 'Book',
+  Audio: 'Audio',
+  Audiodetails: 'Audiodetails',
+  AudioGroupMembers: 'AudioGroupMembers',
   ContactStack: 'ContactStack',
-  Contact: 'Contact',
+  Contact: 'www',
   MyRewardsStack: 'MyRewardsStack',
   MyRewards: 'MyRewards',
   LocationsStack: 'LocationsStack',
@@ -24,66 +27,58 @@ export const routes = [
   {
     name: screens.HomeTab,
     focusedRoute: screens.HomeTab,
-    title: 'Home',
+    title: 'אנשי קשר',
     showInTab: false,
     showInDrawer: false,
     icon: (focused) =>
-      <Icon name="home" size={30} color={focused ? '#551E18' : '#000'} />,
+      <Icon name="users" size={30} color={focused ? '#AAAAEE' : '#000'} />,
   },
   {
     name: screens.HomeStack,
     focusedRoute: screens.HomeStack,
-    title: 'Home',
+    title: 'אנשי קשר',
     showInTab: true,
-    showInDrawer: true,
+    showInDrawer: false,
     icon: (focused) =>
-      <Icon name="home" size={30} color={focused ? '#551E18' : '#000'} />,
+      <Icon name="users" size={30} color={focused ? '#AAAAEE' : '#000'} />,
   },
   {
     name: screens.Home,
     focusedRoute: screens.HomeStack,
-    title: 'Home',
+    title: 'אנשי קשר',
     showInTab: true,
     showInDrawer: false,
     icon: (focused) =>
-      <Icon name="home" size={30} color={focused ? '#551E18' : '#000'} />,
+      <Icon name="users" size={30} color={focused ? '#AAAAEE' : '#000'} />,
   },
   {
-    name: screens.Test1,
+    name: screens.Action1,
     focusedRoute: screens.HomeStack,
     title: 'test1',
     showInTab: false,
     showInDrawer: true,
     icon: (focused) =>
-      <Icon name="home" size={30} color={focused ? '#551E18' : '#000'} />,
+      <Icon name="users" size={30} color={focused ? '#AAAAEE' : '#000'} />,
   },
   {
-    name: screens.Test2,
+    name: screens.Action2,
     focusedRoute: screens.HomeStack,
     title: 'test2',
     showInTab: false,
     showInDrawer: true,
     icon: (focused) =>
-      <Icon name="home" size={30} color={focused ? '#551E18' : '#000'} />,
+      <Icon name="teamspeak" size={30} color={focused ? '#AAAAEE' : '#000'} />,
   },
   {
-    name: screens.Test3,
+    name: screens.Action3,
     focusedRoute: screens.HomeStack,
     title: 'test3',
     showInTab: false,
     showInDrawer: true,
     icon: (focused) =>
-      <Icon name="home" size={30} color={focused ? '#551E18' : '#000'} />,
+      <Icon name="teamspeak" size={30} color={focused ? '#AAAAEE' : '#000'} />,
   },
-  {
-    name: screens.Test4,
-    focusedRoute: screens.HomeStack,
-    title: 'test4',
-    showInTab: false,
-    showInDrawer: true,
-    icon: (focused) =>
-      <Icon name="home" size={30} color={focused ? '#551E18' : '#000'} />,
-  },
+ 
   {
     name: screens.GroupMembers,
     focusedRoute: screens.HomeStack,
@@ -91,28 +86,54 @@ export const routes = [
     showInTab: false,
     showInDrawer: false,
     icon: (focused) =>
-      <Icon name="home" size={30} color={focused ? '#551E18' : '#000'} />,
+      <Icon name="teamspeak" size={30} color={focused ? '#AAAAEE' : '#000'} />,
   },
 
   
   {
     name: screens.BookStack,
     focusedRoute: screens.BookStack,
-    title: 'Book Room',
+    title: 'הקלטה',
     showInTab: true,
     showInDrawer: false,
     icon: (focused) =>
-      <Icon name="bed" size={30} color={focused ? '#551E18' : '#000'} />,
+      <Icon name="file-sound-o" size={30} color={focused ? '#AAAAEE' : '#000'} />,
   },
-
-  {
-    name: screens.Book,
+   {
+    name: screens.Audio,
     focusedRoute: screens.BookStack,
-    title: 'Book Room',
+    title: 'הקלטה',
     showInTab: true,
     showInDrawer: false,
     icon: (focused) =>
-      <Icon name="bed" size={30} color={focused ? '#551E18' : '#000'} />,
+      <Icon name="file-sound-o" size={30} color={focused ? '#AAAAEE' : '#000'} />,
+  },
+  {
+    name: screens.Action4,
+    focusedRoute: screens.BookStack,
+    title: 'הקלטה חדשה',
+    showInTab: false,
+    showInDrawer: true,
+    icon: (focused) =>
+      <Icon name="teamspeak" size={30} color={focused ? '#AAAAEE' : '#000'} />,
+  },
+  {
+    name: screens.AudioGroupMembers,
+    focusedRoute: screens.BookStack,
+    title: 'הקלטה',
+    showInTab: false,
+    showInDrawer: false,
+    icon: (focused) =>
+      <Icon name="file-sound-o" size={30} color={focused ? '#AAAAEE' : '#000'} />,
+  },
+  {
+    name: screens.Audiodetails,
+    focusedRoute: screens.BookStack,
+    title: 'הקלטה',
+    showInTab: false,
+    showInDrawer: false,
+    icon: (focused) =>
+      <Icon name="file-sound-o" size={30} color={focused ? '#AAAAEE' : '#000'} />,
   },
 
   {
@@ -122,7 +143,7 @@ export const routes = [
     showInTab: true,
     showInDrawer: false,
     icon: (focused) =>
-      <Icon name="phone" size={30} color={focused ? '#551E18' : '#000'} />,
+      <Icon name="phone" size={30} color={focused ? '#AAAAEE' : '#000'} />,
   },
   {
     name: screens.Contact,
@@ -131,7 +152,7 @@ export const routes = [
     showInTab: false,
     showInDrawer: false,
     icon: (focused) =>
-      <Icon name="phone" size={30} color={focused ? '#551E18' : '#000'} />,
+      <Icon name="phone" size={30} color={focused ? '#AAAAEE' : '#000'} />,
   },
 
   {
@@ -139,9 +160,9 @@ export const routes = [
     focusedRoute: screens.MyRewardsStack,
     title: 'My Rewards',
     showInTab: false,
-    showInDrawer: true,
+    showInDrawer: false,
     icon: (focused) =>
-      <Icon name="star" size={30} color={focused ? '#551E18' : '#000'} />,
+      <Icon name="star" size={30} color={focused ? '#AAAAEE' : '#000'} />,
   },
   {
     name: screens.MyRewards,
@@ -150,7 +171,7 @@ export const routes = [
     showInTab: false,
     showInDrawer: false,
     icon: (focused) =>
-      <Icon name="star" size={30} color={focused ? '#551E18' : '#000'} />,
+      <Icon name="star" size={30} color={focused ? '#AAAAEE' : '#000'} />,
   },
 
   {
@@ -158,7 +179,7 @@ export const routes = [
     focusedRoute: screens.LocationsStack,
     title: 'Locations',
     showInTab: false,
-    showInDrawer: true,
+    showInDrawer: false,
     icon: (focused) =>
       <Icon name="map-marker" size={30} color={focused ? '#551E18' : '#000'} />,
   },
