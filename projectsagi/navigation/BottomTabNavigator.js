@@ -40,10 +40,6 @@ const tabOptions = ({ route }) => {
 
 const BottomTabNavigator = () => {
 
- 
-
-
-
   return (
     <Tab.Navigator screenOptions={tabOptions}>
       <Tab.Screen name={screens.HomeStack}  component={HomeStackNavigator}

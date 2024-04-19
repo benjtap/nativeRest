@@ -9,7 +9,7 @@ import Audio from "./Audio";
 import Audiodetails from "../action/Audiodetails.js";
 
 import Action1  from "../action/action1.js";
-import Action2 from "../action/action2.js";
+
 import Action3 from "../action/action3.js";
 import Action4 from "../action/action4.js";
 import GroupMembers  from "../action/GroupMembers";      
@@ -20,7 +20,7 @@ export {
   // Welcome,
   Contact,
    Action1,
-   Action2,
+   
    Action3,
    Action4,
    GroupMembers,

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 
-import {useFocusEffect} from  '@react-navigation/native-stack'
+//import {useFocusEffect} from  '@react-navigation/native-stack'
  
 import { StyleSheet, View, TextInput, TouchableOpacity, Text, FlatList, Image } from 'react-native';
 import { api }  from "../client"; 

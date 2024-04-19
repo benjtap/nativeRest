@@ -171,6 +171,7 @@ const fetchAudiogroupDataForPosts = async () => {
   .then(function(myjson){
         let myaudio = dict[myjson.audioid]
         setSelectedName(myaudio.name)
+        setSelectedId(myjson.audioid)
    })
    .catch((response) => {
     console.log(response.status, response.statusText);

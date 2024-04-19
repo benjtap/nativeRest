@@ -1,77 +1,194 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { View, Text } from 'react-native'
+import { Text, TouchableOpacity, View, StyleSheet, TextInput,Platform } from 'react-native';
 
 
+import { api }  from "../client"; 
 
-
+import { COLORS, FONT, SIZES } from "../constants";
 
 
 const Test3 = (props) => {
   const { navigation } = props;
 
+  const [name, setName] = useState(""); 
+  const [errors, setErrors] = useState({}); 
+ 
+  const [isFormValid, setIsFormValid] = useState(false); 
+  
+  
+  
 
 
-  let CreategroupsPost =  {
-    name:"הפצה3",
-  }
 
-   var lst = []
+  const handleSubmit = async() => { 
+     
+      
+      let CreategroupsPost =  {
+        name:name
+      }
+    
+       
+    
+      const requestOptions = {
+        method: 'POST',
+        mode: 'cors', //no-
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(CreategroupsPost)
+        };
 
-  // lst.push(createcontactsPost1)
-   //lst.push(createcontactsPost2)
-
-  const requestOptions = {
-    method: 'POST',
-    mode: 'cors', //no-
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(CreategroupsPost)
-    };
-
-  useEffect(() => {
-    (async () => {
-      try {
        const response = await fetch(
-          `http://192.168.1.104/Restapi/Webhttp/creategroups`, requestOptions
+        api.BASE_URL+ `/Webhttp/creategroups`, requestOptions
         )
         .then(function(response){
           if (response.ok){
             
-            return response.json()
-            
+           navigation.navigate('Contact')
+           // navigation.navigate('GroupMembers')
           }
       })
-      .then(function(myjson){
-          
-        })
+     
+       
+
+    }
   
-      } catch (err) {
+  useEffect(() => {
+       
+    validateForm();     // Call function to get permission
+
+}, [name]);
+
+
+  const validateForm = () => {
+    if (!name)  { 
       
-      } finally {
+      errors.name = 'Name is required.'; 
+        setIsFormValid(false);
+        return;
+    } 
     
-      }
+    else
+    {
+     
+      setErrors(errors); 
+      setIsFormValid(true); 
+        
 
-
-    })();
+    }
    
-  }, []);
-
- 
-
-  const searchContacts = () => {
-    const limit = 30;
- 
-    
-   // fetchDataForPosts();
+}
 
   
-  };
 
-return (
-  <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-    <Text>test2 screen!</Text>
-  </View>
- );
-};
+ 
+
+  return (
+    <View style={styles.container}>
+
+<View style={styles.Viewitem}><Text style={styles.title}> קבוצה חדשה</Text></View>
+<View style={styles.fixToText}>
+        <Text style={styles.title}>
+        This action will create a new group with name.
+      </Text>
+      </View>
+
+<View style={styles.container}>
+                  <TextInput 
+                    style={styles.input} 
+                    placeholder="Name"
+                    value={name} 
+                    onChangeText={setName} 
+                /> 
+     
+           </View>
+      
+               <TouchableOpacity 
+                    style={[styles.button1, { opacity: isFormValid ? 1 : 0.5 }]} 
+                    disabled={!isFormValid} 
+                    onPress={handleSubmit} 
+                > 
+                <Text style={styles.buttonText}>Submit</Text> 
+            </TouchableOpacity> 
+   
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+
+  fixToText: {
+   
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    justifyContent: 'space-between',
+    marginLeft:10,
+    marginRight:10
+  },
+  Viewitem: {
+   
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignContent:'center',
+    alignItems: 'center',
+    borderBottomWidth: 1,
+    marginBottom:18
+     
+  },
+  title: {
+    fontFamily:FONT.regular,
+    fontSize: SIZES.large,
+    color: COLORS.secondary
+    
+  },
+
+
+  container: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  button1: { 
+    backgroundColor: '#aaa', 
+    borderRadius: 8, 
+    paddingVertical: 10, 
+    alignItems: 'center', 
+    marginTop: 16, 
+    marginBottom: 12,
+    width: 68,
+    height: 48, 
+},
+  button: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: 128,
+    height: 128,
+    borderRadius: 64,
+    backgroundColor: 'red',
+  },
+  recordingStatusText: {
+    marginTop: 16,
+  },
+   input: { 
+        width: 158,
+        height: 60, 
+        borderColor: '#ccc', 
+        borderWidth: 1, 
+        marginBottom: 12, 
+        paddingHorizontal: 10, 
+        borderRadius: 8, 
+        fontSize: 16, 
+    }, 
+   
+    buttonText: { 
+        color: '#fff', 
+        fontWeight: 'bold', 
+        fontSize: 16, 
+    }, 
+    error: { 
+        color: 'red', 
+        fontSize: 20, 
+        marginBottom: 12, 
+    }
+});
 
 
 

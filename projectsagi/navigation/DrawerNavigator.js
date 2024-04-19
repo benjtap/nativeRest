@@ -46,13 +46,30 @@ const DrawerNavigator = ({ nav }) => {
           backgroundColor: '#AAAAEE',
           height: 50,
         },
+   
         drawerStyle: {
             width: 200,
-            height:300
+            height:300,
+             right: 200,
+             top:70,
+            backgroundColor: '#fff',
+            borderTopRightRadius: 20,
+            borderTopLeftRadius: 20,
+            borderBottomRightRadius: 20,
+            borderBottomLeftRadius: 20,
+            overflow: 'hidden',
+            background: 'transparent'
           },
-        headerLeft: () => (
+          drawerPosition: 'right',
+          drawerContentStyle:{
+           flexDirection:"column-reverse"
+         },
+        
+         
+          // 
+        headerRight: () => (
           <TouchableOpacity onPress={() => navigation.toggleDrawer()} style={styles.headerLeft}>
-            <Icon name="bars" size={20} color="#fff" />
+            <Icon name="bars" size={20} color="#eee" />
           </TouchableOpacity>
         ),
       })}
@@ -61,11 +78,7 @@ const DrawerNavigator = ({ nav }) => {
       <Drawer.Screen name={screens.HomeTab} component={BottomTabNavigator} options={{
         // title: 'Home',
         headerTitle: () => <Image source={require('../assets/favicon.png')} />,
-        headerRight: () => (
-          <View style={styles.headerRight}>
-            <Icon name="bell" size={20} color="#fff" />
-          </View>
-        ),
+      
       }}/>
     </Drawer.Navigator>
   )
@@ -73,7 +86,9 @@ const DrawerNavigator = ({ nav }) => {
 
 const styles = StyleSheet.create({
   headerLeft: {
-    marginLeft: 15,
+    // marginLeft: 15,
+    marginRight: 25,
+    color: 'black',
   },
   headerTitle: {
     color: 'white',

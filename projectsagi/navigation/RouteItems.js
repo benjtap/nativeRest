@@ -16,7 +16,7 @@ export const screens = {
   Audiodetails: 'Audiodetails',
   AudioGroupMembers: 'AudioGroupMembers',
   ContactStack: 'ContactStack',
-  Contact: 'www',
+  // Contact: 'www',
   MyRewardsStack: 'MyRewardsStack',
   MyRewards: 'MyRewards',
   LocationsStack: 'LocationsStack',
@@ -27,6 +27,15 @@ export const routes = [
   {
     name: screens.HomeTab,
     focusedRoute: screens.HomeTab,
+    title: 'אנשי קשר',
+    showInTab: false,
+    showInDrawer: false,
+    icon: (focused) =>
+      <Icon name="users" size={30} color={focused ? '#AAAAEE' : '#000'} />,
+  },
+  {
+    name: screens.HomeTab,
+    focusedRoute: screens.Contact,
     title: 'אנשי קשר',
     showInTab: false,
     showInDrawer: false,
@@ -54,40 +63,32 @@ export const routes = [
   {
     name: screens.Action1,
     focusedRoute: screens.HomeStack,
-    title: 'test1',
+    title: 'ייצוא רשימת אנשי קשר',
     showInTab: false,
     showInDrawer: true,
     icon: (focused) =>
       <Icon name="users" size={30} color={focused ? '#AAAAEE' : '#000'} />,
   },
-  {
-    name: screens.Action2,
-    focusedRoute: screens.HomeStack,
-    title: 'test2',
-    showInTab: false,
-    showInDrawer: true,
-    icon: (focused) =>
-      <Icon name="teamspeak" size={30} color={focused ? '#AAAAEE' : '#000'} />,
-  },
+  
   {
     name: screens.Action3,
     focusedRoute: screens.HomeStack,
-    title: 'test3',
+    title: 'יצירת קבוצה',
     showInTab: false,
     showInDrawer: true,
     icon: (focused) =>
       <Icon name="teamspeak" size={30} color={focused ? '#AAAAEE' : '#000'} />,
   },
  
-  {
-    name: screens.GroupMembers,
-    focusedRoute: screens.HomeStack,
-    title: 'GroupMembers',
-    showInTab: false,
-    showInDrawer: false,
-    icon: (focused) =>
-      <Icon name="teamspeak" size={30} color={focused ? '#AAAAEE' : '#000'} />,
-  },
+  // {
+  //   name: screens.GroupMembers,
+  //   focusedRoute: screens.HomeStack,
+  //   title: 'GroupMembers',
+  //   showInTab: false,
+  //   showInDrawer: false,
+  //   icon: (focused) =>
+  //     <Icon name="teamspeak" size={30} color={focused ? '#AAAAEE' : '#000'} />,
+  // },
 
   
   {
@@ -117,24 +118,24 @@ export const routes = [
     icon: (focused) =>
       <Icon name="teamspeak" size={30} color={focused ? '#AAAAEE' : '#000'} />,
   },
-  {
-    name: screens.AudioGroupMembers,
-    focusedRoute: screens.BookStack,
-    title: 'הקלטה',
-    showInTab: false,
-    showInDrawer: false,
-    icon: (focused) =>
-      <Icon name="file-sound-o" size={30} color={focused ? '#AAAAEE' : '#000'} />,
-  },
-  {
-    name: screens.Audiodetails,
-    focusedRoute: screens.BookStack,
-    title: 'הקלטה',
-    showInTab: false,
-    showInDrawer: false,
-    icon: (focused) =>
-      <Icon name="file-sound-o" size={30} color={focused ? '#AAAAEE' : '#000'} />,
-  },
+  // {
+  //   name: screens.AudioGroupMembers,
+  //   focusedRoute: screens.BookStack,
+  //   title: 'הקלטה',
+  //   showInTab: false,
+  //   showInDrawer: false,
+  //   icon: (focused) =>
+  //     <Icon name="file-sound-o" size={30} color={focused ? '#AAAAEE' : '#000'} />,
+  // },
+  // {
+  //   name: screens.Audiodetails,
+  //   focusedRoute: screens.BookStack,
+  //   title: 'הקלטה',
+  //   showInTab: false,
+  //   showInDrawer: false,
+  //   icon: (focused) =>
+  //     <Icon name="file-sound-o" size={30} color={focused ? '#AAAAEE' : '#000'} />,
+  // },
 
   {
     name: screens.ContactStack,
@@ -145,15 +146,15 @@ export const routes = [
     icon: (focused) =>
       <Icon name="phone" size={30} color={focused ? '#AAAAEE' : '#000'} />,
   },
-  {
-    name: screens.Contact,
-    focusedRoute: screens.ContactStack,
-    title: 'Contact Us',
-    showInTab: false,
-    showInDrawer: false,
-    icon: (focused) =>
-      <Icon name="phone" size={30} color={focused ? '#AAAAEE' : '#000'} />,
-  },
+  // {
+  //   name: screens.Contact,
+  //   focusedRoute: screens.ContactStack,
+  //   title: 'Contact Us',
+  //   showInTab: false,
+  //   showInDrawer: false,
+  //   icon: (focused) =>
+  //     <Icon name="phone" size={30} color={focused ? '#AAAAEE' : '#000'} />,
+  // },
 
   {
     name: screens.MyRewardsStack,

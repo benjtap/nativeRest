@@ -1,16 +1,36 @@
-import React from 'react'
-import { View, Text } from 'react-native'
+//import React from 'react'
+//import { View, Text } from 'react-native'
 //import { createStackNavigator } from '@react-navigation/stack'
-
+import React, { useState, useEffect } from 'react';
 import {createNativeStackNavigator} from  '@react-navigation/native-stack'
-
-import { screens } from '../RouteItems'
+import { routes,screens } from '../RouteItems'
+//import { screens } from '../RouteItems'
 import {  Audio,Audiodetails,AudioGroupMembers,Action4 } from "../componentsagi";
 const Stack = createNativeStackNavigator()
 
+const showtabdrawer =['BookStack']//,'BookStack'
 
 
-const BookStackNavigator = () => {
+
+
+const BookStackNavigator = (props) => {
+
+
+  const { navigation } = props;
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+    routes.map((record) => (
+      (showtabdrawer.indexOf(record.focusedRoute) >-1)
+      && (record.showInTab===false)   ? record.showInDrawer =true :  record.showInDrawer =false
+    ))
+
+    //Douvle code
+
+    return unsubscribe;
+  });
+  }, [navigation]);
+   
+
   return (
     <Stack.Navigator screenOptions={{
       headerShown: false,
