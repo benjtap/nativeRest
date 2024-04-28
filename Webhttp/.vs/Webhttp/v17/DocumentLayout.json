@@ -3,16 +3,24 @@
   "WorkspaceRootPath": "C:\\docker\\Webhttp\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{0C26D96D-667F-48B4-983C-6A70598B631C}|Webhttp.csproj|c:\\docker\\webhttp\\controllers\\testcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{0C26D96D-667F-48B4-983C-6A70598B631C}|Webhttp.csproj|solutionrelative:controllers\\testcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{0C26D96D-667F-48B4-983C-6A70598B631C}|Webhttp.csproj|c:\\docker\\webhttp\\utility.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0C26D96D-667F-48B4-983C-6A70598B631C}|Webhttp.csproj|solutionrelative:utility.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0C26D96D-667F-48B4-983C-6A70598B631C}|Webhttp.csproj|c:\\docker\\webhttp\\controllers\\authcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0C26D96D-667F-48B4-983C-6A70598B631C}|Webhttp.csproj|solutionrelative:controllers\\authcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0C26D96D-667F-48B4-983C-6A70598B631C}|Webhttp.csproj|c:\\docker\\webhttp\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{0C26D96D-667F-48B4-983C-6A70598B631C}|Webhttp.csproj|solutionrelative:appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0C26D96D-667F-48B4-983C-6A70598B631C}|Webhttp.csproj|c:\\docker\\webhttp\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0C26D96D-667F-48B4-983C-6A70598B631C}|Webhttp.csproj|solutionrelative:program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{0C26D96D-667F-48B4-983C-6A70598B631C}|Webhttp.csproj|c:\\docker\\webhttp\\dbproviders\\mongoprovider.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{0C26D96D-667F-48B4-983C-6A70598B631C}|Webhttp.csproj|solutionrelative:dbproviders\\mongoprovider.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{0C26D96D-667F-48B4-983C-6A70598B631C}|Webhttp.csproj|c:\\docker\\webhttp\\models\\clsproject.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{0C26D96D-667F-48B4-983C-6A70598B631C}|Webhttp.csproj|solutionrelative:models\\clsproject.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -30,41 +38,67 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "clsProject.cs",
-              "DocumentMoniker": "C:\\docker\\Webhttp\\Models\\clsProject.cs",
-              "RelativeDocumentMoniker": "Models\\clsProject.cs",
-              "ToolTip": "C:\\docker\\Webhttp\\Models\\clsProject.cs",
-              "RelativeToolTip": "Models\\clsProject.cs",
-              "ViewState": "AQIAACMAAAAAAAAAAAAEwCwAAAAgAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-04-16T13:51:22.79Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 4,
               "Title": "MongoProvider.cs",
               "DocumentMoniker": "C:\\docker\\Webhttp\\DBProviders\\MongoProvider.cs",
               "RelativeDocumentMoniker": "DBProviders\\MongoProvider.cs",
               "ToolTip": "C:\\docker\\Webhttp\\DBProviders\\MongoProvider.cs",
               "RelativeToolTip": "DBProviders\\MongoProvider.cs",
-              "ViewState": "AQIAAD4AAAAAAAAAAAAAwEoAAAA7AAAA",
+              "ViewState": "AQIAAFkAAAAAAAAAAAAkwGwAAAAMAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-04-16T13:50:54.613Z",
+              "WhenOpened": "2024-04-28T13:06:32.044Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "AuthController.cs",
+              "DocumentMoniker": "C:\\docker\\Webhttp\\Controllers\\AuthController.cs",
+              "RelativeDocumentMoniker": "Controllers\\AuthController.cs",
+              "ToolTip": "C:\\docker\\Webhttp\\Controllers\\AuthController.cs",
+              "RelativeToolTip": "Controllers\\AuthController.cs",
+              "ViewState": "AQIAAEEAAAAAAAAAAAAswEYAAABAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-04-28T13:06:32.07Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 0,
-              "Title": "TestController.cs",
-              "DocumentMoniker": "C:\\docker\\Webhttp\\Controllers\\TestController.cs",
-              "RelativeDocumentMoniker": "Controllers\\TestController.cs",
-              "ToolTip": "C:\\docker\\Webhttp\\Controllers\\TestController.cs",
-              "RelativeToolTip": "Controllers\\TestController.cs",
-              "ViewState": "AQIAAGEAAAAAAAAAAAD4v24AAAAkAAAA",
+              "Title": "Utility.cs",
+              "DocumentMoniker": "C:\\docker\\Webhttp\\Utility.cs",
+              "RelativeDocumentMoniker": "Utility.cs",
+              "ToolTip": "C:\\docker\\Webhttp\\Utility.cs",
+              "RelativeToolTip": "Utility.cs",
+              "ViewState": "AQIAAAsAAAAAAAAAAAAxwBQAAAA1AAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-04-14T04:33:20.935Z",
+              "WhenOpened": "2024-04-28T13:06:32.085Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "Program.cs",
+              "DocumentMoniker": "C:\\docker\\Webhttp\\Program.cs",
+              "RelativeDocumentMoniker": "Program.cs",
+              "ToolTip": "C:\\docker\\Webhttp\\Program.cs",
+              "RelativeToolTip": "Program.cs",
+              "ViewState": "AQIAAAkAAAAAAAAAAAAYwBQAAABcAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-04-28T12:50:02.965Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "appsettings.json",
+              "DocumentMoniker": "C:\\docker\\Webhttp\\appsettings.json",
+              "RelativeDocumentMoniker": "appsettings.json",
+              "ToolTip": "C:\\docker\\Webhttp\\appsettings.json",
+              "RelativeToolTip": "appsettings.json",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAkAAABcAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2024-04-28T12:46:00.439Z",
               "EditorCaption": ""
             }
           ]

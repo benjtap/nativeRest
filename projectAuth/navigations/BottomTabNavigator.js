@@ -4,7 +4,9 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { Text, StyleSheet, View } from 'react-native'
 
 import ContactStackNavigator from './ContactNavigator'
-//import BookStackNavigator from './stack-navigators/BookStackNavigator'
+import AudioStackNavigator from './AudioNavigator'
+
+
 
 
 import {
@@ -45,9 +47,9 @@ const BottomTabNavigator = () => {
     <Tab.Navigator screenOptions={tabOptions}>
       <Tab.Screen name={screens.ContactStack}  component={ContactStackNavigator}
       />
-      {/* <Tab.Screen name={screens.BookStack} component={BookStackNavigator}
-      />
-     */}
+    <Tab.Screen name={screens.AudioStack} component={AudioStackNavigator}
+      />  
+    
     </Tab.Navigator>
   )
 }

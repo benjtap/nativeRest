@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Amazon.Auth.AccessControlPolicy;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Hosting;
 using MongoDB.Bson.IO;
@@ -9,7 +11,8 @@ using Webhttp.Models;
 
 namespace Webhttp.Controllers
 {
-     [ApiController]
+    [Authorize]
+    [ApiController]
     [Route("[controller]")]
     public class WebhttpController : ControllerBase
     {
@@ -38,23 +41,23 @@ namespace Webhttp.Controllers
 
 
 
-        [HttpPost]
-        [Route("createcontacts")]
-        public async Task<IActionResult> createcontacts(createcontactsPost post)
-        {
-
-            await _mongo.CreatecontactsPost(post);
-            return Ok();
-        }
-
         
 
         [HttpPost]
         [Route("createAudiogroups")]
         public async Task<IActionResult> createAudiogroups(createAudiogroupPost post)
         {
+            string id = "";
+            var principal = HttpContext.User;
+            if (principal?.Claims != null)
+            {
 
-            await _mongo.createAudiogroup(post);
+                var claim = principal.Claims.FirstOrDefault();
+
+                id = claim.Value;
+            }
+
+            await _mongo.createAudiogroup(post, id);
             return Ok();
         }
 
@@ -63,8 +66,24 @@ namespace Webhttp.Controllers
         [Route("creategroups")]
         public async Task<IActionResult> creategroups(creategroupsPost post)
         {
+            string id = "";
+            var principal = HttpContext.User;
+            if (principal?.Claims != null)
+            {
 
-            await _mongo.CreategroupsPost(post);
+                var claim = principal.Claims.FirstOrDefault();
+
+                 id = claim.Value;
+            }
+
+            creategroupsPostui mygroup = new creategroupsPostui
+            {
+                uid = id,
+                name= post.name
+
+            };
+
+            await _mongo.CreategroupsPost(mygroup);
             return Ok();
         }
 
@@ -74,7 +93,34 @@ namespace Webhttp.Controllers
         public async Task<IActionResult> bulkcontacts(List<createcontactsPost> post)
         {
 
-            await _mongo.bulkcontacts(post);
+          
+            var principal = HttpContext.User;
+            string id = "";
+            if (principal?.Claims != null)
+            {
+
+                var claim = principal.Claims.FirstOrDefault();
+
+                 id = claim.Value;
+            }
+
+            List<createcontactsPostUid> lst = new List<createcontactsPostUid>();
+
+            foreach (createcontactsPost item in post)
+            {
+                createcontactsPostUid mycontact = new createcontactsPostUid
+                {
+                    uid = id,
+                    name = item.name,
+                    phone = item.phone
+
+                };
+                lst.Add(mycontact);
+
+            }
+
+
+            await _mongo.bulkcontacts(lst);
             return Ok();
         }
 
@@ -82,8 +128,20 @@ namespace Webhttp.Controllers
         [Route("bulkgroupcontacts")]
         public async Task<IActionResult> bulkgroupcontacts(createcontactsgroupPost post)
         {
+            var principal = HttpContext.User;
+            string id = "";
 
-            await _mongo.bulkgroupcontacts(post);
+
+            if (principal?.Claims != null)
+            {
+
+                var claim = principal.Claims.FirstOrDefault();
+
+                id = claim.Value;
+            }
+
+
+            await _mongo.bulkgroupcontacts(post,id);
             return Ok();
         }
 
@@ -91,8 +149,20 @@ namespace Webhttp.Controllers
         [Route("bulkdeletegroupcontacts")]
         public async Task<IActionResult> bulkdeletegroupcontacts(createcontactsgroupPost post)
         {
+            var principal = HttpContext.User;
+            string id = "";
 
-            await _mongo.bulkdeletegroupcontacts(post);
+
+            if (principal?.Claims != null)
+            {
+
+                var claim = principal.Claims.FirstOrDefault();
+
+                id = claim.Value;
+            }
+
+
+            await _mongo.bulkdeletegroupcontacts(post, id);
             return Ok();
         }
 
@@ -120,7 +190,19 @@ namespace Webhttp.Controllers
         public async Task<IActionResult> getgroupcontacts(createcontactsgroupPost post)
         {
 
-            IEnumerable res = await _mongo.getgroupcontacts(post);
+            var principal = HttpContext.User;
+            string id = "";
+
+
+            if (principal?.Claims != null)
+            {
+
+                var claim = principal.Claims.FirstOrDefault();
+
+                id = claim.Value;
+            }
+
+            IEnumerable res = await _mongo.getgroupcontacts(post,id);
             return Ok(res);
         }
 
@@ -129,7 +211,19 @@ namespace Webhttp.Controllers
         public async Task<IActionResult> getcontacts()
         {
             
-                IEnumerable res = await _mongo.GetcontactsPost();
+            var principal = HttpContext.User;
+            string id = "";
+
+
+            if (principal?.Claims != null)
+            {
+
+                var claim = principal.Claims.FirstOrDefault() ;
+
+                 id = claim.Value;
+            }
+
+            IEnumerable res = await _mongo.GetcontactsPost(id);
           
             return Ok(res);
         }
@@ -138,8 +232,21 @@ namespace Webhttp.Controllers
         [Route("getaudios")]
         public async Task<IActionResult> getaudios()
         {
+            var principal = HttpContext.User;
+            string id = "";
 
-            IEnumerable res = await _mongo.GetAudio();
+
+            if (principal?.Claims != null)
+            {
+
+                var claim = principal.Claims.FirstOrDefault();
+
+                id = claim.Value;
+            }
+
+            
+
+            IEnumerable res = await _mongo.GetAudio(id);
             return Ok(res);
         }
 
@@ -148,8 +255,19 @@ namespace Webhttp.Controllers
         [Route("getgroups")]
         public async Task<IActionResult> getgroups()
         {
+            var principal = HttpContext.User;
+            string id = "";
 
-            IEnumerable res = await _mongo.getgroupsPost();
+
+            if (principal?.Claims != null)
+            {
+
+                var claim = principal.Claims.FirstOrDefault();
+
+                id = claim.Value;
+            }
+
+            IEnumerable res = await _mongo.getgroupsPost(id);
 
             return Ok(res);
         }
@@ -158,10 +276,18 @@ namespace Webhttp.Controllers
         [Route("uploadAudio")]
         public IActionResult uploadAudio([FromForm] FormDataAudio formData)
         {
-            logger.Log(LogLevel.Information, "log FormDataAudio");
-            try
+            var principal = HttpContext.User;
+            string id = "";
+
+
+            if (principal?.Claims != null)
             {
-                var Audioname = formData.Audioname;
+
+                var claim = principal.Claims.FirstOrDefault();
+
+                id = claim.Value;
+            }
+            var Audioname = formData.Audioname;
                 var avatarFile = formData.fileAudioname;
 
                 string fileNameWithPath = "c://Upload//" + formData.fileAudioname.FileName;
@@ -173,6 +299,7 @@ namespace Webhttp.Controllers
 
                 createAudio postM = new createAudio
                 {
+                    uid = id,
                     name = Audioname,
                     filename = formData.fileAudioname.FileName
 
@@ -180,21 +307,31 @@ namespace Webhttp.Controllers
 
                 _mongo.CreateAudio(postM);
 
-            }
-            catch (Exception ex)
-            {
-
-                logger.Log(LogLevel.Error, ex.Message);
-            } 
-            // Access the form fields and files
-            
+          
           
             return Ok();
 
             // Process the form data as needed
             // ...
 
-           
+            //[HttpPost]
+            //[Route("createcontacts")]
+            //public async Task<IActionResult> createcontacts(createcontactsPost post)
+            //{
+            //    var principal = HttpContext.User;
+            //    if (principal?.Claims != null)
+            //    {
+
+            //        var claim = principal.Claims.FirstOrDefault();
+
+            //        string id = claim.Value;
+            //    }
+
+            //    await _mongo.CreatecontactsPost(post);
+            //    return Ok();
+            //}
+
+
         }
     }
 

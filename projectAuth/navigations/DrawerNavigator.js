@@ -61,10 +61,10 @@ const DrawerNavigator = ({ nav }) => {
         },
    
         drawerStyle: {
-            // width: 200,
-            // height:300,
-            //  right: 200,
-            //  top:70,
+            width: 200,
+            height:300,
+             right: 200,
+             top:70,
             backgroundColor: '#fff',
             borderTopRightRadius: 20,
             borderTopLeftRadius: 20,
@@ -93,7 +93,7 @@ const DrawerNavigator = ({ nav }) => {
    
      
    
-      <Drawer.Screen name={screens.HomeTab} component={BottomTabNavigator} options={{
+      <Drawer.Screen name={screens.ContactTab} component={BottomTabNavigator} options={{
         // title: 'Home',
         headerTitle: () => <Image source={require('../assets/favicon.png')} />,
       

@@ -30,7 +30,7 @@ const Action3 = (props) => {
   await axiosInstance.post(url,CreategroupsPost)
 
    .then(({data}) => {
-            navigation.navigate('Contact')
+            navigation.navigate('Contacts')
     })
  
     }

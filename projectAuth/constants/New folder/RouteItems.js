@@ -80,15 +80,15 @@ export const routes = [
       <Icon name="teamspeak" size={30} color={focused ? '#AAAAEE' : '#000'} />,
   },
  
-  // {
-  //   name: screens.GROUPMEMBERS,
-  //   focusedRoute: screens.ContactStack,
-  //   title: 'GroupMembers',
-  //   showInTab: false,
-  //   showInDrawer: false,
-  //   icon: (focused) =>
-  //     <Icon name="teamspeak" size={30} color={focused ? '#AAAAEE' : '#000'} />,
-  // },
+  {
+    name: screens.GROUPMEMBERS,
+    focusedRoute: screens.ContactStack,
+    title: 'GroupMembers',
+    showInTab: false,
+    showInDrawer: false,
+    icon: (focused) =>
+      <Icon name="teamspeak" size={30} color={focused ? '#AAAAEE' : '#000'} />,
+  },
 
   
   {
@@ -119,23 +119,23 @@ export const routes = [
     icon: (focused) =>
       <Icon name="file-sound-o" size={30} color={focused ? '#AAAAEE' : '#000'} />,
   },
-  // {
-  //   name: screens.AudioGroupMembers,
-  //   focusedRoute: screens.AudioStack,
-  //   title: 'הקלטה',
-  //   showInTab: false,
-  //   showInDrawer: false,
-  //   icon: (focused) =>
-  //     <Icon name="file-sound-o" size={30} color={focused ? '#AAAAEE' : '#000'} />,
-  // },
-  // {
-  //   name: screens.Audiodetails,
-  //   focusedRoute: screens.AudioStack,
-  //   title: 'הקלטה',
-  //   showInTab: false,
-  //   showInDrawer: false,
-  //   icon: (focused) =>
-  //     <Icon name="file-sound-o" size={30} color={focused ? '#AAAAEE' : '#000'} />,
-  // },
+  {
+    name: screens.AudioGroupMembers,
+    focusedRoute: screens.AudioStack,
+    title: 'הקלטה',
+    showInTab: false,
+    showInDrawer: false,
+    icon: (focused) =>
+      <Icon name="file-sound-o" size={30} color={focused ? '#AAAAEE' : '#000'} />,
+  },
+  {
+    name: screens.Audiodetails,
+    focusedRoute: screens.AudioStack,
+    title: 'הקלטה',
+    showInTab: false,
+    showInDrawer: false,
+    icon: (focused) =>
+      <Icon name="file-sound-o" size={30} color={focused ? '#AAAAEE' : '#000'} />,
+  },
 
 ]

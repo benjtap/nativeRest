@@ -1,5 +1,53 @@
 [
   {
+    "ContainingType": "Webhttp.Controllers.AuthController",
+    "Method": "createregister",
+    "RelativePath": "Auth/createregister",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "post",
+        "Type": "Webhttp.Models.createregisterPost",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Webhttp.Controllers.AuthController",
+    "Method": "login",
+    "RelativePath": "Auth/login",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "user",
+        "Type": "Webhttp.Models.loginPost",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Webhttp.Controllers.AuthController",
+    "Method": "Refresh",
+    "RelativePath": "Auth/refresh",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "tokenResponse",
+        "Type": "Webhttp.Models.TokenResponse",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "WebApplication1.Controllers.WeatherForecastController",
     "Method": "Get",
     "RelativePath": "WeatherForecast",
@@ -85,22 +133,6 @@
   },
   {
     "ContainingType": "Webhttp.Controllers.WebhttpController",
-    "Method": "createcontacts",
-    "RelativePath": "Webhttp/createcontacts",
-    "HttpMethod": "POST",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "post",
-        "Type": "Webhttp.Models.createcontactsPost",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "Webhttp.Controllers.WebhttpController",
     "Method": "creategroups",
     "RelativePath": "Webhttp/creategroups",
     "HttpMethod": "POST",
@@ -135,7 +167,7 @@
     "ContainingType": "Webhttp.Controllers.WebhttpController",
     "Method": "getaudiogroup",
     "RelativePath": "Webhttp/getaudiogroup",
-    "HttpMethod": "GET",
+    "HttpMethod": "POST",
     "IsController": true,
     "Order": 0,
     "Parameters": [

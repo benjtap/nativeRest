@@ -2,12 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { StyleSheet, View, TextInput, TouchableOpacity, Text, FlatList, Button } from 'react-native';
 import {useRoute} from '@react-navigation/native';
 import { COLORS, FONT, SIZES } from "../constants";
-//import { api }  from "../client"; 
-//import instance from '../../app/services/axioshook';
+import axiosInstance from '../helpers/axiosInstance';
 
-// String.isNullOrEmpty = function(value) {
-//   return !(typeof value === "string" && value.length > 0);
-// }
 
 const GroupMembers = (props) => {
   const { navigation } = props;
@@ -120,7 +116,7 @@ useEffect(() => {
 
      let url =`/Webhttp/getgroupcontacts`
 
-     await instance.post(url,creategroupcontactsPost)
+     await axiosInstance.post(url,creategroupcontactsPost)
   
      .then(({data}) => {
            console.log(data);
@@ -138,40 +134,12 @@ useEffect(() => {
 
           let url =`/Webhttp/bulkdeletegroupcontacts`
 
-          await instance.post(url,creategroupcontactsPost)
+          await axiosInstance.post(url,creategroupcontactsPost)
        
           .then(({data}) => {
               fetchgroupsDataForPosts();
            })
-           
-
-    //   const requestOptions=  {
-    //     method: 'POST',
-    //     mode: 'cors', //no-
-    //     headers: { 'Content-Type': 'application/json' },
-    //      body: JSON.stringify(creategroupcontactsPost)
-    //  };
-    //   try {
-       
-    //    const response = await fetch(
-    //       `http://192.168.1.104/Restapi/Webhttp/bulkdeletegroupcontacts`, requestOptions
-    //     )
-    //     .then(function(response){
-    //       if (response.ok){
-            
-    //         fetchgroupsDataForPosts();
-            
-    //       }
-    //   })
-     
-  
-    //   } catch (err) {
-    //     setError(err.message);
-    //     console.log(err.messages)
-    //     setData(null);
-    //   } finally {
-    //     setLoading(false);
-    //   }
+    
 
     };
   
@@ -185,7 +153,7 @@ useEffect(() => {
 
         let url =`/Webhttp/bulkgroupcontacts`
 
-        await instance.post(url,creategroupcontactsPost)
+        await axiosInstance.post(url,creategroupcontactsPost)
      
         .then(({data}) => {
             fetchgroupsDataForPosts();
@@ -211,7 +179,7 @@ useEffect(() => {
   return (
     // <View style={styles.container}>
   <View style={styles.container}>
-    <View style={styles.Viewitem}><Text style={styles.title}>{title}</Text>
+    <View style={styles.Viewitem}><Text style={styles.title}>{title} קבוצה</Text>
  </View>
  <View style={styles.inputContainer}>
         <TextInput

@@ -5,6 +5,7 @@ using Webhttp.Models;
 using MongoDB.Bson;
 using System.Collections.Generic;
 using Microsoft.Extensions.Hosting;
+using System.Collections;
 
 namespace Webhttp.DBProviders
 {
@@ -12,8 +13,10 @@ namespace Webhttp.DBProviders
 	{
 		public IMongoClient _mongoClient;
 		public IMongoDatabase _mongoDatabase;
-	   public IMongoCollection<contactsPostMongo> contactsPostsMon { get; }
-       public IMongoCollection<groupsPostMongo> groupsPostPostsMon { get; }
+	    public IMongoCollection<contactsPostMongo> contactsPostsMon { get; }
+
+        public IMongoCollection<registerPostMongo> registerPostsMon { get; }
+        public IMongoCollection<groupsPostMongo> groupsPostPostsMon { get; }
         public IMongoCollection<groupcontactsPostMongo> groupcontactsPostMon { get; }
 
         public IMongoCollection<AudioPostMongo> AudioPostMon { get; }
@@ -29,12 +32,13 @@ namespace Webhttp.DBProviders
             groupcontactsPostMon = _mongoDatabase.GetCollection<groupcontactsPostMongo>("groupcontacts");
             AudioPostMon = _mongoDatabase.GetCollection<AudioPostMongo>("Audio");
             AudiogroupPostMon = _mongoDatabase.GetCollection<AudiogroupMongo>("Audiogroup");
+            registerPostsMon = _mongoDatabase.GetCollection<registerPostMongo>("user");
         }
 
         
 
 
-        public async Task bulkcontacts(List<createcontactsPost> post)
+        public async Task bulkcontacts(List<createcontactsPostUid> post)
         {
 			List<contactsPostMongo> lst = new List<contactsPostMongo>();
 
@@ -43,6 +47,7 @@ namespace Webhttp.DBProviders
 			{
                 contactsPostMongo postM = new contactsPostMongo
                 {
+                    uid = contact.uid,
                     name = contact.name,
                     phone = contact.phone
 
@@ -55,16 +60,23 @@ namespace Webhttp.DBProviders
         }
 
 
-        public async Task bulkdeletegroupcontacts(createcontactsgroupPost post)
+        public async Task bulkdeletegroupcontacts(createcontactsgroupPost post,string id)
         {
-      
 
-            var Filter = Builders<groupcontactsPostMongo>.Filter
-                                .And(
-                                    Builders<groupcontactsPostMongo>.Filter.Eq(dp => dp.Groupid, post.id)
-                                    );
 
-            var personsDeleteResult = await groupcontactsPostMon.DeleteManyAsync(Filter);
+            //var Filter = Builders<groupcontactsPostMongo>.Filter
+            //                    .And(Builders<groupcontactsPostMongo>.Filter.Eq(dp => dp.Groupid, post.id))
+            //                      .And(Builders<groupcontactsPostMongo>.Filter.Eq(dp => dp.Groupid, post.id))
+            //                    .Filter(
+            //                        Builders<groupcontactsPostMongo>.Filter.Eq(dp => dp.uid, id)
+            //                        );
+
+
+            var Builder = Builders<groupcontactsPostMongo>.Filter;
+            var query = Builder.Where(r => r.Groupid == post.id) &
+                               Builder.Where(r => r.uid == id);
+
+            var personsDeleteResult = await groupcontactsPostMon.DeleteManyAsync(query);
            
          
 
@@ -82,9 +94,37 @@ namespace Webhttp.DBProviders
            var reponse= myres.FirstOrDefault() ;
             return reponse;
         }
+        public async Task<userPost> Login(loginPost post)
+        {
+            var Builder = Builders<registerPostMongo>.Filter;
+            var query = Builder.Where(r => r.username == post.userName) &
+                               Builder.Where(r => r.password  == post.password);
 
 
-        public async Task bulkgroupcontacts(createcontactsgroupPost post)
+            var myres = await registerPostsMon.FindAsync(query);
+
+
+            var response = myres.FirstOrDefault();
+
+            if (response!= null)
+            {
+                userPost myuser = new userPost
+                {
+                    id = response.id.ToString(),
+                    username = response.username
+
+                };
+
+
+
+                return myuser;
+            }
+            else
+                return null;
+
+            
+        }
+        public async Task bulkgroupcontacts(createcontactsgroupPost post,string id)
         {
             List<contactsPostMongo> lst  = await contactsPostsMon.Find(x => true).ToListAsync();
 
@@ -94,7 +134,7 @@ namespace Webhttp.DBProviders
             {
                 groupcontactsPostMongo postM = new groupcontactsPostMongo
                 {
-                    ContactId = contact.id.ToString(),
+                    uid = id,
                     Groupid = post.id,
                     name = contact.name,
                     phone = contact.phone,  
@@ -107,10 +147,27 @@ namespace Webhttp.DBProviders
             await groupcontactsPostMon.InsertManyAsync(lstgrpcontacts);
         }
 
-      
 
-        
 
+
+       
+
+
+
+
+        public async Task createregisterPost(createregisterPost post)
+        {
+            registerPostMongo postM = new registerPostMongo
+            {
+                fullname = post.fullname ,
+                email = post.email,
+                password = post.password,
+                username = post.username
+
+            };
+
+            await registerPostsMon.InsertOneAsync(postM);
+        }
 
         public async Task CreatecontactsPost(createcontactsPost post)
 		{
@@ -124,25 +181,33 @@ namespace Webhttp.DBProviders
 			await contactsPostsMon.InsertOneAsync(postM);
 		}
       
-        public async Task CreategroupsPost(creategroupsPost post)
+        public async Task CreategroupsPost(creategroupsPostui post)
         {
             groupsPostMongo postM = new groupsPostMongo
             {
-                name = post.name
+                name = post.name,
+                uid  =post.uid  
   
             };
 
             await groupsPostPostsMon.InsertOneAsync(postM);
         }
 
-        public async Task createAudiogroup(createAudiogroupPost post)
+        public async Task createAudiogroup(createAudiogroupPost post,string id)
         {
 
-            var query = Builders<AudiogroupMongo>.Filter.Where(r => r.groupid.ToString() == post.groupid);
-            var DeleteResult = await AudiogroupPostMon.DeleteOneAsync(query);
+            //var query = Builders<AudiogroupMongo>.Filter.Where(r => r.groupid.ToString() == post.groupid);
+          
+            var filter = Builders<AudiogroupMongo>.Filter.Where(r => r.groupid.ToString() == post.groupid);
+            filter = filter & Builders<AudiogroupMongo>.Filter.Where(r => r.uid.ToString() == id);
+
+
+
+            var DeleteResult = await AudiogroupPostMon.DeleteOneAsync(filter);
 
             AudiogroupMongo postM = new AudiogroupMongo
             {
+                uid =id,
                 groupid = post.groupid,
                 audioid = post.audioid
 
@@ -175,6 +240,7 @@ namespace Webhttp.DBProviders
         {
             AudioPostMongo postM = new AudioPostMongo
             {
+                uid = post.uid,
                 name = post.name,
                 filename = post.filename
 
@@ -182,11 +248,17 @@ namespace Webhttp.DBProviders
             await AudioPostMon.InsertOneAsync(postM);
         }
 
-        public async Task<IEnumerable<AudioPost>> GetAudio()
+        public async Task<IEnumerable<AudioPost>> GetAudio(string id)
         {
-            IEnumerable<AudioPostMongo> res = await AudioPostMon.Find(x => true).ToListAsync();
+            var query = Builders<AudioPostMongo>.Filter.Where(r => r.uid.ToString() == id);
 
-            List<AudioPost> myres = new List<AudioPost>();
+            var myres = await AudioPostMon.FindAsync(query);
+
+            var res = myres.ToList();
+
+           
+
+            List<AudioPost> mylist = new List<AudioPost>();
             foreach (var item in res)
             {
                 AudioPost myAudio = new AudioPost
@@ -197,41 +269,54 @@ namespace Webhttp.DBProviders
 
                 };
 
-                myres.Add(myAudio);
+                mylist.Add(myAudio);
             }
-            return myres;
+            return mylist;
 
         }
 
-        public async Task<IEnumerable<contactsPost>> GetcontactsPost()
+        public async Task<IEnumerable<contactsPost>> GetcontactsPost(string id)
 		{
-            IEnumerable < contactsPostMongo > res = await contactsPostsMon.Find(x => true).ToListAsync();
+            var query = Builders<contactsPostMongo>.Filter.Where(r => r.uid.ToString() == id);
 
-            List<contactsPost> myres = new List<contactsPost>();
+            var myres = await contactsPostsMon.FindAsync(query);
+
+            var res = myres.ToList();
+
+            List<contactsPost> mylist = new List<contactsPost>();
             foreach (var item in res)
             {
 				contactsPost mycontacts = new contactsPost
 				{
 					id = item.id.ToString(),
+                    uid=item.uid,
 					name = item.name,
 					phone = item.phone
 
 				};
-				
-                myres.Add(mycontacts);
+
+                mylist.Add(mycontacts);
             }
-            return myres;
+            return mylist;
 
         }
 
-        public async Task<IEnumerable<groupcontactsPost>> getgroupcontacts(createcontactsgroupPost post)
+        public async Task<IEnumerable<groupcontactsPost>> getgroupcontacts(createcontactsgroupPost post,string id)
         {
 
-            List<groupcontactsPost> myres = new List<groupcontactsPost>();
+           List<groupcontactsPost> mylist = new List<groupcontactsPost>();
             try
             {
-                var res = await groupcontactsPostMon.Find(s => s.Groupid == post.id).ToListAsync();
-                foreach (var item in res)
+                var filter = Builders<groupcontactsPostMongo>.Filter.Where(r => r.Groupid.ToString() == post.id);
+                 filter = filter & Builders<groupcontactsPostMongo>.Filter.Where(r => r.uid.ToString() == id);
+
+                var res = await groupcontactsPostMon.FindAsync(filter); ;
+
+              
+
+                var myres = await res.ToListAsync();
+
+                foreach (var item in myres)
                 {
                     groupcontactsPost mygroupcontacts = new groupcontactsPost
                     {
@@ -241,7 +326,7 @@ namespace Webhttp.DBProviders
 
                     };
 
-                    myres.Add(mygroupcontacts);
+                    mylist.Add(mygroupcontacts);
                 }
 
             }
@@ -251,14 +336,20 @@ namespace Webhttp.DBProviders
                 string msg = ex.Message;
             }
 
-            return myres;
+            return mylist;
         }
 
-        public async Task<IEnumerable<groupsPost>> getgroupsPost()
+        public async Task<IEnumerable<groupsPost>> getgroupsPost(string id)
         {
-            IEnumerable<groupsPostMongo> res = await groupsPostPostsMon.Find(x => true).ToListAsync();
+           
+            var query = Builders<groupsPostMongo>.Filter.Where(r => r.uid.ToString() == id);
 
-            List<groupsPost> myres = new List<groupsPost>();
+            var myres = await groupsPostPostsMon.FindAsync(query);
+
+            var res = myres.ToList();
+
+
+            List<groupsPost> mylist = new List<groupsPost>();
             foreach (var item in res)
             {
                 groupsPost mygroup = new groupsPost
@@ -268,9 +359,9 @@ namespace Webhttp.DBProviders
 
                 };
 
-                myres.Add(mygroup);
+                mylist.Add(mygroup);
             }
-            return myres;
+            return mylist;
 
         }
 

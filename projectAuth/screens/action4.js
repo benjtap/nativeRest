@@ -6,13 +6,16 @@ import { FontAwesome } from '@expo/vector-icons';
 import { COLORS, FONT, SIZES } from "../constants";
 
 import axiosInstance from '../helpers/axiosInstance';
+import mime from "mime";
 
-export default  function  Action4() {
-   
+
+
+export default  function  Action4(props) {
+  const { navigation } = props;
   const [errors, setErrors] = useState({}); 
  
   const [isFormValid, setIsFormValid] = useState(false); 
-  const [ doc, setDoc ] = useState();
+  //const [ doc, setDoc ] = useState();
 const [name, setName] = useState(null); 
 const [fileName, setFileName] = useState(null); 
 
@@ -171,26 +174,21 @@ formData.append('fileAudioname', {
 
 
 formData.append('Audioname',name)
-  const options = {
-    method: 'POST',
-    body: formData,
-    mode: 'cors', //
-    headers: {
-      Accept: 'application/json',
-      'Content-Type': 'multipart/form-data',
-    },
-};
-       // console.log(uri); http://192.168.1.104/Restapi
 
-//api.BASE_URL+
-try {
-  const response = await fetch(
-    api.BASE_URL+`/Webhttp/uploadAudio`, options
-     ).catch((error) => console.log(error))
-} catch (error) {
-  console.log(error)
-}
-  
+
+ let url ='/Webhttp/uploadAudio';
+
+ axiosInstance.post(url, formData,{
+ headers: {
+  Accept: 'application/json',
+  'Content-Type': 'multipart/form-data',
+ }
+}).then(({data}) => {
+ 
+  navigation.navigate('Audio')
+})
+
+
    
 
 }; 
@@ -308,3 +306,22 @@ const styles = StyleSheet.create({
         marginBottom: 12, 
     }
 });
+
+//   const options = {
+//     method: 'POST',
+//     body: formData,
+//     mode: 'cors', //
+//     headers: {
+//       Accept: 'application/json',
+//       'Content-Type': 'multipart/form-data',
+//     },
+// };
+  
+// try {
+//   const response = await fetch(
+//     api.BASE_URL+`/Webhttp/uploadAudio`, options
+//      ).catch((error) => console.log(error))
+// } catch (error) {
+//   console.log(error)
+// }
+  

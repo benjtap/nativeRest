@@ -1,4 +1,4 @@
-import React from 'react';
+
 
 import {createNativeStackNavigator} from  '@react-navigation/native-stack'
 
@@ -9,8 +9,8 @@ import {
    ACTION3,
   GROUPMEMBERS
 } from '../constants/routeNames';
-
-import { routes,screens } from '../constants/routeNames';
+import React, { useState, useEffect } from 'react';
+import { routes,screens } from '../constants/RouteItems';
 
 import Contact from '../screens/Contact';
 
@@ -21,8 +21,27 @@ import GroupMembers from '../screens/GroupMembers';
 
 
 import Logout from '../screens/Logout';
+
+const showtabdrawer =['ContactStack']
+
 const ContactNavigator = (props) => {
+
   const ContactStack = createNativeStackNavigator();
+   const { navigation } = props;
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+    routes.map((record) => (
+      (showtabdrawer.indexOf(record.focusedRoute) >-1)
+      && (record.showInTab===false)  ? record.showInDrawer =true :  record.showInDrawer =false
+    ))
+ 
+    return unsubscribe;
+  });
+  
+  }, [navigation]);
+
+
   return (
   
 

@@ -8,22 +8,17 @@ import { COLORS, FONT, SIZES } from "../constants";
 import axiosInstance from '../helpers/axiosInstance';
 
 import * as Contacts from 'expo-contacts';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 
 const Action1 = (props) => {
   const { navigation } = props;
 
-  // const [selectedType, setSelectedType] = useState(0);
-  // const [contacts, setContacts] = useState(null);
   var lst = [] 
   
 
   useEffect(() => {
-    //navigation.navigate("Login")
-   
-    //  AsyncStorage.removeItem('accessToken');
-    // AsyncStorage.removeItem('user');
+
   }, []);
 
  
@@ -77,7 +72,7 @@ const Action1 = (props) => {
                   },
                 })
                 .then(({data}) => {
-                  console.log(data);
+                 // console.log(data);
                   
               });
 

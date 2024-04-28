@@ -16,7 +16,7 @@ const SignInScreen = ({navigation}) => {
   
   const [isLoading, setIsLoading] = useState(false);
   const register = () => {
-    navigation.navigate('SignUpScreen');
+    navigation.navigate('Register');
   };
 
     

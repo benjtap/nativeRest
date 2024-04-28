@@ -1,21 +1,24 @@
-import  React, { useState, useEffect, useContext } from 'react';
-import { StyleSheet, View, TextInput, TouchableOpacity, Text, FlatList, Image } from 'react-native';
+import React, { useState, useEffect, useMemo } from 'react';
 
+//import {useFocusEffect} from  '@react-navigation/native-stack'
+ 
+import { StyleSheet, View, TextInput, TouchableOpacity, Text, FlatList, Image } from 'react-native';
 
 import { COLORS, FONT, SIZES } from "../constants";
 
 import axiosInstance from '../helpers/axiosInstance';
 
 
+
 String.isNullOrEmpty = function(value) {
   return !(typeof value === "string" && value.length > 0);
 }
 
-const Contact = (props) => {
+const Audio = (props) => {
   const { navigation } = props;
 
-  //const axiosInstance = useContext(AxiosContext);
-
+  
+  //const { cometChat, setSelectedConversation } = useContext(Context);
 
   const [keyword, setKeyword] = useState('');
   // 0 is user, 1 is group.
@@ -25,57 +28,89 @@ const Contact = (props) => {
  const [loading, setLoading] = useState(false)
  const [error, setError] = useState([]);
  
+ async function runQuerycontact() {
+  // Set the loading true.
+  setLoading(true)
+  
+  setLoading(false)
+  setData(rescontact.data.contacts)
+}
 
+async function runQuerygroup() {
+  // Set the loading true.
+  setLoading(true)
+  
+ //console.log(resgroup.data.groups)
+
+  // Reset the loading state.
+  setLoading(false)
+  setData(resgroup.data.groups)
+}
 
 
 
   useEffect(() => {
-    if (selectedType === 0) {
 
-      searchContacts();
+    const unsubscribe = navigation.addListener('focus', () => {
+      if (selectedType === 0) {
+        searchAudios();
+      } else {
+        searchGroups();
+      }
+    });
+ 
+
+    if (selectedType === 0) {
+      searchAudios();
     } else {
       searchGroups();
     }
-  }, [selectedType]);
+    return unsubscribe;
+  
+  }, [selectedType,navigation]);
 
  
 
-  const searchContacts = () => {
+  const searchAudios = () => {
     const limit = 30;
-       fetchcontactsDataForPosts();
+    fetchAudiosDataForPosts();
    };
 
+//   const requestOptions=  {
+//     method: 'GET',
+//     mode: 'cors', //no-
+//     headers: { 'Content-Type': 'application/json' },
  
- 
-  const fetchcontactsDataForPosts =  async () => {
-   
-     
-  const url =`/Webhttp/getcontacts`;
-  
-   
-  await axiosInstance.get(url)
+// };
 
-   .then(({data}) => {
-        setData(data)
-     }) 
-    }
-    
+  const fetchAudiosDataForPosts = async () => {
+
+    let url = `/Webhttp/getaudios`
+    await axiosInstance.get(url)
+
+    .then(({data}) => {
+
+      setData(data)
+      
+     })
+
+    };
+
 
   const fetchgroupsDataForPosts = async () => {
-    
-    
-    const url =`/Webhttp/getgroups`;
-  
-    //await axiosPrivate
-    
-    await axiosInstance.get(url)
-  
-     .then(({data}) => {
-            setData(data)
-      })
    
-   }
-  
+    let url = `/Webhttp/getgroups`
+    await axiosInstance.get(url)
+
+    .then(({data}) => {
+
+      setData(data)
+    
+     })
+   
+
+  };
+
 
   const searchGroups = () => {
     const limit = 30;
@@ -95,10 +130,16 @@ const Contact = (props) => {
 
   const selectItem = (item) => () => {
    
-    if (selectedType != 0){
-      console.log('selectedType=' +selectedType)
-      navigation.navigate('GROUPMEMBERS', {
+    if (selectedType === 1){
+      
+      navigation.navigate('AudioGroupMembers', {
         id: item.id ,name: item.name
+      })
+    }
+    else  if (selectedType ===0){
+    
+      navigation.navigate('Audiodetails', {
+        id: item.id ,name: item.name,filename: item.filename
       })
     }
     
@@ -113,7 +154,7 @@ const Contact = (props) => {
       <TouchableOpacity style={styles.listItem} onPress={selectItem(item)}>
                <Text style={styles.listItemLabel}>{item.name}</Text>
                {/* <Text style={styles.listItemLabel}>-----</Text> */}
-                <Text style={styles.listItemLabel}>{item.phone}</Text> 
+                <Text style={styles.listItemLabel}>{item.filename}</Text> 
       </TouchableOpacity>
     );
   }
@@ -140,8 +181,9 @@ const Contact = (props) => {
         />
       </View>
       <View style={styles.searchActionContainer}>
-        <TouchableOpacity style={[styles.searchActionBtn, styles.searchLeftActionBtn, selectedType === 0 && styles.searchActionBtnActive]} onPress={updateSelectedType(0)}>
-          <Text style={[styles.searchActionLabel, selectedType === 0 && styles.searchActionLabelActive]}>אנשי קשר</Text>
+        <TouchableOpacity ref={(touchable) => this._touchable = touchable}
+        style={[styles.searchActionBtn, styles.searchLeftActionBtn, selectedType === 0 && styles.searchActionBtnActive]} onPress={updateSelectedType(0)}>
+          <Text style={[styles.searchActionLabel, selectedType === 0 && styles.searchActionLabelActive]}>הקלטה</Text>
         </TouchableOpacity>
         <TouchableOpacity style={[styles.searchActionBtn, styles.searchRightActionBtn, selectedType === 1 && styles.searchActionBtnActive]} onPress={updateSelectedType(1)}>
           <Text style={[styles.searchActionLabel, selectedType === 1 && styles.searchActionLabelActive]}>קבוצה</Text>
@@ -158,8 +200,6 @@ const Contact = (props) => {
   );
 };
 
- 
-
 const styles = StyleSheet.create({
   container: {
     backgroundColor: '#fff',
@@ -173,7 +213,7 @@ const styles = StyleSheet.create({
     borderColor: '#000',
     borderRadius: 8,
     borderWidth: 1,
-     fontSize: 16,
+    fontSize: 16,
     marginHorizontal: 8,
     padding: 12,
   },
@@ -186,7 +226,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     borderColor: '#000',
     flex: 1,
-     fontSize: 16,
+    fontSize: 16,
     padding: 8
   },
   searchLeftActionBtn: {
@@ -210,13 +250,11 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontFamily:FONT.regular,
     fontSize: SIZES.large
-   
   },
   searchActionLabelActive: {
     color: '#fff',
     fontFamily:FONT.regular,
-    fontSize: SIZES.large,
-   
+    fontSize: SIZES.large
   },
   list: {
     flex: 1,
@@ -241,10 +279,10 @@ const styles = StyleSheet.create({
     marginRight: 8
   },
   listItemLabel: {
-     fontSize: 16,
+    fontSize: 16,
  
 
   }
 });
 
-export default Contact;
+export default Audio;

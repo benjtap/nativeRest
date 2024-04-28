@@ -3,7 +3,12 @@ import React from 'react';
 import AppNavContainer from './navigations';
 import GlobalProvider from './context/Provider';
 
+
+
+
 const App = () => {
+  
+
   return (
     <GlobalProvider>
       <AppNavContainer />

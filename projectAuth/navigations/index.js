@@ -41,9 +41,18 @@ const AppNavContainer = () => {
     getUser();
   }, [isLoggedIn]);
 
-  React.useEffect(() => {
-    //SplashScreen.hide();
-  }, []);
+  // React.useEffect(() => {
+  //   //SplashScreen.hide();
+  // }, []);
+
+  if(!fontsLoaded) {
+    return(
+       <ActivityIndicator size="large"/>
+
+       
+    );
+  }
+
 
   return (
     <>
