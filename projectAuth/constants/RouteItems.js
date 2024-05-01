@@ -4,7 +4,8 @@ import Icon from 'react-native-vector-icons/FontAwesome'
 
 export const screens = {
   ContactTab: 'ContactTab',
-  HomeStack: 'HomeStack',
+  AuthStack: 'AuthStack',
+  LOGIN: 'LOGIN',
   Contact: 'Contact',
   ACTION1: 'ACTION1',
   ACTION3: 'ACTION3',
@@ -80,16 +81,15 @@ export const routes = [
       <Icon name="teamspeak" size={30} color={focused ? '#AAAAEE' : '#000'} />,
   },
  
-  // {
-  //   name: screens.GROUPMEMBERS,
-  //   focusedRoute: screens.ContactStack,
-  //   title: 'GroupMembers',
-  //   showInTab: false,
-  //   showInDrawer: false,
-  //   icon: (focused) =>
-  //     <Icon name="teamspeak" size={30} color={focused ? '#AAAAEE' : '#000'} />,
-  // },
-
+  {
+    name: screens.LOGIN,
+    focusedRoute: screens.AuthStack,
+    title: '',
+    showInTab: false,
+    showInDrawer: false,
+    icon: (focused) =>
+      <Icon name="users" size={30} color={focused ? '#AAAAEE' : '#000'} />,
+  },
   
   {
     name: screens.AudioStack,

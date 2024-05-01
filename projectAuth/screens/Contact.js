@@ -1,5 +1,5 @@
-import  React, { useState, useEffect, useContext } from 'react';
-import { StyleSheet, View, TextInput, TouchableOpacity, Text, FlatList, Image } from 'react-native';
+import  React, { useState, useEffect, useContext, useCallback } from 'react';
+import { StyleSheet, View, TextInput, TouchableOpacity, Text, FlatList, ActivityIndicator } from 'react-native';
 
 
 import { COLORS, FONT, SIZES } from "../constants";
@@ -14,7 +14,6 @@ String.isNullOrEmpty = function(value) {
 const Contact = (props) => {
   const { navigation } = props;
 
-  //const axiosInstance = useContext(AxiosContext);
 
 
   const [keyword, setKeyword] = useState('');
@@ -22,21 +21,43 @@ const Contact = (props) => {
   const [selectedType, setSelectedType] = useState(0);
   // data that will be shown on the list, data could be the list of users, or the list of groups.
  const [data, setData] = useState([]);
+ 
  const [loading, setLoading] = useState(false)
  const [error, setError] = useState([]);
  
+ const filterdata= React.useMemo(() =>{
+  if (selectedType === 0)
+return data.filter(post =>  post.phone.toLowerCase().includes(keyword.toLowerCase())
+|| post.name.toLowerCase().includes(keyword.toLowerCase())
+)
+if (selectedType === 1)
+return data.filter(post =>  post.name.toLowerCase().includes(keyword.toLowerCase()))
 
-
+},[data,keyword])
+  
+  
 
 
   useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+       
     if (selectedType === 0) {
+      searchContacts();
+      
+    } else {
+      searchGroups();
+    }
+    });
 
+    if (selectedType === 0) {
       searchContacts();
     } else {
       searchGroups();
     }
-  }, [selectedType]);
+
+    return unsubscribe;
+   
+  }, [selectedType,navigation]);
 
  
 
@@ -49,46 +70,48 @@ const Contact = (props) => {
  
   const fetchcontactsDataForPosts =  async () => {
    
-     
+    setLoading(true)
   const url =`/Webhttp/getcontacts`;
   
    
   await axiosInstance.get(url)
 
    .then(({data}) => {
-        setData(data)
+       setData(data)
+        setLoading(false)
+     }).catch((err) => {
+        
      }) 
     }
     
 
   const fetchgroupsDataForPosts = async () => {
     
-    
+    setLoading(true)
     const url =`/Webhttp/getgroups`;
   
-    //await axiosPrivate
-    
+      
     await axiosInstance.get(url)
   
      .then(({data}) => {
             setData(data)
-      })
+            setLoading(false)
+      }).catch((err) => {
+        
+       })
    
    }
   
 
   const searchGroups = () => {
-    const limit = 30;
-    
+      
     fetchgroupsDataForPosts();
   };
 
-  const onKeywordChanged = (keyword) => {
-    setKeyword(() => keyword);
-  };
 
+  
   const updateSelectedType = (selectedType) => () => {
-    setSelectedType(() => selectedType);
+        setSelectedType(() => selectedType);
   };
 
  
@@ -96,8 +119,7 @@ const Contact = (props) => {
   const selectItem = (item) => () => {
    
     if (selectedType != 0){
-      console.log('selectedType=' +selectedType)
-      navigation.navigate('GROUPMEMBERS', {
+       navigation.navigate('GROUPMEMBERS', {
         id: item.id ,name: item.name
       })
     }
@@ -105,8 +127,8 @@ const Contact = (props) => {
   };
 
  
-
-  const renderItems = ({ item }) => {
+ // useCallback(
+  const renderItems =  useCallback(({ item }) => {
 
     if (selectedType === 0) {
     return (
@@ -126,14 +148,14 @@ const Contact = (props) => {
     );
 
   }
-  }
+  })
 
   return (
     <View style={styles.container}>
       <View style={styles.inputContainer}>
         <TextInput
           autoCapitalize='none'
-          onChangeText={onKeywordChanged}
+          onChangeText={setKeyword}
           placeholder="Search..."
           placeholderTextColor="#000"
           style={styles.input}
@@ -149,7 +171,7 @@ const Contact = (props) => {
       </View>
       <View style={styles.list}>
         <FlatList
-          data={data}
+          data={filterdata}
           renderItem={renderItems}
           keyExtractor={(item, index) => item.id}
         />

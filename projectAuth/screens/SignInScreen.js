@@ -1,14 +1,10 @@
 import {useRoute} from '@react-navigation/native';
 import React, {useState,useContext} from 'react';
 
-import { StyleSheet, View, TextInput, TouchableOpacity, Text, FlatList, Image } from 'react-native';
-//import { axiosPublic } from "../app/services/axiosPublic";
+import { StyleSheet, View, TextInput, TouchableOpacity, Text,Alert } from 'react-native';
+
 import loginUser from '../context/actions/loginUser';
 import {GlobalContext} from '../context/Provider';
-
-
-
-
 
 
 
@@ -19,7 +15,10 @@ const SignInScreen = ({navigation}) => {
     navigation.navigate('Register');
   };
 
-    
+  React.useEffect(() => {
+    RenderError()
+      
+  }, [error]);
 
     const [userName, setuserName] = useState("");
 
@@ -38,8 +37,8 @@ const SignInScreen = ({navigation}) => {
     };
 
       loginUser(form)(authDispatch);
-    
-
+      
+      
       };
    
      
@@ -57,6 +56,20 @@ const SignInScreen = ({navigation}) => {
           <ActivityIndicator size="large" color="#3B82F6" />
         </View>
       );
+    }
+    
+ 
+    const RenderError= () => {
+    
+  
+    if(error && !error.error )
+        return (
+      <View>
+         <Text>{error.message}</Text>
+            </View>
+        
+    );
+      
     }
 
 return (
@@ -83,6 +96,8 @@ return (
       {/*   */}
         <Text style={styles.registerLabel}>Register</Text>
       </TouchableOpacity>
+
+     <RenderError /> 
     </View>
   );
 

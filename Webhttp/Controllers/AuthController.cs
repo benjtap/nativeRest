@@ -62,7 +62,7 @@ namespace Webhttp.Controllers
         [Route("login")]
         public async Task<IActionResult> login(loginPost user)
         {
-            //System.Diagnostics.Debugger.Launch();
+           
             userPost myuser=   await _mongo.Login(user);
 
             if (myuser != null)
@@ -82,13 +82,13 @@ namespace Webhttp.Controllers
                 return Ok(response);
             }
 
-            return Unauthorized();
+           // return Unauthorized();
+            return BadRequest(new { message = "UserName or Password is incorrect" });
 
 
-       
 
 
-         
+
         }
 
    

@@ -7,20 +7,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {ActivityIndicator} from 'react-native';
 import {navigationRef} from './SideMenu/RootNavigator';
 import { useFonts } from "expo-font";
-import * as Linking from 'expo-linking';
-
-class Deferred {
-  constructor() {
-    this.promise = new Promise((resolve, reject) => {
-      this.reject = reject;
-      this.resolve = resolve;
-    });
-  }
-}
 
 const AppNavContainer = () => {
-  const waitFor = React.useRef(new Deferred());
-
   const {
     authState: {isLoggedIn},
   } = useContext(GlobalContext);
@@ -53,12 +41,7 @@ const AppNavContainer = () => {
     getUser();
   }, [isLoggedIn]);
 
-  useEffect(() => {
-    // something like `isAuthenticated `
-    if (isAuthenticated) {
-      waitFor.current.resolve?.(null);
-    }
-  }, [isAuthenticated]);
+ 
 
   if(!fontsLoaded) {
     return(
@@ -71,45 +54,17 @@ const AppNavContainer = () => {
   return (
     <>
       {authLoaded ? (
-        <NavigationContainer  ref={navigationRef}
-        linking={{
-          async getInitialURL() {
-            const url = await Linking.getInitialURL();
-            if (url == null) {
-              return null;
-            }
-            // Ensures that "fallback" is rendered until the promise has been resolved
-            await waitFor.current.promise;
-            // react-navigation will handle the deep link now, after your own condition resolved
-            // which ensures that the corresponding navigation screens/navigators exists and are rendered below
-            return url;
-          }
-          // ,prefixes: [ ... ],
-           ,config: {
-            screens: {
-              LOGIN: 'LOGIN',
-            }
-            }
-        }}
-        
-        
-        >
+        <NavigationContainer  ref={navigationRef}>
           {isAuthenticated ? <DrawerNavigator nav={nav}
-
-
           onUnhandledAction={() => {
             console.log("Using Fallback", "ddd")
+          
           }}
           
-          /> : <AuthNavigator nav={nav}  
-          
-          onUnhandledAction={() => {
+          /> : <AuthNavigator nav={nav}  onUnhandledAction={() => {
             console.log("Using Fallback", "eee")
-             }} 
-          
-          />}
-
-         
+           
+          }} />}
         </NavigationContainer>
       ) : (
         <ActivityIndicator />

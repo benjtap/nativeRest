@@ -3,7 +3,7 @@ import {ActivityIndicator} from 'react-native';
 import logoutUser from '../../context/actions/logoutUser';
 import {GlobalContext} from '../../context/Provider';
 //import {LOGIN} from '../../constants/routeNames';
-//import {navigate} from '../../navigations/SideMenu/RootNavigator';
+import {navigate} from '../../navigations/SideMenu/RootNavigator';
 
 const Logout = (props) => {
   const { navigation } = props;
@@ -11,8 +11,13 @@ const Logout = (props) => {
 
   useEffect(() => {
     logoutUser()(authDispatch);
-    //navigate(LOGIN)
-    navigation.navigate('SignInScreen')
+  //  try {
+      navigate('LOGIN')
+  //  } catch (error) {
+    
+  //  }
+   
+   
   }, []);
 
   return <ActivityIndicator />;

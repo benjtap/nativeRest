@@ -37,7 +37,9 @@ const [error, setError] = useState("");
   function handledeleteallcontactgroupsDataForPosts() {
     deleteallcontactgroupsDataForPosts();
   }
-
+  function handledeletegroupsDataForPosts() {
+    deletegroupsDataForPosts();
+  }
 
   const RenderViewButton = () => {
     if (selectedType === 0){
@@ -67,7 +69,24 @@ const [error, setError] = useState("");
       </View>
       <View style={styles.fixToText}>
         <Button   style={styles.button1}  title="הפעל"  
-        onPress={() => handledeleteallcontactgroupsDataForPosts()}
+        onPress={() => handledeleteallcontactgroupsDataForPosts ()}
+       />
+      </View>
+      </View>
+      );
+    }
+    else if(selectedType === 3){
+      return(
+
+        <View style={styles.Viewitem}>
+       <View style={styles.fixToText}>
+        <Text style={styles.title}>
+        This action delete  this groups.
+      </Text>
+      </View>
+      <View style={styles.fixToText}>
+        <Button   style={styles.button1}  title="הפעל"  
+        onPress={() => handledeletegroupsDataForPosts()}
        />
       </View>
       </View>
@@ -78,8 +97,6 @@ const [error, setError] = useState("");
  
 
   const renderItems = ({ item }) => {
-
-   
     return (
       <TouchableOpacity style={styles.listItem} >
                <Text style={styles.listItemLabel}>{item.name}</Text>
@@ -119,7 +136,7 @@ useEffect(() => {
      await axiosInstance.post(url,creategroupcontactsPost)
   
      .then(({data}) => {
-           console.log(data);
+           
             setData(data)
       })
       
@@ -143,6 +160,24 @@ useEffect(() => {
 
     };
   
+    const deletegroupsDataForPosts= async () => {
+      const oparamid = route.params?.id ? route.params.id : {};
+  
+      let creategroupcontactsPost =  {
+        id:oparamid
+          }
+
+          let url =`/Webhttp/deletegroup`
+
+          await axiosInstance.post(url,creategroupcontactsPost)
+       
+          .then(({data}) => {
+            navigation.navigate('Contacts')
+           })
+    
+
+    };
+    
 
   const createcontactgroupsDataForPosts = async () => {
     const oparamid = route.params?.id ? route.params.id : {};
@@ -172,16 +207,29 @@ useEffect(() => {
    setSelectedType(() => selectedType);
   };
 
- 
-  
- 
+  const RenderFlat= () => {
+    if(selectedType != 3){
 
-  return (
-    // <View style={styles.container}>
-  <View style={styles.container}>
-    <View style={styles.Viewitem}><Text style={styles.title}>{title} קבוצה</Text>
- </View>
- <View style={styles.inputContainer}>
+      return (
+        <View style={styles.list}>
+        <FlatList
+          data={data}
+          renderItem={renderItems}
+          keyExtractor={(item, index) => item.id}
+        />
+      </View>
+        
+    )
+  }
+      }
+
+
+  const RenderInputsearch= () => {
+    if(selectedType === 10){
+     
+    return (
+      
+    <View style={styles.inputContainer}>
         <TextInput
           autoCapitalize='none'
           onChangeText={onKeywordChanged}
@@ -190,31 +238,39 @@ useEffect(() => {
           style={styles.input}
         />
       </View>
+     
+    )
+  }
+      }
+ 
+  
+  return (
+  
+  <View style={styles.container}>
+    <View style={styles.Viewitem}><Text style={styles.title}>{title} קבוצה</Text>
+ </View>
+       
+     <RenderInputsearch />
+
       <View style={styles.searchActionContainer}>
         <TouchableOpacity style={[styles.searchActionBtn, styles.searchLeftActionBtn, selectedType === 0 && styles.searchActionBtnActive]} onPress={updateSelectedType(0)}>
           <Text style={[styles.searchActionLabel, selectedType === 0 && styles.searchActionLabelActive]}>ייבא אנשי קשר</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={[styles.searchActionBtn, styles.searchRightActionBtn, selectedType === 1 && styles.searchActionBtnActive]} onPress={updateSelectedType(1)}>
-          <Text style={[styles.searchActionLabel, selectedType === 1 && styles.searchActionLabelActive]}>ייבוא מקובץ</Text>
-        </TouchableOpacity>
+        
         <TouchableOpacity style={[styles.searchActionBtn, styles.searchRightActionBtn, selectedType === 2 && styles.searchActionBtnActive]} onPress={updateSelectedType(2)}>
           <Text style={[styles.searchActionLabel, selectedType === 2 && styles.searchActionLabelActive]}>מחק כל אנשי קשר</Text>
         </TouchableOpacity>
         <TouchableOpacity style={[styles.searchActionBtn, styles.searchRightActionBtn, selectedType === 3&& styles.searchActionBtnActive]} onPress={updateSelectedType(3)}>
-          <Text style={[styles.searchActionLabel, selectedType === 3 && styles.searchActionLabelActive]}>מחוק</Text>
+          <Text style={[styles.searchActionLabel, selectedType === 3 && styles.searchActionLabelActive]}>קבוצה  מחוק</Text>
         </TouchableOpacity>
       </View>
      
       <RenderViewButton />
      
-     
-      <View style={styles.list}>
-        <FlatList
-          data={data}
-          renderItem={renderItems}
-          keyExtractor={(item, index) => item.id}
-        />
-      </View>
+      <RenderFlat />
+      
+
+
     </View>
    
  
@@ -224,68 +280,6 @@ useEffect(() => {
 };
 
 
-
-
-    //   const requestOptions=  {
-    //     method: 'POST',
-    //     mode: 'cors', //no-
-    //     headers: { 'Content-Type': 'application/json' },
-    //      body: JSON.stringify(creategroupcontactsPost)
-    //  };
-
-
-         //   const requestOptions=  {
-  //     method: 'POST',
-  //     mode: 'cors', //no-
-  //     headers: { 'Content-Type': 'application/json' },
-  //      body: JSON.stringify(creategroupcontactsPost)
-  //  };
-    // try {
-     
-    //  const response = await fetch(
-    //     `http://192.168.1.104/Restapi/Webhttp/bulkgroupcontacts`, requestOptions
-    //   )
-    //   .then(function(response){
-    //     if (response.ok){
-          
-    //       fetchgroupsDataForPosts();
-          
-    //     }
-    // })
-   
-
-    // } catch (err) {
-    //   setError(err.message);
-    //   console.log(err.messages)
-    //   setData(null);
-    // } finally {
-    //   setLoading(false);
-    // }
-
-// try {
-       
-      //  const response = await fetch(
-      //   api.BASE_URL+`/Webhttp/getgroupcontacts`, requestOptions
-      //   )
-      //   .then(function(response){
-      //     if (response.ok){
-            
-      //       return response.json()
-            
-      //     }
-      // })
-      // .then(function(myjson){
-            
-      //      setData(myjson)
-      //   })
-  
-      // } catch (err) {
-      //   setError(err.message);
-      //   console.log(err.messages)
-      //   setData(null);
-      // } finally {
-      //   setLoading(false);
-      // }
 
 const styles = StyleSheet.create({
   container: {
@@ -370,13 +364,13 @@ const styles = StyleSheet.create({
     fontSize: 16,
     textAlign: 'center',
     fontFamily:FONT.medium,
-    fontSize: SIZES.small,
+    fontSize: SIZES.medium,
 
   },
   searchActionLabelActive: {
     color: '#ffa',
     fontFamily:FONT.medium,
-    fontSize: SIZES.small,
+    fontSize: SIZES.medium,
   },
   list: {
     flex: 1,

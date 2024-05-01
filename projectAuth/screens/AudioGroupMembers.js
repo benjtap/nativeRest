@@ -191,9 +191,9 @@ async function fetchData() {
           <Text style={[styles.searchActionLabel, selectedType === 0 && styles.searchActionLabelActive]}>שייך הקלטה</Text>
         </TouchableOpacity>
        
-        <TouchableOpacity style={[styles.searchActionBtn, styles.searchRightActionBtn, selectedType === 1&& styles.searchActionBtnActive]} onPress={updateSelectedType(1)}>
+        {/* <TouchableOpacity style={[styles.searchActionBtn, styles.searchRightActionBtn, selectedType === 1&& styles.searchActionBtnActive]} onPress={updateSelectedType(1)}>
           <Text style={[styles.searchActionLabel, selectedType === 3 && styles.searchActionLabelActive]}>מחוק</Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
       </View>
      
       <RenderViewButton />
@@ -219,70 +219,7 @@ async function fetchData() {
 };
 
 
-        // then(({data}) => {
-        //   if (!data.ok){
-        //    return Promise.reject(data);
-        //          }
-        //     })
-   
- 
-//};
 
- 
-    /*
-        const requestOptions=  {
-      method: 'POST',
-      mode: 'cors', //no-
-      headers: { 'Content-Type': 'application/json' },
-       body: JSON.stringify(creategroupcontactsPost)
-   };
-    try {
-     
-     const response = await fetch(
-      api.BASE_URL+`/Webhttp/createAudiogroups`, requestOptions
-      )
-     
-   
-
-    } catch (err) {
-      setError(err);
-      console.log(err)
-      setData(null);
-    } finally {
-      setLoading(false);
-    }
-    */
-
-
-
-/*      
-    const requestOptions=  {
-      method: 'POST',
-      mode: 'cors', //no-
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(getAudiobyidReq)
-    };
-   const response = await fetch(
-    api.BASE_URL+`/Webhttp/getaudiogroup`, requestOptions
-    )
-    .then(function(response){
-      if (response.ok){
-           return response.json()
-      }
-       
-      return Promise.reject(response);
-                
-  })
-  .then(function(myjson){
-        let myaudio = dict[myjson.audioid]
-        setSelectedName(myaudio.name)
-        setSelectedId(myjson.audioid)
-   })
-   .catch((response) => {
-    console.log(response.status, response.statusText);
-   
-  });
- */
 
 const styles = StyleSheet.create({
   container: {
@@ -373,13 +310,13 @@ const styles = StyleSheet.create({
     fontSize: 16,
     textAlign: 'center',
     fontFamily:FONT.medium,
-    fontSize: SIZES.small,
+    fontSize: SIZES.medium,
 
   },
   searchActionLabelActive: {
     color: '#ffa',
     fontFamily:FONT.medium,
-    fontSize: SIZES.small,
+    fontSize: SIZES.medium,
   },
   list: {
     flex: 1,

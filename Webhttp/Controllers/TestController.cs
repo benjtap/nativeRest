@@ -174,14 +174,37 @@ namespace Webhttp.Controllers
             await _mongo.deleteAudiorecordPost(post);
             return Ok();
         }
+
+        [HttpPost]
+        [Route("deletegroup")]
+        public async Task<IActionResult> deletegroup(deletegroup post)
+        {
+            
+            await _mongo.deletegroupPost(post);
+            return Ok();
+        }
+
         
+
 
         [HttpPost]
         [Route("getaudiogroup")]
         public async Task<IActionResult> getaudiogroup(getAudiobyidReq post)
         {
+            var principal = HttpContext.User;
+            string id = "";
 
-            AudiogroupMongo res =await _mongo.getAudiobyidPost(post);
+
+            if (principal?.Claims != null)
+            {
+
+                var claim = principal.Claims.FirstOrDefault();
+
+                id = claim.Value;
+            }
+
+
+            AudiogroupMongo res =await _mongo.getAudiobyidPost(post,id);
             return Ok(res);
         }
 

@@ -8,11 +8,6 @@ import * as FileSystem from 'expo-file-system';
 
 import axiosInstance from '../helpers/axiosInstance';
 
-
-String.isNullOrEmpty = function(value) {
-  return !(typeof value === "string" && value.length > 0);
-}
-
 const Audiodetails = (props) => {
   const { navigation } = props;
 
@@ -109,77 +104,30 @@ useEffect(() => {
       let deleteAudiorecordPost =  {
         id:oparamid
           }
-    //   const requestOptions=  {
-    //     method: 'POST',
-    //     mode: 'cors', //no-
-    //     headers: { 'Content-Type': 'application/json' },
-    //      body: JSON.stringify(deleteAudiorecordPost)
-    //  };
-    //   try {
-       
-    //    const response = await fetch(
-    //     api.BASE_URL+`/Webhttp/deleteAudiorecord`, requestOptions
-    //     )
-    //     .then(function(response){
-    //       if (response.ok){
-            
-    //         navigation.navigate('Audio')
-            
-    //       }
-    //   })
-     
-  
-    //   } catch (err) {
-    //     setError(err);
-    //     console.log(err)
-    //     setData(null);
-    //   } finally {
-    //     setLoading(false);
-    //   }
+
+
+  let url = `/Webhttp/deleteAudiorecord`
+    await axiosInstance.post(url,deleteAudiorecordPost)
+
+    .then(({data}) => {
+
+      navigation.navigate('Audio')
+      
+     })
+
     };
-  
-
-
-
-  const createcontactgroupsDataForPosts = async () => {
-    const oparamid = route.params?.id ? route.params.id : {};
-
-    let creategroupcontactsPost =  {
-      id:oparamid
-        }
-    const requestOptions=  {
-      method: 'POST',
-      mode: 'cors', //no-
-      headers: { 'Content-Type': 'application/json' },
-       body: JSON.stringify(creategroupcontactsPost)
-   };
-    try {
-     
-     const response = await fetch(
-        `http://192.168.1.104/Restapi/Webhttp/bulkgroupcontacts`, requestOptions
-      )
-      .then(function(response){
-        if (response.ok){
           
-          //fetchgroupsDataForPosts();
-          
-        }
-    })
    
 
-    } catch (err) {
-      setError(err.message);
-      console.log(err.messages)
-      setData(null);
-    } finally {
-      setLoading(false);
-    }
-  };
 
 
-  const onKeywordChanged = (keyword) => {
-   // setKeyword(() => keyword);
-  };
+ 
+
+   
+ 
+
+
+ 
 
   const updateSelectedType = (selectedType) => () => {
    setSelectedType(() => selectedType);
@@ -313,13 +261,13 @@ const styles = StyleSheet.create({
     fontSize: 16,
     textAlign: 'center',
     fontFamily:FONT.medium,
-    fontSize: SIZES.small,
+    fontSize: SIZES.medium,
 
   },
   searchActionLabelActive: {
     color: '#ffa',
     fontFamily:FONT.medium,
-    fontSize: SIZES.small,
+    fontSize: SIZES.medium,
   },
   list: {
     flex: 1,

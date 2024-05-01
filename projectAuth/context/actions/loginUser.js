@@ -8,6 +8,7 @@ import {
 import axiosInstance from '../../helpers/axiosInstance';
 
 export default ({password, userName: username}) => (dispatch) => {
+ 
   dispatch({
     type: LOGIN_LOADING,
   });
@@ -17,6 +18,7 @@ export default ({password, userName: username}) => (dispatch) => {
       username,
     })
     .then((res) => {
+     
       AsyncStorage.setItem('token', res.data.accessToken);
       AsyncStorage.setItem('user', JSON.stringify(res.data.accessToken));
       dispatch({
@@ -25,7 +27,7 @@ export default ({password, userName: username}) => (dispatch) => {
       });
     })
     .catch((err) => {
-      dispatch({
+       dispatch({
         type: LOGIN_FAIL,
         payload: err.response
           ? err.response.data

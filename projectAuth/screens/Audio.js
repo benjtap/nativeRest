@@ -89,9 +89,10 @@ async function runQuerygroup() {
     await axiosInstance.get(url)
 
     .then(({data}) => {
-
-      setData(data)
-      
+       setData(data)
+    
+     }).catch((err) => {
+        
      })
 
     };
@@ -103,10 +104,10 @@ async function runQuerygroup() {
     await axiosInstance.get(url)
 
     .then(({data}) => {
-
       setData(data)
-    
-     })
+    }).catch((err) => {
+        
+    })
    
 
   };
@@ -171,7 +172,7 @@ async function runQuerygroup() {
 
   return (
     <View style={styles.container}>
-      <View style={styles.inputContainer}>
+      {/* <View style={styles.inputContainer}>
         <TextInput
           autoCapitalize='none'
           onChangeText={onKeywordChanged}
@@ -179,7 +180,7 @@ async function runQuerygroup() {
           placeholderTextColor="#000"
           style={styles.input}
         />
-      </View>
+      </View> */}
       <View style={styles.searchActionContainer}>
         <TouchableOpacity ref={(touchable) => this._touchable = touchable}
         style={[styles.searchActionBtn, styles.searchLeftActionBtn, selectedType === 0 && styles.searchActionBtnActive]} onPress={updateSelectedType(0)}>
