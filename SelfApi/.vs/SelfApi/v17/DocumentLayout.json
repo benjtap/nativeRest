@@ -1,0 +1,136 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\docker\\SelfApi\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{42CE5497-3626-49AC-8321-CA8BD96A9D4C}|..\\SelfApiproj\\SelfApiproj.csproj|c:\\docker\\selfapiproj\\startup.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{42CE5497-3626-49AC-8321-CA8BD96A9D4C}|..\\SelfApiproj\\SelfApiproj.csproj|c:\\docker\\selfapiproj\\controllers\\testcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{42CE5497-3626-49AC-8321-CA8BD96A9D4C}|..\\SelfApiproj\\SelfApiproj.csproj|c:\\docker\\selfapiproj\\services\\mongodbrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{42CE5497-3626-49AC-8321-CA8BD96A9D4C}|..\\SelfApiproj\\SelfApiproj.csproj|c:\\docker\\selfapiproj\\dbproviders\\mongoprovider.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{42CE5497-3626-49AC-8321-CA8BD96A9D4C}|..\\SelfApiproj\\SelfApiproj.csproj|c:\\docker\\selfapiproj\\utility.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{42CE5497-3626-49AC-8321-CA8BD96A9D4C}|..\\SelfApiproj\\SelfApiproj.csproj|c:\\docker\\selfapiproj\\controllers\\authcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{42CE5497-3626-49AC-8321-CA8BD96A9D4C}|..\\SelfApiproj\\SelfApiproj.csproj|c:\\docker\\selfapiproj\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 7,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{3ae79031-e1bc-11d0-8f78-00a0c9110057}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "Utility.cs",
+              "DocumentMoniker": "C:\\docker\\SelfApiproj\\Utility.cs",
+              "RelativeDocumentMoniker": "..\\SelfApiproj\\Utility.cs",
+              "ToolTip": "C:\\docker\\SelfApiproj\\Utility.cs",
+              "RelativeToolTip": "..\\SelfApiproj\\Utility.cs",
+              "ViewState": "AQIAAA0AAAAAAAAAAAAgwB0AAAA1AAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-05-05T10:48:26.293Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "TestController.cs",
+              "DocumentMoniker": "C:\\docker\\SelfApiproj\\Controllers\\TestController.cs",
+              "RelativeDocumentMoniker": "..\\SelfApiproj\\Controllers\\TestController.cs",
+              "ToolTip": "C:\\docker\\SelfApiproj\\Controllers\\TestController.cs",
+              "RelativeToolTip": "..\\SelfApiproj\\Controllers\\TestController.cs",
+              "ViewState": "AQIAAA8AAAAAAAAAAAArwE4BAAAiAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-05-05T08:35:55.992Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "MongoProvider.cs",
+              "DocumentMoniker": "C:\\docker\\SelfApiproj\\DBProviders\\MongoProvider.cs",
+              "RelativeDocumentMoniker": "..\\SelfApiproj\\DBProviders\\MongoProvider.cs",
+              "ToolTip": "C:\\docker\\SelfApiproj\\DBProviders\\MongoProvider.cs",
+              "RelativeToolTip": "..\\SelfApiproj\\DBProviders\\MongoProvider.cs",
+              "ViewState": "AQIAAO4AAAAAAAAAAAAWwPUAAAAGAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-05-05T06:02:35.651Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "AuthController.cs",
+              "DocumentMoniker": "C:\\docker\\SelfApiproj\\Controllers\\AuthController.cs",
+              "RelativeDocumentMoniker": "..\\SelfApiproj\\Controllers\\AuthController.cs",
+              "ToolTip": "C:\\docker\\SelfApiproj\\Controllers\\AuthController.cs",
+              "RelativeToolTip": "..\\SelfApiproj\\Controllers\\AuthController.cs",
+              "ViewState": "AQIAADkAAAAAAAAAAAAAwEMAAABAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-05-03T10:06:50.492Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "MongodbRepository.cs",
+              "DocumentMoniker": "C:\\docker\\SelfApiproj\\Services\\MongodbRepository.cs",
+              "RelativeDocumentMoniker": "..\\SelfApiproj\\Services\\MongodbRepository.cs",
+              "ToolTip": "C:\\docker\\SelfApiproj\\Services\\MongodbRepository.cs",
+              "RelativeToolTip": "..\\SelfApiproj\\Services\\MongodbRepository.cs",
+              "ViewState": "AQIAAHYBAAAAAAAAAAAYwHwBAAArAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-05-03T10:06:46.997Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "Program.cs",
+              "DocumentMoniker": "C:\\docker\\SelfApiproj\\Program.cs",
+              "RelativeDocumentMoniker": "..\\SelfApiproj\\Program.cs",
+              "ToolTip": "C:\\docker\\SelfApiproj\\Program.cs",
+              "RelativeToolTip": "..\\SelfApiproj\\Program.cs",
+              "ViewState": "AQIAAA4AAAAAAAAAAAAzwBoAAAApAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-05-03T10:05:41.289Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Startup.cs",
+              "DocumentMoniker": "C:\\docker\\SelfApiproj\\Startup.cs",
+              "RelativeDocumentMoniker": "..\\SelfApiproj\\Startup.cs",
+              "ToolTip": "C:\\docker\\SelfApiproj\\Startup.cs",
+              "RelativeToolTip": "..\\SelfApiproj\\Startup.cs",
+              "ViewState": "AQIAABIAAAAAAAAAAAAuwB0AAAAMAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-05-03T09:18:25.634Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
