@@ -1,7 +1,8 @@
 {
   "expo": {
-    "name": "projectsagi",
-    "slug": "projectsagi",
+    "scheme": "projectAuth",
+    "name": "projectAuth",
+    "slug": "projectAuth",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -16,16 +17,18 @@
       "infoPlist": {
         "NSContactsUsageDescription": "ContactsList needs your permission to access your contacts."
       },
-      "permissions": ["android.permission.READ_CONTACTS"],
+      "permissions": [
+        "android.permission.READ_CONTACTS"
+      ],
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      
-        },
+      },
       "splash": {
-         "resizeMode": "contain",
+        "resizeMode": "contain",
         "backgroundColor": "#191015"
-      }
+      },
+      "package": "com.updatesapidemo"
     },
     "ios": {
       "supportsTablet": true,
@@ -42,11 +45,14 @@
         "assetPatternsToBeBundled": [
           "app/includedImages/*"
         ]
+      },
+      "eas": {
+        "projectId": "41291cb5-4ad1-4bfa-aee2-68c94fd4999c"
       }
     },
     "plugins": [
-      
       "expo-localization",
+      "./trust-local-certs.js",
       [
         "expo-build-properties",
         {
@@ -60,8 +66,6 @@
         }
       ],
       "expo-font"
-     
-     
     ],
     "experiments": {
       "tsconfigPaths": true

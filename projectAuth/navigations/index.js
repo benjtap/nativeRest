@@ -4,10 +4,11 @@ import AuthNavigator from './AuthNavigator';
 import DrawerNavigator from './DrawerNavigator';
 import {GlobalContext} from '../context/Provider';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {ActivityIndicator} from 'react-native';
+import {ActivityIndicator,StyleSheet,View} from 'react-native';
 import {navigationRef} from './SideMenu/RootNavigator';
 import { useFonts } from "expo-font";
-import * as Linking from 'expo-linking';
+
+import {createNativeStackNavigator} from  '@react-navigation/native-stack'
 
 class Deferred {
   constructor() {
@@ -16,6 +17,18 @@ class Deferred {
       this.resolve = resolve;
     });
   }
+}
+
+const HelpScreen = () => { 
+
+  return (
+    <View style={[styles.container, styles.horizontal]}>
+    <Text> שלום וברכב</Text>
+    <ActivityIndicator size="large" />
+  </View> );
+  
+
+
 }
 
 const AppNavContainer = () => {
@@ -34,6 +47,8 @@ const AppNavContainer = () => {
     DMMedium: require('../assets/fonts/DMSans-Medium.ttf'),
      DMRegular: require('../assets/fonts/DMSans-Regular.ttf'),
    })
+
+  
 
   const getUser = async () => {
     try {
@@ -67,49 +82,19 @@ const AppNavContainer = () => {
        
     );
   }
- 
+  //ref={(x) => (global.stackNavigator = x)}
+
+  const CommonStack = createNativeStackNavigator();
+  //
   return (
     <>
       {authLoaded ? (
-        <NavigationContainer  ref={navigationRef}
-        linking={{
-          async getInitialURL() {
-            const url = await Linking.getInitialURL();
-            if (url == null) {
-              return null;
-            }
-            // Ensures that "fallback" is rendered until the promise has been resolved
-            await waitFor.current.promise;
-            // react-navigation will handle the deep link now, after your own condition resolved
-            // which ensures that the corresponding navigation screens/navigators exists and are rendered below
-            return url;
+        <NavigationContainer  ref={navigationRef}>
+          {isAuthenticated ?<DrawerNavigator nav={nav}   />
+          : <AuthNavigator nav={nav}        
+          />
           }
-          // ,prefixes: [ ... ],
-           ,config: {
-            screens: {
-              LOGIN: 'LOGIN',
-            }
-            }
-        }}
-        
-        
-        >
-          {isAuthenticated ? <DrawerNavigator nav={nav}
 
-
-          onUnhandledAction={() => {
-            console.log("Using Fallback", "ddd")
-          }}
-          
-          /> : <AuthNavigator nav={nav}  
-          
-          onUnhandledAction={() => {
-            console.log("Using Fallback", "eee")
-             }} 
-          
-          />}
-
-         
         </NavigationContainer>
       ) : (
         <ActivityIndicator />
@@ -119,3 +104,15 @@ const AppNavContainer = () => {
 };
 
 export default AppNavContainer;
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+  },
+  horizontal: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    padding: 10,
+  },
+});

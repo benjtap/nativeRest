@@ -22,31 +22,31 @@ const [fileName, setFileName] = useState(null);
 const [uri, setUri] = useState(null); 
   const [recording, setRecording] = useState(null);
   const [recordingStatus, setRecordingStatus] = useState('idle');
-  const [audioPermission, setAudioPermission] = useState(null);
+  //const [audioPermission, setAudioPermission] = useState(null);
 
-
+  const [permissionResponse, requestPermission] = Audio.usePermissions();
 
  
 
-const getPermission = useCallback(async() =>
-{
-  // async function () {
-    await Audio.requestPermissionsAsync().then((permission) => {
-      console.log('Permission Granted: ' + permission.granted);
-      setAudioPermission(permission.granted)
-    }).catch(error => {
-      console.log(error);
-    });
+// const getPermission = useCallback(async() =>
+// {
+//   // async function () {
+//     await Audio.requestPermissionsAsync().then((permission) => {
+//       console.log('Permission Granted: ' + permission.granted);
+//       setAudioPermission(permission.granted)
+//     }).catch(error => {
+//       console.log(error);
+//     });
 
-    getPermission()
-    // Cleanup upon first render
-    return () => {
-      if (recording) {
-        stopRecording();
-      }
-    };
-  //}
-},[audioPermission]);
+//     getPermission()
+//     // Cleanup upon first render
+//     return () => {
+//       if (recording) {
+//         stopRecording();
+//       }
+//     };
+//   //}
+// },[audioPermission]);
 
 
 
@@ -85,8 +85,15 @@ const validateForm = () => {
 
   async function startRecording() {
     try {
-      // needed for IoS
-      if (audioPermission) {
+     
+      if (permissionResponse.status !== 'granted') {
+        console.log('Requesting permission..');
+        await requestPermission();
+      }
+
+      // if (audioPermission) {
+
+      if (permissionResponse.status !== 'granted') {
         await Audio.setAudioModeAsync({
           allowsRecordingIOS: true,
           playsInSilentModeIOS: true

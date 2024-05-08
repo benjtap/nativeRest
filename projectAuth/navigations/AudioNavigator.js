@@ -41,7 +41,7 @@ const AudioNavigator = (props) => {
 
   const AudioStack = createNativeStackNavigator();
   return (
-      <AudioStack.Navigator initialRouteName={AUDIO} screenOptions={{
+      <AudioStack.Navigator  initialRouteName={AUDIO} screenOptions={{
       headerShown: false,
     }}>
       <AudioStack.Screen name={screens.Audio} component={Audio} />

@@ -6,7 +6,7 @@ import loginUser from '../../context/actions/loginUser';
 import {GlobalContext} from '../../context/Provider';
 const Login = () => {
   const [form, setForm] = useState({});
-  const [justSignedUp, setJustSignedUp] = useState(false);
+ 
   const {params} = useRoute();
 
   React.useEffect(() => {
@@ -22,15 +22,13 @@ const Login = () => {
   } = useContext(GlobalContext);
 
   const onSubmit = () => {
+  
     if (form.userName && form.password) {
       loginUser(form)(authDispatch);
     }
   };
 
-  const onChange = ({name, value}) => {
-    setJustSignedUp(false);
-    setForm({...form, [name]: value});
-  };
+ 
 
   return (
     <LoginComponent

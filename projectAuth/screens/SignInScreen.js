@@ -8,27 +8,47 @@ import {GlobalContext} from '../context/Provider';
 
 
 
+
+
 const SignInScreen = ({navigation}) => {
+  const timerRef = React.useRef(null);
+
+  const [isHide, setIsHide] = useState(true)
+  const [justSignedUp, setJustSignedUp] = useState(false);
+
+  const {
+    authDispatch,
+    authState: {error, loading},
+  } = useContext(GlobalContext);
+
   
   const [isLoading, setIsLoading] = useState(false);
   const register = () => {
     navigation.navigate('Register');
   };
 
+
+  
   React.useEffect(() => {
     RenderError()
-      
-  }, [error]);
+    if(!error)
+      setNodisplay(true);
+    else
+    setNodisplay(false);
+     
+    timerRef.current = setTimeout(() => {
+      setIsHide(false);
+  }, 5000);
+  }, [error,isHide]);
+
+
+  const [nodisplay, setNodisplay] = useState(false);
 
     const [userName, setuserName] = useState("");
 
     const [password, setpassword] = useState("");
 
-    const {
-      authDispatch,
-      authState: {error, loading},
-    } = useContext(GlobalContext);
-
+   
     const handleSubmit = async(userName, password) => { 
      
     const form = {
@@ -46,8 +66,16 @@ const SignInScreen = ({navigation}) => {
     
 
     const loginHandle = (userName, password) => {
-           handleSubmit(userName, password)
-         
+     
+         if(timerRef.current)
+          clearTimeout(timerRef.current)
+
+          setIsHide(true);
+          
+          handleSubmit(userName, password)
+
+          
+
     }
 
     if (isLoading) {
@@ -62,13 +90,15 @@ const SignInScreen = ({navigation}) => {
     const RenderError= () => {
     
   
-    if(error && !error.error )
+    if(error && !error.error && isHide )
         return (
-      <View>
-         <Text>{error.message}</Text>
+      <View style={styles.errorview}>
+         <Text style={styles.errorLabel}>{error.message}</Text>
             </View>
-        
-    );
+   );
+
+   if(nodisplay) return (null);
+   
       
     }
 
@@ -112,6 +142,8 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     justifyContent: 'center'
   },
+
+
   input: {
     borderColor: '#ccc',
     borderRadius: 8,
@@ -131,6 +163,18 @@ const styles = StyleSheet.create({
   },
   loginLabel: {
     color: '#fff',
+    fontWeight: 'bold',
+    textAlign: 'center',
+    textTransform: 'uppercase',
+  },
+  errorview: {
+    fontSize: 16,
+    marginHorizontal: 24,
+    marginVertical: 8,
+    padding: 16,
+  },
+  errorLabel: {
+    color: '#eea',
     fontWeight: 'bold',
     textAlign: 'center',
     textTransform: 'uppercase',

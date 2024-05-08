@@ -72,7 +72,7 @@ const Action1 = (props) => {
                   },
                 })
                 .then(({data}) => {
-                 // console.log(data);
+                 navigation.navigate('Contacts')
                   
               });
 

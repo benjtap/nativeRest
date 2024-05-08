@@ -8,3 +8,4 @@ export const ACTION3 = 'ACTION3';
 export const ACTION4 = 'ACTION4';
 export const GROUPMEMBERS = 'GROUPMEMBERS';
 export const AUDIO= 'AUDIO';
+export const CALENDAR= 'CALENDAR';

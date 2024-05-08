@@ -1,7 +1,7 @@
 import  React, { useState, useEffect, useContext, useCallback } from 'react';
 import { StyleSheet, View, TextInput, TouchableOpacity, Text, FlatList, ActivityIndicator } from 'react-native';
 
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { COLORS, FONT, SIZES } from "../constants";
 
 import axiosInstance from '../helpers/axiosInstance';
@@ -62,6 +62,8 @@ return data.filter(post =>  post.name.toLowerCase().includes(keyword.toLowerCase
  
 
   const searchContacts = () => {
+
+    //navigation.GetParent().navigate('LOGIN')
     const limit = 30;
        fetchcontactsDataForPosts();
    };
@@ -69,7 +71,8 @@ return data.filter(post =>  post.name.toLowerCase().includes(keyword.toLowerCase
  
  
   const fetchcontactsDataForPosts =  async () => {
-   
+    //await AsyncStorage.removeItem('token');
+    //await AsyncStorage.removeItem('user');
     setLoading(true)
   const url =`/Webhttp/getcontacts`;
   
@@ -114,7 +117,9 @@ return data.filter(post =>  post.name.toLowerCase().includes(keyword.toLowerCase
         setSelectedType(() => selectedType);
   };
 
- 
+  const listSeparator = () => {
+    return <View style={ styles.separator } />
+    }
 
   const selectItem = (item) => () => {
    
@@ -173,6 +178,7 @@ return data.filter(post =>  post.name.toLowerCase().includes(keyword.toLowerCase
         <FlatList
           data={filterdata}
           renderItem={renderItems}
+          ItemSeparatorComponent = { listSeparator }
           keyExtractor={(item, index) => item.id}
         />
       </View>
@@ -254,19 +260,23 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: '#ccc',
     marginLeft:10,
-    marginRight:10
+    marginRight:10,
+   
+
      
   },
-  listItemImage: {
-    width: 32,
-    height: 32,
-    marginRight: 8
-  },
+  
   listItemLabel: {
      fontSize: 16,
- 
+    //  fontWeight: 600,
+      marginLeft: 13,
+   },
+   separator: {
+    height: 1,
+    width: '100%',
+    backgroundColor: '#CCC'
+    },
 
-  }
 });
 
 export default Contact;

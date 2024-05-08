@@ -103,7 +103,7 @@ const SignUpScreen = (props) => {
         username,
       })
       .then((res) => {
-        navigation.navigate('SignInScreen')
+        navigation.navigate('LOGIN')
       })
      
    
