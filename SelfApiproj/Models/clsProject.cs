@@ -15,6 +15,12 @@ namespace Webhttp.Models
         public string id { get; set; }
 
     }
+
+    public class deletetimingPost
+    {
+        public string id { get; set; }
+
+    }
     public class deletegroup
     {
         public string id { get; set; }
@@ -77,6 +83,25 @@ namespace Webhttp.Models
         public string groupid { get; set; }
         public string audioid { get; set; }
     }
+
+    public class TiminggroupMongo
+    {
+        public ObjectId id { get; set; }
+
+        public string uid { get; set; }
+        public string groupid { get; set; }
+        public string date { get; set; }
+    }
+
+    public class getTiminggroup
+    {
+        public string id { get; set; }
+        public string groupname { get; set; }
+        public string date { get; set; }
+        public int height { get; set; }
+        public string day { get; set; }
+    }
+
     public class AudioPost
     {
         public string id { get; set; }
@@ -213,12 +238,16 @@ namespace Webhttp.Models
     }
 
 
+    public class creategrouptimingPost
+    {
+        public string groupid { get; set; }
+        public string date { get; set; }
+    }
     public class createAudiogroupPost
     {
         public string groupid { get; set; }
         public string audioid { get; set; }
     }
-
     public class creategroupsPost
     {
      public string? name { get; set; }

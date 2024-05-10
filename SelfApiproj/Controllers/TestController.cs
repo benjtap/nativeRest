@@ -1,13 +1,11 @@
-﻿using Amazon.Auth.AccessControlPolicy;
+﻿
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using MongoDB.Bson.IO;
+
 using SelfApiproj.Repository;
 using System.Collections;
-using System.Net;
+
 
 using Webhttp.Models;
 
@@ -64,6 +62,44 @@ namespace Webhttp.Controllers
                await _mongo.createAudiogroup(post, id);
             return Ok();
         }
+        [HttpPost]
+        [Route("creategrouptiming")]
+        public async Task<IActionResult> creategrouptiming(creategrouptimingPost post)
+        {
+            string id = "";
+            var principal = HttpContext.User;
+            if (principal?.Claims != null)
+            {
+
+                var claim = principal.Claims.FirstOrDefault();
+
+                id = claim.Value;
+            }
+
+            await _mongo.createTiminggroup(post, id);
+            return Ok();
+        }
+
+        [HttpGet]
+        [Route("getgrouptiming")]
+        public async Task<IActionResult> getgrouptiming()
+        {
+            string id = "";
+            var principal = HttpContext.User;
+            if (principal?.Claims != null)
+            {
+
+                var claim = principal.Claims.FirstOrDefault();
+
+                id = claim.Value;
+            }
+           
+
+            Dictionary<string,HashSet<getTiminggroup>> res = await _mongo.getgrouptiming(id); ;
+            //  
+            return Ok(res);
+        }
+
 
 
         [HttpPost]
@@ -176,6 +212,15 @@ namespace Webhttp.Controllers
         {
 
             await _mongo.deleteAudiorecordPost(post);
+            return Ok();
+        }
+
+        [HttpPost]
+        [Route("deletetimimgrecord")]
+        public async Task<IActionResult> deletetimimg(deletetimingPost post)
+        {
+
+            await _mongo.deletetimimg(post);
             return Ok();
         }
 

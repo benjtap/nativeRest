@@ -71,6 +71,8 @@ namespace ConsoleAppToWebAPI
         }
         public void Configure(IApplicationBuilder app,IWebHostEnvironment env)
         {
+            app.UseCors(options => options.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
+
             app.UseRouting();
              app.UseAuthentication();
             app.UseAuthorization();
@@ -82,7 +84,7 @@ namespace ConsoleAppToWebAPI
             {
                 endpoints.MapControllers();
             });
-            app.UseCors(options => options.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
+           
 
 
 
