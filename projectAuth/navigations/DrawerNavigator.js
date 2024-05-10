@@ -61,10 +61,10 @@ const DrawerNavigator = ({ nav }) => {
         },
    
         drawerStyle: {
-            width: 200,
-            height:300,
-             right: 200,
-             top:70,
+            // width: 200,
+            // height:300,
+            //  right: 200,
+            //  top:70,
             backgroundColor: '#fff',
             borderTopRightRadius: 20,
             borderTopLeftRadius: 20,

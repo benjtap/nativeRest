@@ -4,7 +4,7 @@ import AuthNavigator from './AuthNavigator';
 import DrawerNavigator from './DrawerNavigator';
 import {GlobalContext} from '../context/Provider';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {ActivityIndicator,StyleSheet,View} from 'react-native';
+import {ActivityIndicator,StyleSheet,View,Text} from 'react-native';
 import {navigationRef} from './SideMenu/RootNavigator';
 import { useFonts } from "expo-font";
 
@@ -82,9 +82,16 @@ const AppNavContainer = () => {
        
     );
   }
-  //ref={(x) => (global.stackNavigator = x)}
+ 
+  const Help = () =>{
+     return (
+     <View><Text>Help</Text></View>
+     )
+  }
 
-  const CommonStack = createNativeStackNavigator();
+  //const CommonStack = createNativeStackNavigator();
+
+  const Stack = createNativeStackNavigator();
   //
   return (
     <>
@@ -95,6 +102,9 @@ const AppNavContainer = () => {
           />
           }
 
+        <Stack.Group name="HelpStack" screenOptions={{ presentation: 'modal' }}>
+          <Stack.Screen name="Help" component={Help} />
+        </Stack.Group> 
         </NavigationContainer>
       ) : (
         <ActivityIndicator />

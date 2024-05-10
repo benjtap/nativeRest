@@ -7,14 +7,10 @@ import {createNativeStackNavigator} from  '@react-navigation/native-stack'
 import { routes,screens } from '../constants/RouteItems';
 
  import Calendar from '../screens/Calendar';
-
+ import Planning from '../screens/Planning';
 
 import Logout from '../screens/Logout';
 import {
-  AUDIO,
-  ACTION4,
-  AUDIODETAILS,
-  AUDIOGROUPMEMBERS,
   LOGOUT
   
 } from '../constants/routeNames';
@@ -38,11 +34,11 @@ const CalendarNavigator = (props) => {
 
   const CalendarStack = createNativeStackNavigator();
   return (
-      <CalendarStack.Navigator  initialRouteName={AUDIO}   screenOptions={{
+      <CalendarStack.Navigator  initialRouteName={screens.Calendar}   screenOptions={{
       headerShown: false,
     }}>
       <CalendarStack.Screen name={screens.Calendar} component={Calendar} />
-    
+      <CalendarStack.Screen name={screens.Planning} component={Planning} />
      <CalendarStack.Screen name={LOGOUT} component={Logout} /> 
     </CalendarStack.Navigator>
   );

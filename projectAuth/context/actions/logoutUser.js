@@ -10,12 +10,6 @@ export default () =>  (dispatch) => {
     type: LOGOUT_USER,
   });
 
- 
-
-  //    global.stackNavigator.dispatch(
-  //     NavigationActions.navigate({
-  //         routeName: 'LOGIN',
-  //         params: { },
-  //     }),
-  //  );
+  
+    
 };

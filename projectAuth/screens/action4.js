@@ -64,7 +64,7 @@ const validateForm = () => {
           }
           else
           {
-            console.log('test')
+           
             setErrors(errors); 
             setIsFormValid(true); 
               

@@ -280,7 +280,10 @@ const styles = StyleSheet.create({
     marginRight: 8
   },
   listItemLabel: {
-    fontSize: 16,
+    color: COLORS.secondary,
+     fontFamily:FONT.regular,
+     fontSize: SIZES.medium,
+     marginLeft: 13,
  
 
   }

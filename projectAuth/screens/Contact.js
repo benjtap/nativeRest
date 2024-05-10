@@ -5,6 +5,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { COLORS, FONT, SIZES } from "../constants";
 
 import axiosInstance from '../helpers/axiosInstance';
+import { CommonActions } from '@react-navigation/native';
 
 
 String.isNullOrEmpty = function(value) {
@@ -13,6 +14,8 @@ String.isNullOrEmpty = function(value) {
 
 const Contact = (props) => {
   const { navigation } = props;
+
+
 
 
 
@@ -35,10 +38,13 @@ return data.filter(post =>  post.name.toLowerCase().includes(keyword.toLowerCase
 
 },[data,keyword])
   
-  
 
+
+   
 
   useEffect(() => {
+   //navigation.dispatch(CommonActions.navigate("HelpStack",{screen :"Help"}));
+    
     const unsubscribe = navigation.addListener('focus', () => {
        
     if (selectedType === 0) {
@@ -267,9 +273,11 @@ const styles = StyleSheet.create({
   },
   
   listItemLabel: {
-     fontSize: 16,
-    //  fontWeight: 600,
-      marginLeft: 13,
+     //fontSize: 16,
+     color: COLORS.secondary,
+     fontFamily:FONT.regular,
+     fontSize: SIZES.medium,
+     marginLeft: 13,
    },
    separator: {
     height: 1,

@@ -1,127 +1,234 @@
-import React, { useState, useEffect, useMemo } from 'react';
-
-
- 
-import { StyleSheet, View, TextInput, Button, Text, } from 'react-native';
-
-import { COLORS, FONT, SIZES } from "../constants";
-
+import React, { Component,useState,useEffect } from "react"
+import {SafeAreaView, Alert, StyleSheet, Text, View, TouchableOpacity, Modal, Pressable } from "react-native"
+import { Agenda } from "react-native-calendars"
+import testIDs from "../testIDs"
 import axiosInstance from '../helpers/axiosInstance';
 
-import { StatusBar } from 'expo-status-bar';
-
-
-import CalendarPicker from 'react-native-calendar-picker';
-import * as Calendar from 'expo-calendar';
-
-String.isNullOrEmpty = function(value) {
-  return !(typeof value === "string" && value.length > 0);
-}
-
-const MyCalendar = (props) => {
+ const MyCalendar = (props) => {
   const { navigation } = props;
-  const [selectedStartDate, setSelectedStartDate] = useState(null);
-  const [friendNameText, setFriendNameText] = useState("");
-
-  async function getDefaultCalendarSource() {
-    const calendars = await Calendar.getCalendarsAsync(
-      Calendar.EntityTypes.EVENT
-    );
-    const defaultCalendars = calendars.filter(
-      (each) => each.source.name === 'Default'
-    );
-    return defaultCalendars.length
-      ? defaultCalendars[0].source
-      : calendars[0].source;
-  }
   
-  async function createCalendar() {
-    const defaultCalendarSource =
-      Platform.OS === 'ios'
-        ? await getDefaultCalendarSource()
-        : { isLocalAccount: true, name: 'Expo Calendar' };
-    const newCalendarID = await Calendar.createCalendarAsync({
-      title: 'Expo Calendar',
-      color: 'blue',
-      entityType: Calendar.EntityTypes.EVENT,
-      sourceId: defaultCalendarSource.id,
-      source: defaultCalendarSource,
-      name: 'internalCalendarName',
-      ownerAccount: 'personal',
-      accessLevel: Calendar.CalendarAccessLevel.OWNER,
-    });
-    console.log(`Your new calendar ID is: ${newCalendarID}`);
-    return newCalendarID;
-  }
-
-  const addNewEvent = async () => {
-    try {
-      const calendarId = await createCalendar();
-      
-      const res = await Calendar.createEventAsync(calendarId, {
-        endDate: getAppointementDate(startDate),
-        startDate: getAppointementDate(startDate),
-        title: 'Happy Birthday buddy ' + friendNameText,
-      });
-      Alert.alert('Event Created!');
-    } catch (e) {
-      console.log(e);
-    }
-  };
-
+  const [state, setState] = React.useState({items: undefined });
+ 
+  const [modalVisible, setModalVisible] = useState(false);
+  const [deletableval, setDeletableval] = useState(false);
+  
 
   useEffect(() => {
-    (async () => {
-      const { status } = await Calendar.requestCalendarPermissionsAsync();
-      if (status === 'granted') {
-        const calendars = await Calendar.getCalendarsAsync(
-          Calendar.EntityTypes.EVENT
-        );
-        console.log('Here are all your calendars:');
-        console.log({ calendars });
-      }
-    })();
-  }, []);
+    const unsubscribe = navigation.addListener('focus', () => {
+       
+      loadItems()
+    });
 
+
+    return unsubscribe;
    
-    const startDate = selectedStartDate
-      ? selectedStartDate.format('YYYY-MM-DD').toString()
-      : '';
+  }, [navigation]);
+
+
+
+  loadItems = async() => {
   
-    return (
-      <View style={styles.container}>
-        <StatusBar style="auto" />
-        <TextInput
-        onChangeText={setFriendNameText}
-        value={friendNameText}
-        placeholder="Enter the name of your friend"
-        style={styles.input}
-      />
-        <CalendarPicker onDateChange={setSelectedStartDate} />
-        <Text style={styles.dateText}>Birthday: {startDate}</Text>
-        <Button title={"Add to calendar"} onPress={addNewEvent} />
-      </View>
-    );
+  const url =`/Webhttp/getgrouptiming`;
+     
+  await axiosInstance.get(url)
 
+   .then(({data}) => {
+     console.log(data)
+    setState({  items: data })
+     }).catch((err) => {
+        
+     }) 
+   }
+
+  const deleterecord = async() =>{
+
+    let deletegrouptimingPost =  {
+      id:deletableval,
+      }
+        let url =`/Webhttp/deletetimimgrecord`
+
+     await axiosInstance.post(url,deletegrouptimingPost)
+  
+     .then(({data}) => {
+      setModalVisible(!modalVisible) 
+      loadItems()    
+      })
   }
- 
- 
 
-  const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      backgroundColor: '#fff',
-      alignItems: 'center',
-      justifyContent: 'center',
-    },
-    input: {
-      height: 40,
-      margin: 12,
-      borderWidth: 1,
-    },
-    dateText: {
-      margin: 16,
-    },
-  });
 
+
+renderDay = day => {
+  if (day) {
+    return <Text style={styles.customDay}>{day.getDay()}</Text>
+  }
+  return <View style={styles.dayItem} />
+}
+
+renderItem = (reservation, isFirst) => {
+  const fontSize = isFirst ? 16 : 14
+  const color = isFirst ? "black" : "#43515c"
+
+  return (
+    <TouchableOpacity
+      testID={testIDs.agenda.ITEM}
+      style={[styles.item, { height: reservation.height }]}
+      onPress={() => {
+         setDeletableval(reservation.id)
+
+         setModalVisible(true)
+         }}>
+      <Text style={{ fontSize, color }}> קבוצה {reservation.groupname} ב {reservation.date}</Text>
+    </TouchableOpacity>
+  )
+}
+
+ renderEmptyDate = () => {
+  return (
+    <View style={styles.emptyDate}>
+      <Text>This is empty date!</Text>
+    </View>
+  )
+}
+
+ rowHasChanged = (r1, r2) => {
+  return r1.name !== r2.name
+}
+
+ timeToString = (time) => {
+  const date = new Date(time)
+  return date.toISOString().split("T")[0]
+}
+
+    return (
+      <SafeAreaView style={{flex: 1}}>
+         <View style={styles.container}> 
+  <Agenda
+
+  testID={testIDs.agenda.CONTAINER}
+  items={state.items}
+   loadItemsForMonth={loadItems}
+  selected={'2024-05-01'}
+  renderItem={renderItem}
+  renderEmptyDate={renderEmptyDate}
+  rowHasChanged={rowHasChanged}
+  showClosingKnob={true}
+
+  maxData={'2050-01-01'}
+  monthFormat={'MMMM yyyy'}
+ 
+    
+/>
+</View>
+<View style={styles.centeredView}> 
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => {
+          //Alert.alert('Modal has been closed.');
+          setModalVisible(!modalVisible);
+        }}>
+        <View style={styles.centeredView}>
+          <View style={styles.modalView}>
+            <Text style={styles.modalText}>מחוק רשומה </Text>
+            <Pressable
+              style={[styles.button, styles.buttonClose]}
+              onPress={() =>{
+                deleterecord()
+                     }}
+               >
+              <Text style={styles.textStyle}>הפעל</Text>
+            </Pressable>
+          </View>
+        </View>
+      </Modal>
+      </View>
+      </SafeAreaView>
+    )
+
+
+
+}
+
+const styles = StyleSheet.create({
+  wrapper: {
+    
+    
+  },
+ 
+  container: {
+    //backgroundColor: '#fff',
+    flex:14,
+    flexWrap: "wrap",
+    flexDirection: "row",
+  },
+  item: {
+    backgroundColor: "white",
+    flex: 1,
+    borderRadius: 5,
+    padding: 10,
+    marginRight: 10,
+    marginTop: 17
+  },
+  emptyDate: {
+    height: 15,
+    flex: 1,
+    paddingTop: 30
+  },
+  customDay: {
+    margin: 10,
+    fontSize: 24,
+    color: "green"
+  },
+  dayItem: {
+    marginLeft: 34
+  },
+  centeredView: {
+    flex:1,
+   
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 22,
+  },
+  modalView: {
+    margin: 20,
+    backgroundColor: 'white',
+    borderRadius: 20,
+    padding: 35,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+   
+      width: 300,
+      height: 300
+  },
+  button: {
+    borderRadius: 20,
+    padding: 10,
+    elevation: 2,
+  },
+  buttonOpen: {
+    backgroundColor: '#F194FF',
+  },
+  buttonClose: {
+    backgroundColor: '#2196F3',
+  },
+  textStyle: {
+    color: 'white',
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  modalText: {
+    marginBottom: 15,
+    textAlign: 'center',
+  },
+
+
+})
 export default MyCalendar;

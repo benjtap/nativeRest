@@ -16,6 +16,7 @@ import {
         return {
           ...state,
           loading: true,
+          error: null,
         };
   
       case REGISTER_SUCCESS:
@@ -23,6 +24,7 @@ import {
           ...state,
           loading: false,
           data: payload,
+          error: null,
         };
   
       case LOGIN_SUCCESS:
@@ -31,6 +33,7 @@ import {
           loading: false,
           data: payload,
           isLoggedIn: true,
+          error: null,
         };
   
       case LOGOUT_USER:

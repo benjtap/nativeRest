@@ -11,6 +11,7 @@ export const screens = {
   ACTION1: 'ACTION1',
   ACTION3: 'ACTION3',
   ACTION4: 'ACTION4',
+  Planning: 'Planning',
   GROUPMEMBERS: 'GROUPMEMBERS',
   HelpStack: 'HelpStack',
   AudioStack: 'AudioStack',
@@ -81,16 +82,6 @@ export const routes = [
       <Icon name="teamspeak" size={30} color={focused ? '#AAAAEE' : '#000'} />,
   },
  
-  // {
-  //   name: screens.Help,
-  //   focusedRoute: screens.HelpStack,
-  //   title: '',
-  //   showInTab: false,
-  //   showInDrawer: false,
-  //   icon: (focused) =>
-  //     <Icon name="users" size={30} color={focused ? '#AAAAEE' : '#000'} />,
-  // },
-  
   {
     name: screens.AudioStack,
     focusedRoute: screens.AudioStack,
@@ -137,6 +128,14 @@ export const routes = [
     icon: (focused) =>
       <Icon name="calendar" size={30} color={focused ? '#AAAAEE' : '#000'} />,
   },
+  {
+    name: screens.Planning,
+    focusedRoute: screens.CalendarStack,
+    title: 'יצירה תזמון',
+    showInTab: false,
+    showInDrawer: true,
+    icon: (focused) =>
+      <Icon name="calendar" size={30} color={focused ? '#AAAAEE' : '#000'} />,
+  }
   
-
 ]

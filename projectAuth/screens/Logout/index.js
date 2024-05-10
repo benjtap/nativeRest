@@ -1,12 +1,14 @@
 import React, {useContext, useEffect} from 'react';
 import {ActivityIndicator,RefreshControl,
   SafeAreaView,
-  ScrollView,
+  View,
   StyleSheet,
   Text,} from 'react-native';
 import logoutUser from '../../context/actions/logoutUser';
 import {GlobalContext} from '../../context/Provider';
 import { CommonActions } from '@react-navigation/native';
+import { Link } from "expo-router";
+
 
 //import {navigate} from '../../navigations/SideMenu/RootNavigator';
 
@@ -14,25 +16,26 @@ const Logout = (props) => {
   const { navigation } = props;
   const {authDispatch} = useContext(GlobalContext);
  
-  const [refreshing, setRefreshing] = React.useState(false);
+
 
 
   useEffect(() => {
-    logoutUser()(authDispatch);
     
-   
-  }, []);
+      logoutUser()(authDispatch)
+
+     // navigation.dispatch(CommonActions.navigate("LOGINSTACK",{screen :"LOGIN"}));
+
+      
+          
+  
+      // navigation.dispatch(CommonActions.navigate("Help"));
+
+  }, [navigation]);
 
   return (
-    <SafeAreaView style={styles.container}>
-    {/* <ScrollView
-      contentContainerStyle={styles.scrollView}
-      refreshControl={
-        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-      }>
-      <Text>Pull down to see RefreshControl indicator</Text>
-    </ScrollView> */}
-  </SafeAreaView>
+    <View style={styles.View}>
+    <Link href="/LOGIN">App</Link>
+  </View>
 
 
   );
@@ -44,7 +47,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  scrollView: {
+  View: {
     flex: 1,
     backgroundColor: 'pink',
     alignItems: 'center',

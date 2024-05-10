@@ -43,9 +43,9 @@ const ContactNavigator = (props) => {
 
 
   return (
-  
+    //initialRouteName={CONTACT}
 
-    <ContactStack.Navigator initialRouteName={CONTACT}  screenOptions={{
+    <ContactStack.Navigator   screenOptions={{
       headerShown: false,
     }}>
       <ContactStack.Screen name={CONTACT} component={Contact} />
