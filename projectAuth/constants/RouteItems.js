@@ -4,14 +4,15 @@ import Icon from 'react-native-vector-icons/FontAwesome'
 
 export const screens = {
   ContactTab: 'ContactTab',
-  //CalendarTab: 'CalendarTab',
-  AuthStack: 'AuthStack',
-  Help: 'Help',
+  AppTab: 'AppTab',
+   AuthStack: 'AuthStack',
+  Application: 'Application',
   Contact: 'Contact',
   ACTION1: 'ACTION1',
   ACTION3: 'ACTION3',
   ACTION4: 'ACTION4',
   Planning: 'Planning',
+  TASKSAPP:'TASKSAPP',
   GROUPMEMBERS: 'GROUPMEMBERS',
   HelpStack: 'HelpStack',
   AudioStack: 'AudioStack',
@@ -21,11 +22,39 @@ export const screens = {
   Audiodetails: 'Audiodetails',
   AudioGroupMembers: 'AudioGroupMembers',
   ContactStack: 'ContactStack',
-
+  AppStack: 'AppStack',
 
 }
 
 export const routes = [
+  
+  {
+    name: screens.AppTab,
+    focusedRoute: screens.AppTab,
+    title: 'אפליקציה',
+    showInTab: false,
+    showInDrawer: false,
+    icon: (focused) =>
+      <Icon name="address-book" size={30} color={focused ? '#AAAAEE' : '#000'} />,
+  },
+  {
+    name: screens.AppTab,
+    focusedRoute: screens.Application,
+    title: 'אפליקציה',
+    showInTab: false,
+    showInDrawer: false,
+    icon: (focused) =>
+      <Icon name="address-book" size={30} color={focused ? '#AAAAEE' : '#000'} />,
+  },
+  {
+    name: screens.AppStack,
+    focusedRoute: screens.AppStack,
+    title: 'אפליקציה',
+    showInTab: true,
+    showInDrawer: false,
+    icon: (focused) =>
+      <Icon name="address-book" size={30} color={focused ? '#AAAAEE' : '#000'} />,
+  },
   {
     name: screens.ContactTab,
     focusedRoute: screens.ContactTab,

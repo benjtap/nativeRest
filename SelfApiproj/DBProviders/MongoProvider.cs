@@ -1,4 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
+using MongoDB.Bson;
 using MongoDB.Driver;
 using Webhttp.Models;
 
@@ -35,6 +37,23 @@ namespace Webhttp.DBProviders
         
 
 
+        public async Task<contactsPostMongo> isfilescontactExist(string id,string filename)
+        {
+
+            var filter = new BsonDocument();
+
+            var Builder = Builders<contactsPostMongo>.Filter;
+            var query = Builder.Where(r => r.filename == filename) &
+                Builder.Where(r => r.uid == id);
+
+            var filenameList = await contactsPostsMon.FindAsync(query);
+            var reponse = filenameList.FirstOrDefault();
+            return reponse;
+
+            // var categoriesList = await contactsPostsMon.DistinctAsync<string>("filename", query);
+        }
+
+
         public async Task bulkcontacts(List<createcontactsPostUid> post)
         {
 			List<contactsPostMongo> lst = new List<contactsPostMongo>();
@@ -46,7 +65,8 @@ namespace Webhttp.DBProviders
                 {
                     uid = contact.uid,
                     name = contact.name,
-                    phone = contact.phone
+                    phone = contact.phone,
+                    filename=contact.filename,
 
                 };
                 lst.Add(postM);

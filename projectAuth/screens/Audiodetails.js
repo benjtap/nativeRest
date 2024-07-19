@@ -217,7 +217,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontFamily:FONT.regular,
-    fontSize: SIZES.large,
+    fontSize: SIZES.medium,
     color: COLORS.secondary
     
   },

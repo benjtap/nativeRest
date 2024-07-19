@@ -1,5 +1,6 @@
 ﻿using Amazon.Runtime.Internal.Transform;
 using Microsoft.Extensions.Hosting;
+using MongoDB.Bson;
 using MongoDB.Driver;
 using SelfApiproj.settings;
 using System;
@@ -83,6 +84,39 @@ namespace SelfApiproj.Repository
             };
 
             await registerPostsMon.InsertOneAsync(postM);
+        }
+
+
+        
+
+        public async Task<IEnumerable<contactsPost>> GetfilecontactsPosts(string filename,string id)
+        {
+            var Builder = Builders<contactsPostMongo>.Filter;
+            var query = Builder.Where(r => r.filename == filename) &
+                Builder.Where(r => r.uid == id);
+
+            var myres = await contactsPostsMon.FindAsync(query);
+
+            //var myres = await contactsPostsMon.FindAsync(query);
+
+            var res = myres.ToList();
+
+            List<contactsPost> mylist = new List<contactsPost>();
+            foreach (var item in res)
+            {
+                contactsPost mycontacts = new contactsPost
+                {
+                    id = item.id.ToString(),
+                    uid = item.uid,
+                    name = item.name,
+                    phone = item.phone
+
+                };
+
+                mylist.Add(mycontacts);
+            }
+            return mylist;
+
         }
 
         public async Task<IEnumerable<contactsPost>> GetcontactsPost(string id)
@@ -389,6 +423,23 @@ namespace SelfApiproj.Repository
 
         }
 
+
+        public async Task<contactsPostMongo> isfilescontactExist(string id, string filename)
+        {
+
+            var filter = new BsonDocument();
+
+            var Builder = Builders<contactsPostMongo>.Filter;
+            var query = Builder.Where(r => r.filename == filename) &
+                Builder.Where(r => r.uid == id);
+
+            var filenameList = await contactsPostsMon.FindAsync(query);
+            var reponse = filenameList.FirstOrDefault();
+            return reponse;
+
+            // var categoriesList = await contactsPostsMon.DistinctAsync<string>("filename", query);
+        }
+
         public async Task bulkcontacts(List<createcontactsPostUid> post)
         {
             List<contactsPostMongo> lst = new List<contactsPostMongo>();
@@ -400,8 +451,8 @@ namespace SelfApiproj.Repository
                 {
                     uid = contact.uid,
                     name = contact.name,
-                    phone = contact.phone
-
+                    phone = contact.phone,
+                    filename= contact.filename,
                 };
                 lst.Add(postM);
             }
@@ -503,6 +554,8 @@ namespace SelfApiproj.Repository
         Task createregisterPost(createregisterPost post);
         Task<IEnumerable<contactsPost>> GetcontactsPost(string id);
 
+        Task<IEnumerable<contactsPost>> GetfilecontactsPosts(string filename, string id);
+
         Task<IEnumerable<groupsPost>> getgroupsPost(string id);
 
          Task<IEnumerable<AudioPost>> GetAudio(string id);
@@ -523,6 +576,8 @@ namespace SelfApiproj.Repository
         Task bulkdeletegroupcontacts(createcontactsgroupPost post, string id);
 
         Task bulkcontacts(List<createcontactsPostUid> post);
+
+        Task<contactsPostMongo> isfilescontactExist(string id, string filename);
 
         Task CreategroupsPost(creategroupsPostui post);
 

@@ -27,7 +27,7 @@ namespace ConsoleAppToWebAPI
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(new[] { new Claim("id", user.id.ToString()) }),
-                Expires = DateTime.UtcNow.AddMinutes(1), // AddHours(4) Token expiration time
+                Expires = DateTime.UtcNow.AddHours(12), // AddHours(4) Token expiration timeyhhh55
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };
 
@@ -62,7 +62,7 @@ namespace ConsoleAppToWebAPI
 
             var tokenDescriptor = new SecurityTokenDescriptor
             {
-                Expires = DateTime.UtcNow.AddMinutes(15), // Extend expiration time
+                Expires = DateTime.UtcNow.AddHours(15), // Extend expiration time
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };
 

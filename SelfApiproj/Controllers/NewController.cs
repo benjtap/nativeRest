@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Webhttp.Controllers;
-using Webhttp.DBProviders;
+//using Webhttp.DBProviders;
 using Webhttp.Models;
 
 namespace ConsoleAppToWebAPI.Controllers

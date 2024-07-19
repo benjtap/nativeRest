@@ -5,7 +5,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { COLORS, FONT, SIZES } from "../constants";
 
 import axiosInstance from '../helpers/axiosInstance';
-import { CommonActions } from '@react-navigation/native';
+
 
 
 String.isNullOrEmpty = function(value) {
@@ -15,8 +15,8 @@ String.isNullOrEmpty = function(value) {
 const Contact = (props) => {
   const { navigation } = props;
 
-
-
+  
+ 
 
 
   const [keyword, setKeyword] = useState('');
@@ -43,7 +43,7 @@ return data.filter(post =>  post.name.toLowerCase().includes(keyword.toLowerCase
    
 
   useEffect(() => {
-   //navigation.dispatch(CommonActions.navigate("HelpStack",{screen :"Help"}));
+    //navigation.navigate('LOGIN1')
     
     const unsubscribe = navigation.addListener('focus', () => {
        
@@ -177,7 +177,7 @@ return data.filter(post =>  post.name.toLowerCase().includes(keyword.toLowerCase
           <Text style={[styles.searchActionLabel, selectedType === 0 && styles.searchActionLabelActive]}>אנשי קשר</Text>
         </TouchableOpacity>
         <TouchableOpacity style={[styles.searchActionBtn, styles.searchRightActionBtn, selectedType === 1 && styles.searchActionBtnActive]} onPress={updateSelectedType(1)}>
-          <Text style={[styles.searchActionLabel, selectedType === 1 && styles.searchActionLabelActive]}>קבוצה</Text>
+          <Text style={[styles.searchActionLabel, selectedType === 1 && styles.searchActionLabelActive]}>אפליקציה</Text>
         </TouchableOpacity>
       </View>
       <View style={styles.list}>

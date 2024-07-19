@@ -14,7 +14,7 @@ import {
 
 import { routes,screens } from '../constants/RouteItems';
 
-import Audio from '../screens/Audio';
+import Audio from '../screens/updatecontactfiles';
 import Action4 from '../screens/action4';
 import Audiodetails from '../screens/Audiodetails';
 import AudioGroupMembers from '../screens/AudioGroupMembers';
@@ -48,8 +48,10 @@ const AudioNavigator = (props) => {
       <AudioStack.Screen name={screens.ACTION4} component={Action4} />
        <AudioStack.Screen name={screens.Audiodetails} component={Audiodetails} />
    
-      <AudioStack.Screen name={screens.AudioGroupMembers} component={AudioGroupMembers} />  
-     <AudioStack.Screen name={LOGOUT} component={Logout} /> 
+ {/* <AudioStack.Screen name={LOGOUT} component={Logout} />    */}
+ 
+     <AudioStack.Screen name={screens.AudioGroupMembers} component={AudioGroupMembers} />  
+     
     </AudioStack.Navigator>
   );
 };

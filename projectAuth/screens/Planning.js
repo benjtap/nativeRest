@@ -212,7 +212,15 @@ useEffect(() => {
           alignItems: 'center',
         }}
       >
-       <Button style={styles.button1} title="הפעל" onPress={onSubmit} />
+
+<TouchableOpacity 
+                    style={[styles.button1, { opacity:  0.5 }]} 
+                   
+                    onPress={onSubmit} 
+                > 
+                <Text style={styles.buttonText}>Submit</Text> 
+            </TouchableOpacity>
+       {/* <Button style={styles.button1} title="הפעל" onPress={onSubmit} /> */}
         </View>
 
     </SafeAreaView>

@@ -6,7 +6,7 @@ import { Text, StyleSheet, View } from 'react-native'
 import ContactStackNavigator from './ContactNavigator'
 import AudioStackNavigator from './AudioNavigator'
 import CalendarStackNavigator from './CalendarNavigator'
-
+import ApplicationStackNavigator from './ApplicationNavigator'
 
 
 
@@ -46,6 +46,8 @@ const BottomTabNavigator = () => {
 
   return (
     <Tab.Navigator screenOptions={tabOptions}>
+       <Tab.Screen name={screens.AppStack}  component={ApplicationStackNavigator}
+      />
       <Tab.Screen name={screens.ContactStack}  component={ContactStackNavigator}
       />
     <Tab.Screen name={screens.AudioStack} component={AudioStackNavigator}

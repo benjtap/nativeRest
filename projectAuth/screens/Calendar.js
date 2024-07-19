@@ -11,7 +11,7 @@ import axiosInstance from '../helpers/axiosInstance';
  
   const [modalVisible, setModalVisible] = useState(false);
   const [deletableval, setDeletableval] = useState(false);
-  
+  const [selected, setSelected] = useState(false);
 
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
@@ -33,7 +33,13 @@ import axiosInstance from '../helpers/axiosInstance';
   await axiosInstance.get(url)
 
    .then(({data}) => {
-     console.log(data)
+   
+    if(data.length > 0){
+      setSelected(data[0])
+      console.log(data)
+    }
+    
+
     setState({  items: data })
      }).catch((err) => {
         
@@ -67,7 +73,7 @@ renderDay = day => {
 renderItem = (reservation, isFirst) => {
   const fontSize = isFirst ? 16 : 14
   const color = isFirst ? "black" : "#43515c"
-
+ 
   return (
     <TouchableOpacity
       testID={testIDs.agenda.ITEM}
@@ -83,6 +89,7 @@ renderItem = (reservation, isFirst) => {
 }
 
  renderEmptyDate = () => {
+  
   return (
     <View style={styles.emptyDate}>
       <Text>This is empty date!</Text>
@@ -107,7 +114,7 @@ renderItem = (reservation, isFirst) => {
   testID={testIDs.agenda.CONTAINER}
   items={state.items}
    loadItemsForMonth={loadItems}
-  selected={'2024-05-01'}
+  selected={selected}
   renderItem={renderItem}
   renderEmptyDate={renderEmptyDate}
   rowHasChanged={rowHasChanged}
@@ -132,7 +139,7 @@ renderItem = (reservation, isFirst) => {
           <View style={styles.modalView}>
             <Text style={styles.modalText}>מחוק רשומה </Text>
             <Pressable
-              style={[styles.button, styles.buttonClose]}
+              style={[styles.button1, styles.buttonClose]}
               onPress={() =>{
                 deleterecord()
                      }}
@@ -162,6 +169,16 @@ const styles = StyleSheet.create({
     flexWrap: "wrap",
     flexDirection: "row",
   },
+  button1: { 
+    backgroundColor: '#aaa', 
+    borderRadius: 8, 
+    paddingVertical: 10, 
+    alignItems: 'center', 
+    marginTop: 16, 
+    marginBottom: 12,
+    width: 68,
+    height: 48, 
+},
   item: {
     backgroundColor: "white",
     flex: 1,
@@ -205,8 +222,8 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 5,
    
-      width: 300,
-      height: 300
+      width: 150,
+      height: 180
   },
   button: {
     borderRadius: 20,

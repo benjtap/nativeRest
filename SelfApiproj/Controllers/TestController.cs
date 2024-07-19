@@ -132,8 +132,8 @@ namespace Webhttp.Controllers
         [Route("bulkcontacts")]
         public async Task<IActionResult> bulkcontacts(List<createcontactsPost> post)
         {
+           
 
-          
             var principal = HttpContext.User;
             string id = "";
             if (principal?.Claims != null)
@@ -144,6 +144,12 @@ namespace Webhttp.Controllers
                  id = claim.Value;
             }
 
+            string? filename = post.FirstOrDefault().filename;
+
+            contactsPostMongo res = await _mongo.isfilescontactExist(id, filename);
+            if (res != null)
+                return Ok("message");
+
             List<createcontactsPostUid> lst = new List<createcontactsPostUid>();
 
             foreach (createcontactsPost item in post)
@@ -152,6 +158,7 @@ namespace Webhttp.Controllers
                 {
                     uid = id,
                     name = item.name,
+                    filename = item.filename,
                     phone = item.phone
 
                 };
@@ -163,6 +170,9 @@ namespace Webhttp.Controllers
             await _mongo.bulkcontacts(lst);
             return Ok();
         }
+
+
+
 
         [HttpPost]
         [Route("bulkgroupcontacts")]
@@ -299,6 +309,31 @@ namespace Webhttp.Controllers
           
             return Ok(res);
         }
+        [HttpPost]
+        [Route("getfilecontacts")]
+        public async Task<IActionResult> getfilecontacts(getfilecontactsPost post)
+        {
+
+            var principal = HttpContext.User;
+            string id = "";
+
+
+            if (principal?.Claims != null)
+            {
+
+                var claim = principal.Claims.FirstOrDefault();
+
+                id = claim.Value;
+            }
+
+            string filename = post.filename;
+
+            IEnumerable res = await _mongo.GetfilecontactsPosts(filename, id);
+
+            return Ok(res);
+        }
+
+
 
         [HttpGet]
         [Route("getaudios")]

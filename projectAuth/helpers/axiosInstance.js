@@ -39,16 +39,20 @@ axiosInstance.interceptors.request.use(
 axiosInstance.interceptors.response.use(
   (response) =>
     new Promise((resolve, reject) => {
-      console.log('test')
+    //  console.log('test')
       resolve(response);
     }),
   (error) => {
-
+    navigate(LOGOUT, {tokenExpired: true});
     console.log(error.request)
     if (!error.response) {
-      return new Promise((resolve, reject) => {
+            return new Promise((resolve, reject) => {
         reject(error);
       });
+    }
+    else
+    {
+      console.log(error.response)
     }
     //if (error.response.status !="" ) {
     //  console.log(error.response.status)

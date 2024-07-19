@@ -6,11 +6,10 @@ import {ActivityIndicator,RefreshControl,
   Text,} from 'react-native';
 import logoutUser from '../../context/actions/logoutUser';
 import {GlobalContext} from '../../context/Provider';
-import { CommonActions } from '@react-navigation/native';
-import { Link } from "expo-router";
+import {navigate} from '../../navigations/SideMenu/RootNavigator';
 
 
-//import {navigate} from '../../navigations/SideMenu/RootNavigator';
+
 
 const Logout = (props) => {
   const { navigation } = props;
@@ -18,23 +17,18 @@ const Logout = (props) => {
  
 
 
-
   useEffect(() => {
     
-      logoutUser()(authDispatch)
-
-     // navigation.dispatch(CommonActions.navigate("LOGINSTACK",{screen :"LOGIN"}));
-
-      
-          
-  
-      // navigation.dispatch(CommonActions.navigate("Help"));
-
-  }, [navigation]);
+    //await AsyncStorage.removeItem('token');
+    //await AsyncStorage.removeItem('user');
+       logoutUser()(authDispatch)
+      // navigate('LOGIN') 
+       
+  }, []);
 
   return (
     <View style={styles.View}>
-    <Link href="/LOGIN">App</Link>
+    {/* <Redirect href="/LOGIN">App</Redirect> */}
   </View>
 
 

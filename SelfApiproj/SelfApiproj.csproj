@@ -8,6 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="DBProviders\MongoProvider.cs" />
     <Compile Remove="Services\IRepository.cs" />
     <Compile Remove="Services\IServiceAuth.cs" />
     <Compile Remove="Services\Repository.cs" />
@@ -17,6 +18,10 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.4" />
     <PackageReference Include="MongoDB.Driver" Version="2.25.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="DBProviders\" />
   </ItemGroup>
 
 </Project>

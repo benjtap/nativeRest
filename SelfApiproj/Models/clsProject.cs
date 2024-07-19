@@ -35,6 +35,7 @@ namespace Webhttp.Models
         public string? uid { get; set; }
         public string? name { get; set; }
 
+        public string? filename { get; set; }
         public string? phone { get; set; }
     }
 
@@ -161,6 +162,8 @@ namespace Webhttp.Models
     {
        public string? name { get; set; }
 
+        public string? filename { get; set; }
+
         public string? phone { get; set; }
     }
 
@@ -169,7 +172,7 @@ namespace Webhttp.Models
 
         public string? uid { get; set; }
         public string? name { get; set; }
-
+        public string? filename { get; set; }
         public string? phone { get; set; }
     }
 
@@ -228,6 +231,12 @@ namespace Webhttp.Models
     public class createcontactsgroupPost
     {
         public string id { get; set; }
+
+    }
+
+    public class getfilecontactsPost
+    {
+        public string? filename { get; set; }
 
     }
 

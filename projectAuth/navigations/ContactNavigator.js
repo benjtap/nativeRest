@@ -53,7 +53,15 @@ const ContactNavigator = (props) => {
     <ContactStack.Screen name={ACTION3} component={Action3} />
    
       <ContactStack.Screen name={GROUPMEMBERS} component={GroupMembers} /> 
-      <ContactStack.Screen name={LOGOUT} component={Logout} />
+       <ContactStack.Screen name={LOGOUT} 
+       component={Logout} 
+       options={{
+        headerShown: false,
+        animationEnabled: false,
+        gestureEnabled: false,
+        detachPreviousScreen: true,
+      }}
+       />  
     </ContactStack.Navigator>
   );
 };

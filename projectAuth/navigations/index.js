@@ -7,8 +7,10 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {ActivityIndicator,StyleSheet,View,Text} from 'react-native';
 import {navigationRef} from './SideMenu/RootNavigator';
 import { useFonts } from "expo-font";
-
+// import Login from '../screens/SignInScreen.js';
 import {createNativeStackNavigator} from  '@react-navigation/native-stack'
+import * as Linking from 'expo-linking';
+
 
 class Deferred {
   constructor() {
@@ -26,14 +28,27 @@ const HelpScreen = () => {
     <Text> שלום וברכב</Text>
     <ActivityIndicator size="large" />
   </View> );
-  
-
-
-}
+  }
 
 const AppNavContainer = () => {
   const waitFor = React.useRef(new Deferred());
+ 
+  const prefix = Linking.createURL("/");
+ 
+  const config = {
+    screens: {
+      AuthStack: {
+        screens: {
+          LOGIN: 'LOGIN',
+        },
+      }
+    }
+  };
 
+  const linking = {
+    prefixes: [prefix],
+    config:config
+  };
   const {
     authState: {isLoggedIn},
   } = useContext(GlobalContext);
@@ -48,28 +63,46 @@ const AppNavContainer = () => {
      DMRegular: require('../assets/fonts/DMSans-Regular.ttf'),
    })
 
-  
+   function convertUTCDateToLocalDate(date) {
+    var newDate = new Date(date.getTime()+date.getTimezoneOffset()*60*1000);
 
+    var offset = date.getTimezoneOffset() / 60;
+    var hours = date.getHours();
+
+    newDate.setHours(hours - offset);
+    newDate = newDate.getTime();
+    return newDate;  
+    };
+  
   const getUser = async () => {
     try {
-      const user = await AsyncStorage.getItem('user');
+      const user =await AsyncStorage.getItem('token');
+      //await AsyncStorage.removeItem('token');
+      const start = Date.now();
       if (user) {
         setAuthLoaded(true);
 
         setIsAuthenticated(true);
+
+        console.log('setIsAuthenticated=true ' +start)
       } else {
         setAuthLoaded(true);
 
         setIsAuthenticated(false);
+        
+        console.log('setIsAuthenticated=false ' +start)
       }
-    } catch (error) {}
+    } catch (error) {
+      console.log('setIsAuthenticated='+error + ' '+start)
+
+    }
   };
   useEffect(() => {
     getUser();
   }, [isLoggedIn]);
 
   useEffect(() => {
-    // something like `isAuthenticated `
+   
     if (isAuthenticated) {
       waitFor.current.resolve?.(null);
     }
@@ -83,32 +116,31 @@ const AppNavContainer = () => {
     );
   }
  
-  const Help = () =>{
-     return (
-     <View><Text>Help</Text></View>
-     )
-  }
-
-  //const CommonStack = createNativeStackNavigator();
-
+ 
   const Stack = createNativeStackNavigator();
   //
   return (
     <>
       {authLoaded ? (
-        <NavigationContainer  ref={navigationRef}>
-          {isAuthenticated ?<DrawerNavigator nav={nav}   />
+        <NavigationContainer  ref={navigationRef} linking={linking}>
+          {isAuthenticated ?<DrawerNavigator  nav={nav}   />
           : <AuthNavigator nav={nav}        
           />
           }
-
-        <Stack.Group name="HelpStack" screenOptions={{ presentation: 'modal' }}>
-          <Stack.Screen name="Help" component={Help} />
-        </Stack.Group> 
+        
+              
         </NavigationContainer>
       ) : (
         <ActivityIndicator />
-      )}
+      )
+    }
+
+        
+
+     
+
+
+
     </>
   );
 };
@@ -126,3 +158,11 @@ const styles = StyleSheet.create({
     padding: 10,
   },
 });
+
+ // const Help = () =>{
+  //    return (
+  //    <View><Text>Help</Text></View>
+  //    )
+  // }
+
+  //navigationKey={currentUserId}
