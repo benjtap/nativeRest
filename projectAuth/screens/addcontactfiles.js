@@ -1,11 +1,10 @@
 import React, { useState,useEffect } from "react";
 import { View, Button,Text, FlatList, TextInput, SafeAreaView ,StyleSheet} from "react-native";
-// import * as DocumentPicker from "expo-document-picker";
-// import Papa from "papaparse";
-// import * as FileSystem from "expo-file-system";
+import { routes,screens } from '../constants/RouteItems';
 import axiosInstance from '../helpers/axiosInstance';
 
-const Addcontactfiles = () => {
+const Addcontactfiles = (props) => {
+  const { navigation } = props;
   const [fileUri, setFileUri] = useState(null);
   const [fileindex, setFileindex] = useState(0);
   const [csvData, setCsvData] = useState([]);
@@ -17,6 +16,9 @@ const Addcontactfiles = () => {
 
 
   useEffect(() => {
+    routes.map((record) => (
+      record.showInDrawer =false
+ ))
     validateForm();
     setStatusPicked(3)
 
@@ -28,6 +30,9 @@ const Addcontactfiles = () => {
 
   };
 
+  const Cancel= async () => {
+    navigation.navigate('Contacts')
+  };
   
   const exportexistCsv = async () => {
 
@@ -42,9 +47,6 @@ const Addcontactfiles = () => {
         lst.push(createcontactsPost)
     
         return lst;
-      
-      
-         
         });
         
 
@@ -55,9 +57,9 @@ const Addcontactfiles = () => {
            Accept: "application/json",
            "Content-Type": "application/json;charset=UTF-8",
          },
-       })
-
-
+       }).then((res) => {
+        navigation.navigate('Contacts')
+      })
 
   }
 
@@ -78,7 +80,7 @@ const Addcontactfiles = () => {
                
        });
        
-       console.log(lst)
+      
        const url =`/Webhttp/bulkcontacts`;
 
        await axiosInstance.post(url,lst ,{
@@ -87,12 +89,7 @@ const Addcontactfiles = () => {
           "Content-Type": "application/json;charset=UTF-8",
         },
       }) .then((res) => {
-       
-        if(res.data ==="message")
-          alert("the given filename is already used");
-        else
-        console.log("ok!!!!!")
-
+        navigation.navigate('Contacts')
       })
 
 
@@ -111,10 +108,6 @@ const Addcontactfiles = () => {
 
   const validateForm = () => {
    
-
-    //console.log(duplicateNumbers.length)
-
-
     if(duplicatenum.length >0) { 
       errors.duplicateNumbers = 'field number must be unique.'; 
      
@@ -281,7 +274,7 @@ const Addcontactfiles = () => {
                 />
        </View>
        <View style={{ marginHorizontal: 10,marginTop: 5 }}>
-              <Button title="בטל" onPress={() => setFilePicked(false)} style={{ padding: 20, }} />
+              <Button title="בטל" onPress={() => Cancel()} style={{ padding: 20, }} />
        </View>
        <View style={{ marginHorizontal: 10,marginTop: 5 }}>
            <Button title="הוסף"  onPress={handleAddRow}  style={{ padding: 20, }} />
@@ -306,7 +299,7 @@ const Addcontactfiles = () => {
                />
        </View>
        <View style={{ marginHorizontal: 10,marginTop: 5 }}>
-              <Button title="בטל" onPress={() => setFilePicked(false)} style={{ padding: 20, }} />
+              <Button title="בטל" onPress={() => Cancel(false)} style={{ padding: 20, }} />
        </View>
        <View style={{ marginHorizontal: 10,marginTop: 5 }}>
            <Button title="הוסף"  onPress={handleAddRow}  style={{ padding: 20, }} />

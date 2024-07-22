@@ -119,10 +119,7 @@ const Addcontactfiles = () => {
 
       try {
          
-     
-        // console.log('/storage/emulated/0/documents/')
-       //  await FileSystem.deleteAsync(FileSystem.documentDirectory + 'contacts/'+ fileName, { idempotent: true });  
-        
+       
         await FileSystem.StorageAccessFramework.createFileAsync(
           permissions.directoryUri,
           fileName,

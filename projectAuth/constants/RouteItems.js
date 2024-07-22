@@ -5,11 +5,13 @@ import Icon from 'react-native-vector-icons/FontAwesome'
 export const screens = {
   ContactTab: 'ContactTab',
   AppTab: 'AppTab',
-   AuthStack: 'AuthStack',
+  MenuTab: 'MenuTab',
+  AuthStack: 'AuthStack',
   Application: 'Application',
+  MenuApp: 'MenuApp',
   Contact: 'Contact',
   ACTION1: 'ACTION1',
-  ACTION3: 'ACTION3',
+  ADDCONTACTFILES: 'ADDCONTACTFILES',
   ACTION4: 'ACTION4',
   Planning: 'Planning',
   TASKSAPP:'TASKSAPP',
@@ -23,6 +25,7 @@ export const screens = {
   AudioGroupMembers: 'AudioGroupMembers',
   ContactStack: 'ContactStack',
   AppStack: 'AppStack',
+  MenuStack: 'MenuStack',
 
 }
 
@@ -56,9 +59,36 @@ export const routes = [
       <Icon name="address-book" size={30} color={focused ? '#AAAAEE' : '#000'} />,
   },
   {
+    name: screens.MenuTab,
+    focusedRoute: screens.MenuTab,
+    title: 'תפריט',
+    showInTab: false,
+    showInDrawer: false,
+    icon: (focused) =>
+      <Icon name="list" size={30} color={focused ? '#AAAAEE' : '#000'} />,
+  },
+  {
+    name: screens.MenuTab,
+    focusedRoute: screens.MenuApp,
+    title: 'תפריט',
+    showInTab: false,
+    showInDrawer: false,
+    icon: (focused) =>
+      <Icon name="list" size={30} color={focused ? '#AAAAEE' : '#000'} />,
+  },
+  {
+    name: screens.MenuStack,
+    focusedRoute: screens.MenuStack,
+    title:  'תפריט',
+    showInTab: true,
+    showInDrawer: false,
+    icon: (focused) =>
+      <Icon name="list" size={30} color={focused ? '#AAAAEE' : '#000'} />,
+  },
+  {
     name: screens.ContactTab,
     focusedRoute: screens.ContactTab,
-    title: 'אנשי קשר',
+    title: 'הפצה',
     showInTab: false,
     showInDrawer: false,
     icon: (focused) =>
@@ -67,7 +97,7 @@ export const routes = [
   {
     name: screens.ContactTab,
     focusedRoute: screens.Contact,
-    title: 'אנשי קשר',
+    title: 'הפצה',
     showInTab: false,
     showInDrawer: false,
     icon: (focused) =>
@@ -76,7 +106,7 @@ export const routes = [
   {
     name: screens.ContactStack,
     focusedRoute: screens.ContactStack,
-    title: 'אנשי קשר',
+    title: 'הפצה',
     showInTab: true,
     showInDrawer: false,
     icon: (focused) =>
@@ -85,26 +115,17 @@ export const routes = [
   {
     name: screens.ContactStack,
     focusedRoute: screens.ContactStack,
-    title: 'אנשי קשר',
+    title: 'הפצה',
     showInTab: true,
     showInDrawer: false,
     icon: (focused) =>
       <Icon name="users" size={30} color={focused ? '#AAAAEE' : '#000'} />,
   },
+ 
   {
-    name: screens.ACTION1,
+    name: screens.ADDCONTACTFILES,
     focusedRoute: screens.ContactStack,
-    title: 'ייצוא רשימת אנשי קשר',
-    showInTab: false,
-    showInDrawer: true,
-    icon: (focused) =>
-      <Icon name="users" size={30} color={focused ? '#AAAAEE' : '#000'} />,
-  },
-  
-  {
-    name: screens.ACTION3,
-    focusedRoute: screens.ContactStack,
-    title: 'יצירת קבוצה',
+    title: 'הפצה חדשה',
     showInTab: false,
     showInDrawer: true,
     icon: (focused) =>

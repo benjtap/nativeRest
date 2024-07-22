@@ -7,7 +7,7 @@ import ContactStackNavigator from './ContactNavigator'
 import AudioStackNavigator from './AudioNavigator'
 import CalendarStackNavigator from './CalendarNavigator'
 import ApplicationStackNavigator from './ApplicationNavigator'
-
+import MenuStackNavigator from './MenuNavigator'
 
 
 import {
@@ -48,6 +48,9 @@ const BottomTabNavigator = () => {
     <Tab.Navigator screenOptions={tabOptions}>
        <Tab.Screen name={screens.AppStack}  component={ApplicationStackNavigator}
       />
+      <Tab.Screen name={screens.MenuStack}  component={MenuStackNavigator}
+      />
+       
       <Tab.Screen name={screens.ContactStack}  component={ContactStackNavigator}
       />
     <Tab.Screen name={screens.AudioStack} component={AudioStackNavigator}

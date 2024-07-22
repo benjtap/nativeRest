@@ -12,7 +12,7 @@ String.isNullOrEmpty = function(value) {
   return !(typeof value === "string" && value.length > 0);
 }
 
-const Appli = (props) => {
+const MenuApp = (props) => {
   const { navigation } = props;
 
   
@@ -88,16 +88,16 @@ return data.filter(post =>  post.name.toLowerCase().includes(keyword.toLowerCase
 
 
   
-  const updateSelectedType = (selectedType) => () => {
-        setSelectedType(() => selectedType);
-  };
+ 
 
   const listSeparator = () => {
     return <View style={ styles.separator } />
     }
 
   const selectItem = (item) => () => {
-     navigation.navigate('TASKSAPP', {
+   
+  
+       navigation.navigate('TASKSAPP', {
         id: item.id ,name: item.name
       })
     
@@ -107,20 +107,22 @@ return data.filter(post =>  post.name.toLowerCase().includes(keyword.toLowerCase
  
  // useCallback(
   const renderItems =  useCallback(({ item }) => {
+
+  
     return (
     <TouchableOpacity style={styles.listItem} onPress={selectItem(item)}>
     <Text style={styles.listItemLabel}>{item.name}</Text>
     </TouchableOpacity>
     );
 
- // }
+
   })
 
   return (
     
     <View style={{ flex: 1 }}>
       <View style={{ padding: 20, backgroundColor: 'lightgray' }}>
-        {/* Content for the container at the top */}
+    
       </View>
     <View style={styles.container}>
       <View style={styles.inputContainer}>
@@ -137,7 +139,7 @@ return data.filter(post =>  post.name.toLowerCase().includes(keyword.toLowerCase
           <Text style={[styles.searchActionLabel, selectedType === 0 && styles.searchActionLabelActive]}>אנשי קשר</Text>
         </TouchableOpacity> */}
         <TouchableOpacity style={ [styles.searchActionBtn, styles.searchLeftActionBtn,  styles.searchActionBtnActive]} >
-          <Text style={ [styles.searchActionLabel,  styles.searchActionLabelActive]}>אפליקציה</Text>
+          <Text style={ [styles.searchActionLabel,  styles.searchActionLabelActive]}>תפריט</Text>
         </TouchableOpacity>
       </View>
       <View style={styles.list}>
@@ -150,7 +152,7 @@ return data.filter(post =>  post.name.toLowerCase().includes(keyword.toLowerCase
       </View>
     </View>
     <View style={{ padding: 20, backgroundColor: 'lightgray' }}>
-        {/* Content for the container at the top */}
+       
       </View>
     </View>
   );
@@ -255,4 +257,4 @@ const styles = StyleSheet.create({
 
 });
 
-export default Appli;
+export default MenuApp;

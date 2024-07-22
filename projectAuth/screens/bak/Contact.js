@@ -77,8 +77,7 @@ return data.filter(post =>  post.name.toLowerCase().includes(keyword.toLowerCase
  
  
   const fetchcontactsDataForPosts =  async () => {
-    //await AsyncStorage.removeItem('token');
-    //await AsyncStorage.removeItem('user');
+    
     setLoading(true)
   const url =`/Webhttp/getcontacts`;
   

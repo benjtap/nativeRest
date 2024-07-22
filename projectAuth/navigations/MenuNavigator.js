@@ -1,10 +1,7 @@
-
-
 import {createNativeStackNavigator} from  '@react-navigation/native-stack'
 
 import {
- TASKSAPP,
-  APP,
+ MENUSAPP,
   LOGOUT,
    
 } from '../constants/routeNames';
@@ -12,20 +9,18 @@ import {
 import React, { useState, useEffect } from 'react';
 import { routes,screens } from '../constants/RouteItems';
 
-import Application from '../screens/Application';
+import MenuApp from '../screens/MenuApp';
 
-// import Action1 from '../screens/action1';
-// import Action3 from '../screens/action3';
- import Tasksapp from '../screens/Tasksapp';
+ 
 
 
 import Logout from '../screens/Logout';
 
-const showtabdrawer =['AppStack']
+const showtabdrawer =['MenuStack']
 
-const ApplicationNavigator = (props) => {
+const MenuNavigator = (props) => {
 
-  const AppStack = createNativeStackNavigator();
+  const MenuStack = createNativeStackNavigator();
    const { navigation } = props;
 
   useEffect(() => {
@@ -44,13 +39,13 @@ const ApplicationNavigator = (props) => {
   return (
     //initialRouteName={CONTACT}
 
-    <AppStack.Navigator   screenOptions={{
+    <MenuStack.Navigator   screenOptions={{
       headerShown: false,
     }}>
-      <AppStack.Screen name={APP} component={Application} />
-      <AppStack.Screen name={TASKSAPP} component={Tasksapp} />
+      <MenuStack.Screen name={MENUSAPP} component={MenuApp} />
     
-       <AppStack.Screen name={LOGOUT} 
+    
+       <MenuStack.Screen name={LOGOUT} 
        component={Logout} 
        options={{
         headerShown: false,
@@ -59,7 +54,7 @@ const ApplicationNavigator = (props) => {
         detachPreviousScreen: true,
       }}
        />  
-    </AppStack.Navigator>
+    </MenuStack.Navigator>
   );
 };
-export default ApplicationNavigator;
+export default MenuNavigator;
