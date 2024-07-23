@@ -16,9 +16,9 @@ const Addcontactfiles = (props) => {
 
 
   useEffect(() => {
-    routes.map((record) => (
-      record.showInDrawer =false
- ))
+//     routes.map((record) => (
+//       record.showInDrawer =false
+//  ))
     validateForm();
     setStatusPicked(3)
 

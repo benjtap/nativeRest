@@ -122,7 +122,6 @@ return data.filter(post =>  post.name.toLowerCase().includes(keyword.toLowerCase
     
     <View style={{ flex: 1 }}>
       <View style={{ padding: 20, backgroundColor: 'lightgray' }}>
-    
       </View>
     <View style={styles.container}>
       <View style={styles.inputContainer}>

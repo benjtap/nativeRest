@@ -149,7 +149,7 @@ renderItem = (reservation, isFirst) => {
           </View>
         </View>
       </Modal>
-      </View>
+ </View>
       </SafeAreaView>
     )
 

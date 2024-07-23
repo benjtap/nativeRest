@@ -7,7 +7,7 @@ import axiosInstance from '../helpers/axiosInstance';
 import {useRoute} from '@react-navigation/native';
 import { routes,screens } from '../constants/RouteItems';
 
-const updatecontactfiles = (props) => {
+const Updatecontactfiles = (props) => {
   const { navigation } = props;
   const [fileUri, setFileUri] = useState(null);
   const [fileindex, setFileindex] = useState(0);
@@ -26,9 +26,9 @@ const updatecontactfiles = (props) => {
    
    
     if(!didFetch){
-      routes.map((record) => (
-            record.showInDrawer =false
-       ))
+      // routes.map((record) => (
+      //       record.showInDrawer =false
+      //  ))
       const oparamname = route.params?.filename ? route.params.filename : {};
       console.log(oparamname)
       setSelectedText(oparamname)
@@ -424,6 +424,6 @@ const styles = StyleSheet.create({
   },
  
   });
-export default updatecontactfiles;
+export default Updatecontactfiles;
 
 

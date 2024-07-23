@@ -46,10 +46,10 @@ let navegState = navigation.getState();
     const unsubscribe = navigation.addListener('focus', () => {
        
     
-      routes.map((record) => (
-        (showtabdrawer.indexOf(record.focusedRoute) >-1)
-   && (record.showInTab===false)  ? record.showInDrawer =true :  record.showInDrawer =false
-  ))
+  //     routes.map((record) => (
+  //       (showtabdrawer.indexOf(record.focusedRoute) >-1)
+  //  && (record.showInTab===false)  ? record.showInDrawer =true :  record.showInDrawer =false
+  // ))
       searchfilescontacts();
     
     });
