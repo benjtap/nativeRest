@@ -169,6 +169,8 @@ const Addcontactfiles = (props) => {
       if (!newData[rowIndex]) {
         newData[rowIndex] = [];
       }
+
+     
       newData[rowIndex][cellIndex] = text;
 
       const duplicateNumbers = findDuplicatesOptimized(csvData);

@@ -31,11 +31,40 @@ const Menu = () => {
 
  
   const [fileindex, setFileindex] = useState(0);
-
+  const [selectedDate, setSelectedDate] = useState(new Date());
   
+  // const [data, setData] = useState([
+ 
+  //   {
+  //     title: 'Software',
+  //     items: [
+  //       {
+  //         title: 'JS',
+         
+  //       },
+  //       {
+  //         title: 'React JS',
+  //         items: [
+  //           {
+  //             title: 'Components',
+              
+  //           },
+  //           {
+  //             title: 'Hooks',
+              
+  //           },
+  //         ],
+  //       },
+  //     ],
+  //   },
+  // ]);
+
   const [data, setData] = useState([])
 
-
+  const handleConfirm = (date) => {
+    setSelectedDate(date);
+   
+  };
   const [selected, setSelected] = useState(null);
   const [arrtitle, setTitle] = useState([]);   
 
@@ -195,7 +224,7 @@ const Menu = () => {
    
         setErrors(false)
         if (isLevel >0){
-          
+          console.log('ttt' +isLevel)
           addtochildTree(isIndex,isLevel,isItem)
         }
        
@@ -236,7 +265,7 @@ const Menu = () => {
     setData(function(){
       // create shallow copy of array
       const newPost = [...data];
-    
+      console.log(data)
       
        
         isItem.title= step1Data.menuname
@@ -249,11 +278,11 @@ const Menu = () => {
     
         for(var pindex in arrtitle){
           var qval = arrtitle[pindex]
-     
+    
           var qrdata ={}
           isItem.items.splice(isIndex, 0, qrdata);
-          //qrdata.title=qval
-          qrdata.makchim=qval
+          qrdata.title=qval
+            
           i=i+1;
          }
     
@@ -332,10 +361,8 @@ const Menu = () => {
 
       setTitle(prevArray => [...prevArray, ""])
      
-     
       setCsvData((prevData) => {
         const newData = [...prevData];
-      
         if (!newData[fileindex]) {
           newData[fileindex] = [];
         }
@@ -373,11 +400,11 @@ const Menu = () => {
         return newList
       });
     }
-    // const toggleModal = () => {
+    const toggleModal = () => {
    
-    //   setModalVisible(!isModalVisible);
+      setModalVisible(!isModalVisible);
    
-    // };
+    };
    
    
     const fetchAudioDataForPosts = async () => {
@@ -423,8 +450,6 @@ const Menu = () => {
       setStep1Data({ menuname: '' }) 
       setStep2Data({ audioname: '' })
       setTitle([])
-      setCsvData([])
-      setFileindex(0)
     };
 
     const AddModallevel = (index,level,it) => {
@@ -437,8 +462,6 @@ const Menu = () => {
       setModalVisible(true)
     }
 
-   
-
     const listenAudiorecord = async(filename) => {
       const limit = 30;
       console.log(filename)
@@ -449,48 +472,8 @@ const Menu = () => {
   
        
       };
-      const GetItemInfo = ({item,index,level}) => {
-       let title= "";
-
-       if(level==1)
-        for(var p in data){
-            title = data[p].title
-         }
-
-        else if(level==2){
-        
-          for(var p in data){
-            var pindex =data[p]
-            for(var pq in pindex.items){
-            var rpq = pindex.items[pq]
-              if(rpq.title !=undefined)
-              title = rpq.title
-            }
- 
-        }
-       }
-
-       else if(level==3){
-        
-        for(var p in data){
-          var pindex =data[p]
-          for(var pq in pindex.items){
-          var rpq = pindex.items[pq]
-          
-          for(var lpq in rpq.items){
-            var gpq = rpq.items[lpq]
-            //console.log(gpq.title)
-            if(gpq.title !=undefined)
-               title = gpq.title
-          }
-       }
-
-      }
-     
-    }
-       return (   "(" + title + ")"  );
-    }
-      
+    
+    
    
   return (
     <View style={{ flex: 1 }}>
@@ -506,7 +489,7 @@ const Menu = () => {
    
            <View style = {{flex:1,flexDirection:'row',flexWrap:'wrap',justifyContent:'center'}}>
              
-          <Text style={{fontSize:24, fontWeight: 'bold'}}> {item.title}   
+             <Text style={{fontSize:24, fontWeight: 'bold'}}> {item.title}   
              {item.items.length>0 && 
           <View style={{ flexDirection:"row" }}>
              <View style={{ marginHorizontal: 10,marginTop: 5 }}>
@@ -522,128 +505,42 @@ const Menu = () => {
            
            {item.items.length==0 &&  <Button   style={styles.button1}  title="הוסף"  
              onPress={() => addChild(index,0,item)} /> }
-         </Text>
-        </View>
+              </Text>
+              
+              </View>
           
             {item.items && <>
             {item.items.map((item, index) => (
                 <View key={index} style={{ borderBottomColor: 'black', borderBottomWidth: .5}}>
                     
-                    {/* <View style = {{flexDirection:'row',justifyContent:'center'}}>
+                    <View style = {{flexDirection:'row',justifyContent:'center'}}>
                       <Text style={{fontSize: 20, marginRight: 50, color: 'blue03'}}>
                         {item.makchim} <Button style={styles.button1}  title="הוסף" onPress={() => AddModallevel(index,1,item)  } 
                       /></Text>    
-                   </View>    */}
+                      
+                       
+              </View>  
+                   
+                 
 
-              
-           <View style = {{flex:1,flexDirection:'row',flexWrap:'wrap',justifyContent:'center'}}>
-         
-            {item.items !=null && 
-               <View style={{ flexDirection:"row" }}> 
-             <View style={{ marginHorizontal: 10,marginTop: 5 }}>
-              <Text style={{fontSize: 20, color: 'green'}}> {item.title} </Text>
-              </View>
-              <View style={{ marginHorizontal: 10,marginTop: 5 }}>
-              <Text style={{fontSize: 20, color: 'blue03'}}> 
-              <GetItemInfo
-             item={item}
-            index={index}
-            level={1}
-          />    מקש {item.makchim} </Text>
-              </View>
-                <View style={{ marginHorizontal: 10,marginTop: 5 }}>
-                 <Button   style={styles.button1}  title="ערוך"  
-                onPress={() => setModalVisible(true)} /> 
-                </View> 
-                <View style={{ marginHorizontal: 10,marginTop: 5 }}>
-                <Button   style={styles.button1}  title="נגן"  
-                onPress={() => listenAudiorecord(item.audioname)} /> 
-                </View> 
-               
-               
-             </View>
-           
-                } 
-         {item.items==null && 
-        
-         <Text style={{fontSize: 20, marginRight: 50, color: 'blue03'}}>
-          <GetItemInfo
-             item={item}
-            index={index}
-            level={1}
-          />  מקש {item.makchim} <Button style={styles.button1}  title="הוסף" onPress={() => AddModallevel(index,1,item)  } 
-          /></Text> 
-         
-         }
-
-           </View>
 
                      {item.items && <>
                      {item.items.map((item, index) => (
                        <View key={index}  style={{ borderBottomColor: 'black', borderBottomWidth: .5}}>
-                         
-       <View style = {{flex:1,flexDirection:'row',flexWrap:'wrap',justifyContent:'center'}}>
-         {item.items !=null && 
-            <View style={{ flexDirection:"row" }}> 
-          <View style={{ marginHorizontal: 10,marginTop: 5 }}>
-           <Text style={{fontSize: 20, color: 'purple'}}> {item.title} </Text>
-           </View>
-           <View style={{ marginHorizontal: 10,marginTop: 5 }}>
-           <Text style={{fontSize: 20, color: 'green'}}>
-           <GetItemInfo
-             item={item}
-            index={index}
-            level={2}
-          />   מקש {item.makchim}  </Text>
-           </View>
-             <View style={{ marginHorizontal: 10,marginTop: 5 }}>
-              <Button   style={styles.button1}  title="ערוך"  
-             onPress={() => setModalVisible(true)} /> 
-             </View> 
-             <View style={{ marginHorizontal: 10,marginTop: 5 }}>
-             <Button   style={styles.button1}  title="נגן"  
-             onPress={() => listenAudiorecord(item.audioname)} /> 
-             </View> 
-          </View>
-        
-             } 
-      {item.items==null &&  <Text style={{fontSize: 20, marginRight: 62, color: 'green'}}>
-      <GetItemInfo
-             item={item}
-            index={index}
-            level={2}
-          />   מקש {item.makchim} <Button style={styles.button1}  title="הוסף" onPress={() => AddModallevel(index,2,item)  } 
-      /></Text>    }
-      </View>
-
-                         
-                           {/* <View style = {{flexDirection:'row',flexWrap:'wrap',justifyContent:'center'}}>
+                           <View style = {{flexDirection:'row',flexWrap:'wrap',justifyContent:'center'}}>
                            <Text style={{fontSize: 18, marginRight:62,color: 'green'}}>{item.title} <Button   style={styles.button1}  title="הוסף"  
              onPress={() => addChild( index,2,item)} />   
              
-                   </Text></View> */}
+                   </Text></View>
 
                    {item.items && <>
                      {item.items.map((item, index) => (
                        <View key={index}  style={{ borderBottomColor: 'black', borderBottomWidth: .5}}>
-                        
-                        <View style = {{flex:1,flexDirection:'row',flexWrap:'wrap',justifyContent:'center'}}>
-        
-      <Text style={{fontSize: 20, marginRight: 82, color: 'purple'}}>
-      <GetItemInfo
-             item={item}
-            index={index}
-            level={3}
-          /> מקש  {item.makchim}
-                     
-                      </Text>    
-      </View>
-
-                           {/* <View style = {{flexDirection:'row',flexWrap:'wrap',justifyContent:'center'}}>
+                           <View style = {{flexDirection:'row',flexWrap:'wrap',justifyContent:'center'}}>
                            <Text style={{fontSize: 16, marginRight:82,color: 'purple'}}>{item.title} <Button   style={styles.button1}  title="הוסף"  
              onPress={() => addChild( index,3,item)} />   
            
-                   </Text></View> */}
+                   </Text></View>
                    
  
                        </View>
@@ -658,9 +555,8 @@ const Menu = () => {
             ))}
            </>}
         </View>
-     ))}
-     </ScrollView>
-    
+     ))}</ScrollView>
+     {/* </View> */}
 <View style={{ flexDirection:"row" }}>
        
           
@@ -702,7 +598,7 @@ const Menu = () => {
           transparent={false}
           visible={isModalVisible}
           onRequestClose={() => {
-          
+            alert('Modal has been closed.');
           }}>
            <View style={styles.modalView}>
             <View style={{ flex: 0.1, justifyContent: "flex-start",backgroundColor:'gray'  }} >
@@ -1083,28 +979,47 @@ const styles = StyleSheet.create({
   }
 });
 
-// const [data, setData] = useState([
- 
-  //   {
-  //     title: 'Software',
-  //     items: [
-  //       {
-  //         title: 'JS',
-         
-  //       },
-  //       {
-  //         title: 'React JS',
-  //         items: [
-  //           {
-  //             title: 'Components',
-              
-  //           },
-  //           {
-  //             title: 'Hooks',
-              
-  //           },
-  //         ],
-  //       },
-  //     ],
-  //   },
-  // ]);
+// const styles = StyleSheet.create({
+  
+//   fixToText: {
+//     flex: 1,
+    
+//     justifyContent: 'space-around',
+//     justifyContent: 'space-between',
+//     marginLeft:10,
+//     marginRight:10
+//   },
+//   Viewitem: {
+//       flexDirection: 'row',
+//     justifyContent: 'space-around',
+//     margin:10,
+//     padding:10,
+//     borderBottomWidth: 1,
+     
+//   },
+//   button1: { 
+//     backgroundColor: '#aaa', 
+//     borderRadius: 8, 
+//     paddingVertical: 10, 
+//     paddingHorizontal: 20, 
+//     alignItems: 'center', 
+//     marginTop: 26, 
+//     marginBottom: 12,
+//     width: 68,
+//     height: 48
+//   }
+
+// });
+
+
+// const styles = StyleSheet.create({
+//   row: {
+//       borderColor: 'rgb(84, 85, 86)',
+//       backgroundColor: 'rgb(10, 157, 40)',
+//       borderWidth: 1,
+//       justifyContent: 'center',
+//       alignItems: 'center',
+//       height: 30,
+//   },
+  
+// })

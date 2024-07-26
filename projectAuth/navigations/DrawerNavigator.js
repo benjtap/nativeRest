@@ -12,20 +12,24 @@ import {
 
 
 
-
+const showtabdrawer =['Contacts','Application','MENUSAPP','Audio']
 
 const CustomDrawerContent = (props) => {
   const currentRouteName = props.nav()?.getCurrentRoute()?.name
  
- if (currentRouteName ==='Contacts' ||currentRouteName ==='Application' ||currentRouteName ==='MENUSAPP' ||currentRouteName ==='Audio')
+ // const showtabdrawer =['Contacts','Application','MENUSAPP','Audio']
+
+ //if (currentRouteName ==='Contacts' ||currentRouteName ==='Application' ||currentRouteName ==='MENUSAPP' ||currentRouteName ==='Audio')
     return (
     <DrawerContentScrollView {...props}>
       {
         routes.filter(route => route.showInDrawer).map((route) => {
           const focusedRoute = routes.find(r => r.name === currentRouteName)
+        
           const focused = focusedRoute ?
             route.name === focusedRoute?.focusedRoute :
-            route.name === screens.HomeStack
+            route.name === screens.AppStack
+         if (showtabdrawer.indexOf(currentRouteName) >-1)
           return (
             <DrawerItem
               key={route.name}
@@ -42,29 +46,7 @@ const CustomDrawerContent = (props) => {
       }
     </DrawerContentScrollView>
   )
-  else
- <DrawerContentScrollView {...props}>
-      {
-        routes.filter(route => route.showInDrawer).map((route) => {
-          const focusedRoute = routes.find(r => r.name === currentRouteName)
-          const focused = focusedRoute ?
-            route.name === focusedRoute?.focusedRoute :
-            route.name === screens.HomeStack
-          return (
-            <DrawerItem
-              key={route.name}
-              label={() => (
-                <Text style={focused ? styles.drawerLabelFocused : styles.drawerLabel}>
-                  {route.title}
-                </Text>
-              )}
-              onPress={() => props.navigation.navigate(route.name)}
-              style={[styles.drawerItem, focused ? styles.drawerItemFocused : null]}
-            />
-          )
-        })
-      }
-    </DrawerContentScrollView>
+
 
 }
 
@@ -72,8 +54,10 @@ const CustomDrawerContent = (props) => {
 
 const DrawerNavigator = ({ nav }) => {
   
-  const screenOptions = React.useCallback(({navigation})=>{
-
+  const screenOptions = React.useCallback(({navigation,props})=>{
+    const currentRouteName = nav()?.getCurrentRoute()?.name
+    console.log(currentRouteName)
+    if (showtabdrawer.indexOf(currentRouteName) >-1)
     return {
         headerStyle: {
          backgroundColor: '#fff',
@@ -100,25 +84,23 @@ const DrawerNavigator = ({ nav }) => {
             overflow: 'hidden',
             background: 'transparent'
           },
+          drawerPosition: 'left',
+         
           drawerPosition: 'right',
           drawerContentStyle:{
            flexDirection:"column-reverse"
          },
-        headerTitle: () => <Image source={require('../assets/favicon.png')} />,
+        // headerTitle: () => <Image source={require('../assets/favicon.png')} />,
         headerTintColor: '#404040',
-         headerRight: () => (
-          <TouchableOpacity onPress={() =>  {
-            if (1===1)
-              navigation.toggleDrawer()
-           }} style={styles.headerLeft}>
-            <Icon name="bars" size={20} color="#eee" />
-          </TouchableOpacity>
-        ),
-          
-        headerTitleStyle: {
+               headerTitleStyle: {
           fontWeight: 'bold',
         },
     }
+    else return {
+    
+      headerLeft:false
+  }
+
 }, [])
 
  
@@ -128,54 +110,18 @@ const DrawerNavigator = ({ nav }) => {
   return (
     <Drawer.Navigator
     screenOptions={screenOptions}
-    
-      // screenOptions={({ navigation }) => ({
-      //   headerStyle: {
-      //     backgroundColor: '#AAAAEE',
-      //     height: 50,
-      //   },
-   
-      //   drawerStyle: {
-      //       width: 200,
-      //       height:300,
-      //        right: 200,
-      //        top:70,
-      //       backgroundColor: '#fff',
-      //       borderTopRightRadius: 20,
-      //       borderTopLeftRadius: 20,
-      //       borderBottomRightRadius: 20,
-      //       borderBottomLeftRadius: 20,
-      //       overflow: 'hidden',
-      //       background: 'transparent'
-      //     },
-      //     drawerPosition: 'right',
-      //     drawerContentStyle:{
-      //      flexDirection:"column-reverse"
-      //    },
-        
-         
-      //     // 
-      //   headerRight: () => (
-      //     <TouchableOpacity onPress={() => navigation.toggleDrawer()} style={styles.headerLeft}>
-      //       <Icon name="bars" size={20} color="#eee" />
-      //     </TouchableOpacity>
-      //   ),
-      // })}
-      
-      drawerContent={(props) => <CustomDrawerContent {...props} nav={nav}
+       drawerContent={(props) => <CustomDrawerContent {...props} nav={nav}
          authDispatch={authDispatch} />} >
     
    
-    <Drawer.Screen name={screens.AppTab} component={BottomTabNavigator} options={{
+    <Drawer.Screen name={screens.AppTab} component={BottomTabNavigator}
+     options={{
        headerTitle: () => <Image source={require('../assets/favicon.png')} />,
       
-      }}/>
+      }}
+      />
    
-      {/* <Drawer.Screen name={screens.ContactTab} component={BottomTabNavigator} options={{
-        // title: 'Home',
-        headerTitle: () => <Image source={require('../assets/favicon.png')} />,
       
-      }}/> */}
       
     </Drawer.Navigator>
   )
