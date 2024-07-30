@@ -129,15 +129,10 @@ useEffect(() => {
   
   return (
   
- <View style={styles.container}>
-  
-
-      <View style={styles.searchActionContainer}>
-        <TouchableOpacity style={[styles.searchActionBtnActive]} >
-          <Text style={[styles.searchActionLabelActive]}>הוספת תזמון</Text>
-        </TouchableOpacity>
-
-      </View>
+    <View style={{ flex: 1 }}>
+    <View style={{ padding: 20, backgroundColor: 'lightgray' }}>
+      {/* Content for the container at the top */}
+    </View>
       <View style={{
           padding: 20,
           flex: 1,
@@ -147,7 +142,7 @@ useEffect(() => {
         }}>
      {/* <View style={styles.fixToText}> */}
       <Text style={styles.title}>
-      Select group.
+      בחר אפליקציה
     </Text>
     {/* <View style={styles.Viewitem}> */}
         <Dropdown
@@ -161,7 +156,7 @@ useEffect(() => {
           maxHeight={300}
           labelField="label"
           valueField="value"
-          placeholder={!isFocus ? 'Select item' : '...'}
+          placeholder={!isFocus ? 'בחר' : '...'}
         
           value={value}
           onFocus={() => setIsFocus(true)}
@@ -180,7 +175,8 @@ useEffect(() => {
           )}
         />
    
-   <SafeAreaView style={{ flex: 1 }}>
+   <View style={{ flex: 1 }}>
+   
       <View
         style={{
           padding: 20,
@@ -193,7 +189,7 @@ useEffect(() => {
         <Text style={{ fontSize: 24, fontWeight: 'bold', marginBottom: 20 }}>
           {selectedDate ? selectedDate.toLocaleDateString() : 'No date selected'}
         </Text>
-        <Button title="Select a date" onPress={showDatePicker} />
+        <Button title="בחר תאריך" onPress={showDatePicker} />
         <DateTimePickerModal
           date={selectedDate}
           isVisible={datePickerVisible}
@@ -223,7 +219,7 @@ useEffect(() => {
        {/* <Button style={styles.button1} title="הפעל" onPress={onSubmit} /> */}
         </View>
 
-    </SafeAreaView>
+    </View>
 
       {/* </View> */}
       {/* </View> */}
@@ -238,6 +234,9 @@ useEffect(() => {
       
 
 
+    <View style={{ padding: 20, backgroundColor: 'lightgray' }}>
+      {/* Content for the container at the top */}
+    </View>
     </View>
    
  

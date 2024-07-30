@@ -1,910 +1,226 @@
-import React, { useState, useEffect } from 'react';
-//import { I18nManager } from 'react-native'
-// import all the components we are going to use
-import {Button,View, Text,StyleSheet,TouchableOpacity,TextInput,ScrollView,Modal,FlatList, Alert,} from 'react-native';
+import  React, { useState, useEffect, useContext, useCallback } from 'react';
+import { StyleSheet, View, TextInput, TouchableOpacity, Text, FlatList, Button,Alert } from 'react-native';
+
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { COLORS, FONT, SIZES } from "../constants";
-import { Dropdown } from 'react-native-element-dropdown';
-import AntDesign from '@expo/vector-icons/AntDesign';
-import { ProgressSteps, ProgressStep } from 'react-native-progress-steps';
+
 import axiosInstance from '../helpers/axiosInstance';
-import { Audio } from 'expo-av';
-import * as FileSystem from 'expo-file-system';
+import { LinearGradient } from "expo-linear-gradient";
 
-const Menu = () => {
-  const [selectedText, setSelectedText] = useState(null);
 
-  const [isFocus, setIsFocus] = useState(false);
+String.isNullOrEmpty = function(value) {
+  return !(typeof value === "string" && value.length > 0);
+}
 
-  const makachim = [
-    {label: '1', value: '1'},
-    {label: '2', value: '2'},
-    {label: '3', value: '3'},
-    {label: '4', value: '4'},
-    {label: '5', value: '5'},
-    {label: '6', value: '6'},
-    {label: '7', value: '7'},
-    {label: '8', value: '8'},
-    {label: '9', value: '9'},
-  ];
+const Menu = (props) => {
+  const { navigation } = props;
 
-  const [dataddl, setDataddl] = useState([]);
-
+  
  
-  const [fileindex, setFileindex] = useState(0);
-
-  
-  const [data, setData] = useState([])
 
 
-  const [selected, setSelected] = useState(null);
-  const [arrtitle, setTitle] = useState([]);   
-
+  const [keyword, setKeyword] = useState('');
+  // 0 is user, 1 is group.
+  const [selectedType, setSelectedType] = useState(0);
+  // data that will be shown on the list, data could be the list of users, or the list of groups.
+ const [data, setData] = useState([]);
  
+ const [loading, setLoading] = useState(false)
+ const [error, setError] = useState([]);
+ const showtabdrawer =['ContactStack']
+
+ const filterdata= React.useMemo(() =>{
+
+return data.filter(post =>  post.filename.toLowerCase().includes(keyword.toLowerCase()))
+
+},[data,keyword])
   
-  const [step1Data, setStep1Data] = useState({ menuname: '' });
 
-  const [step2Data, setStep2Data] = useState({ audioname: ''});
-
-  const [csvData, setCsvData] = useState([]);
-  const [step3Data, setStep3Data] = useState(csvData);
-  
-  const [duplicatemakach, setDuplicatemakach] = useState(0);
-  const [nullmakach, setNullmakach] = useState(0);
-  //const [value, setValue] = useState(null);
-
-  const [isFormValid, setIsFormValid] = useState(false); 
-  const [errormessages, setErrormessages] = useState({}); 
-  const [errors, setErrors] = useState(false); 
-
-  const [isToogleOssef, setIsToogleOssef] = useState(true); 
-
-  const [isLevel, setIsLevel] = useState(0);
-  const [isIndex, setIsIndex] = useState(0);
-  const [isItem, setisItem] = useState([]);
-
-  const buttonTextStyle = {
-    color: '#393939'
-};
-  const [didFetch,setDidFetch] = useState(false)
+let navegState = navigation.getState();
+     
+  // console.log('CURRENT SCREEN', navegState.routes[navegState.index].name);
 
   useEffect(() => {
-    if(!didFetch){
-     
-      
-      fetchAudioDataForPosts();
-      setDidFetch(true)
-      }
 
-      
-   
-  }, []);
-
-
-
- 
-  
- 
-
-
-  function findDuplicatesOptimized(array) {
-    const duplicates = [];
-    const frequencyMap = {};
+    const unsubscribe = navigation.addListener('focus', () => {
+      searchfilescontacts();
     
-    for (let i = 0; i < array.length; i++) {
-      const element = array[i][0];
-      
-      if (frequencyMap[element]) {
-        if (!duplicates.includes(element)) {
-          duplicates.push(element);
-        }
-      } else {
-        frequencyMap[element] = true;
-      }
-    }
-    
-    return duplicates;
-  }
+    });
 
-  const handleTitle= (index) => {
-
-         if (arrtitle[index]=="") 
-          return ""
-        else
-        return "מקש " + arrtitle[index] ;
-  }
-
-    const addChild = (index,level,it =null) => {
- 
-
-    setData(function(){
-      // create shallow copy of array
-      const newPost = [...data];
-      
-       for(var pindex in newPost){
-          
-        
-        p = newPost[pindex] 
-
-           if (level==0 )
-            p.items.splice(index, 0, { title: "billy" });
-          else{
-            if( it.items===undefined)
-            {
-                 it.items = [] 
-          it.items.splice(index, 0, { title: "billy" });
-            }else
-            {
-              it.items.splice(index, 0, { title: "billy" });
-
-            }
-
-          }
-          return newPost;
-         }
-     })
+      searchfilescontacts();
+     return unsubscribe;
    
-    }
- 
- 
- 
-    const [isModalVisible, setModalVisible] = useState(false);
-    const [active, setActive] = useState(0);
- 
-    const onSubmit1 = function() {
-     
-     let isValid =false
-   
-     let nullmakach =null;
-         nullmakach = arrtitle.filter((user) => {
-          return (user==='' || user===null);
-      });
-      
-     
-    let duplicatemakach =findDuplicatesOptimized(arrtitle)
+  }, [navigation]);
 
-    
-      if(duplicatemakach.length >0) { 
-        errormessages.duplicatemakach = 'touch must be unique.'; 
-        alert('touch must be unique.')
-        isValid =false
-
-        } 
-  
-  
-      
-      else if(nullmakach.length>0 || arrtitle.length ===0) { 
-        errormessages.duplicatemakach = 'touch must be not null.'; 
-        alert(' touch must be not null.')
-        isValid =false
-         
-      } 
-      else if (nullmakach.length===0 && arrtitle.length >0 && duplicatemakach.length ===0) {
-        console.log('isFormValid')
-        setErrors(errors); 
-        isValid =true
-      }
-      
-    
-       if(!isValid){
-       
-        setErrors(true)
-        return;
-        }
-      else
-      {
-   
-        setErrors(false)
-        if (isLevel >0){
-          
-          addtochildTree(isIndex,isLevel,isItem)
-        }
-       
-      else{
-       
-        addtochild()
-      }
-       
-      
-      setModalVisible(false);
-        setIsToogleOssef(false)
-        return;
-      }
+ 
+  const handleDelete = async (item) => {
+    const url =`/Webhttp/deletefilesmenu`;
+    var getfilemenuPost =
+    { 
+     "filename": item.filename
      }
     
-    const onNextStep = () => {
-     
-      if(step1Data.menuname ==""){
-        alert('menu name must  not be empty.')
-        errors.menuname = 'menu name must  not be empty.';
-        setErrors(true)
       
-        
-      }
-      else
-      {
-      
-       
-        setErrors(false)
+    await axiosInstance.post(url,getfilemenuPost)
+  
+     .then(({data}) => {
+  
+      if(data=="message"){
+        alert('File exist in Application, you must remove him before')
         return;
       }
-     
+            setData(data)
+            setLoading(false)
+      }).catch((err) => {
+        
+       })
+
+      }
+
+      const handleconfirmDelete= (item) => {
+        Alert.alert(
+          'confirmation',
+          'Are you sure to delete', // <- this part is optional, you can pass an empty string
+          [
+            {text: 'כן', onPress: () => handleDelete(item)},
+            {text: 'לא', onPress: () => console.log('OK Pressed')},
+          ],
+          {cancelable: true},
+        );
+    
+      }
+    
+
+  const fetchfilescontactsDataForPosts = async () => {
+    
+    setLoading(true)
+    const url =`/Webhttp/getAllfilesMenu`;
+  
+      
+    await axiosInstance.get(url)
+  
+     .then(({data}) => {
+            setData(data)
+            setLoading(false)
+      }).catch((err) => {
+        
+       })
+   
+   }
+  
+
+  const searchfilescontacts = () => {
+      
+    fetchfilescontactsDataForPosts();
   };
 
+
+  
+  const updateSelectedType = (selectedType) => () => {
+        setSelectedType(() => selectedType);
+  };
+
+  const listSeparator = () => {
+    return <View style={ styles.separator } />
+    }
+
+  const selectItem = (item) => () => {
+     navigation.navigate('EDITMENUFILES', {
+        filename: item.filename
+      })
+    };
+
+
+  // const renderItems =  useCallback(({ item }) => {
+
+  //    return (
  
+  //   <View style={{ flexDirection:"row" }}>
+  //      <View style={{ marginHorizontal: 10 }}> 
+  //      <Button title="מחק"  onPress={() => handleconfirmDelete( item)}  style={{ padding: 20, }} />
+        
+  //       </View> 
+  //         <View style={{ flex:1,marginHorizontal: 10,}}>
+  //         <TouchableOpacity style={styles.listItem} onPress={selectItem(item)}>
+  //  <Text style={styles.listItemLabel}>{item.filename}</Text>
+  // </TouchableOpacity>
+  //    </View>
+  //    </View>
 
-  const addtochildTree  = (isIndex,isLevel,isItem) =>{
-    setData(function(){
-      // create shallow copy of array
-      const newPost = [...data];
-    
-      
+  //   );
+
+
+  // })
+
+  const renderItems =  useCallback(({ item }) => {
+    return (
+      <LinearGradient colors={['#5ED2A0', '#C3CBDC']}> 
+      <View style={{ flex: 1,flexDirection:"row", justifyContent: 'center',
+       alignItems: 'center', }} onPress={selectItem(item)}>
        
-        isItem.title= step1Data.menuname
-        isItem.audioname=  step2Data.audioname
-        isItem.items = [] 
-
-        
-        
-        let i=0;
-    
-        for(var pindex in arrtitle){
-          var qval = arrtitle[pindex]
-     
-          var qrdata ={}
-          isItem.items.splice(isIndex, 0, qrdata);
-          //qrdata.title=qval
-          qrdata.makchim=qval
-          i=i+1;
-         }
-    
-
-       
-    return newPost;
-
-      })
-  }
-
-  const addtochild  = () =>{
-  
-    var pdata = [];
-
-
-    var rdata ={}
-    rdata.title= step1Data.menuname
-    rdata.audioname=  step2Data.audioname
-      
-    pdata.splice(0, 0, rdata);
-
-    rdata.items = []
-   
-    let i=0;
-    
-    for(var pindex in arrtitle){
-      var qval = arrtitle[pindex]
-
-      var qrdata ={}
-      rdata.items.splice(i, 0, qrdata);
-      qrdata.makchim=qval
-        
-      i=i+1;
-     }
-
-    setData(pdata)
-
-    }
-
-  const onNextStep1= () => {
-      
-    if(step2Data.audioname ==""){
-      alert('audio name must  not be empty.')
-      errormessages.audioname = 'audio name must  not be empty.';
-      
-      setErrors(true)
-      
-      
-    }
-    else
-    {
-    
-     
-      setErrors(false)
-      return;
-    }
-   
-};
-
-
-
-    const handleOnChange = function(item,index) {
-     
-      setTitle((prevArray) => {
-        const newarrData = [...prevArray];
-        newarrData[index] = item.label;
-
-       
-
-        return newarrData;
-
-      })
-     }
-
-    const handleAddRow = () => {
-
-      setTitle(prevArray => [...prevArray, ""])
-     
-     
-      setCsvData((prevData) => {
-        const newData = [...prevData];
-      
-        if (!newData[fileindex]) {
-          newData[fileindex] = [];
-        }
-       newData[fileindex][0] = makachim;
-    
-       let count = fileindex + 1;
-  
-         setFileindex(count)
-         
-        return newData;
-      });
-      
-    };
-
-    const handleDelete = (index) =>  {
-      
-      setTitle((prevArray) => {
-        const newarrData = [...prevArray];
-        
-        newarrData.splice(index, 1);
-        return newarrData;
-
-      })
-      
-      setCsvData((prevData) => {
-        const newList = [...prevData];
-      
-      
-        newList.splice(index, 1);
-        
-        let count = fileindex - 1;
-       
-        setFileindex(count)
-    
-        return newList
-      });
-    }
-    // const toggleModal = () => {
-   
-    //   setModalVisible(!isModalVisible);
-   
-    // };
-   
-   
-    const fetchAudioDataForPosts = async () => {
-      const limit = 30;
-  
-      
-  
-      let url = `/Webhttp/getaudios`
-  
-      await axiosInstance.get(url)
-  
-        .then(({ data }) => {
-       
-
-          // Array to store partial objects
-          let ddldata = [];
-  
-          // Using forEach() to create partial objects
-          data.forEach(obj => {
-            const partialObj = {};
-            partialObj.label = obj.name;
-            partialObj.value = obj.filename;
-            // You can include other properties as needed
-            ddldata.push(partialObj);
-          });
-  
-      
-          setDataddl(ddldata)
-  
-  
-        })
-  
-    };
-   
-    const handleExit = () => {
-         
-      setModalVisible(false);
-   
-    };
-
-    const ClearModal = () => {
-         
-      setStep1Data({ menuname: '' }) 
-      setStep2Data({ audioname: '' })
-      setTitle([])
-      setCsvData([])
-      setFileindex(0)
-    };
-
-    const AddModallevel = (index,level,it) => {
-     setIsLevel(level)
-     setIsIndex(index);
-
-     setisItem(it);
-
-      ClearModal()
-      setModalVisible(true)
-    }
-
-   
-
-    const listenAudiorecord = async(filename) => {
-      const limit = 30;
-      console.log(filename)
-      
-       const playbackObject = new Audio.Sound();
-          await playbackObject.loadAsync({ uri: FileSystem.documentDirectory + 'recordings/' + `${filename}` });
-          await playbackObject.playAsync();
-  
-       
-      };
-      const GetItemInfo = ({item,index,level}) => {
-       let title= "";
-
-       if(level==1)
-        for(var p in data){
-            title = data[p].title
-         }
-
-        else if(level==2){
-        
-          for(var p in data){
-            var pindex =data[p]
-            for(var pq in pindex.items){
-            var rpq = pindex.items[pq]
-              if(rpq.title !=undefined)
-              title = rpq.title
-            }
- 
-        }
-       }
-
-       else if(level==3){
-        
-        for(var p in data){
-          var pindex =data[p]
-          for(var pq in pindex.items){
-          var rpq = pindex.items[pq]
+      <View style={{ width: "14%",margin: 10 }}> 
+      <Button title="מחק"  onPress={() => handleconfirmDelete( item)}   style={styles.button}  />
+         </View>  
           
-          for(var lpq in rpq.items){
-            var gpq = rpq.items[lpq]
-            //console.log(gpq.title)
-            if(gpq.title !=undefined)
-               title = gpq.title
-          }
-       }
-
-      }
-     
-    }
-       return (   "(" + title + ")"  );
-    }
-      
+        
+         <View style={{ flex: 1,marginHorizontal: 10,}}>
+         <TouchableOpacity style={styles.listItem} onPress={selectItem(item)}>
+  <Text style={styles.listItemLabel}>{item.filename}</Text>
+ </TouchableOpacity>
+    </View>
+  
    
+    </View>
+    </LinearGradient>
+    );
+
+  })
+
+
   return (
     <View style={{ flex: 1 }}>
     <View style={{ padding: 20, backgroundColor: 'lightgray' }}>
-  
+      {/* Content for the container at the top */}
     </View>
-    {/* <View style={styles.container}> */}
-    <ScrollView style={styles.scrollView}>    
-    {data.map((item, index) => (
-        <View key={index} style={{borderBottomColor: 'black', borderBottomWidth: .5,marginTop:25}}>
-          
-          
-   
-           <View style = {{flex:1,flexDirection:'row',flexWrap:'wrap',justifyContent:'center'}}>
-             
-          <Text style={{fontSize:24, fontWeight: 'bold'}}> {item.title}   
-             {item.items.length>0 && 
-          <View style={{ flexDirection:"row" }}>
-             <View style={{ marginHorizontal: 10,marginTop: 5 }}>
-              <Button   style={styles.button1}  title="ערוך"  
-             onPress={() => setModalVisible(true)} /> 
-             </View> 
-             <View style={{ marginHorizontal: 10,marginTop: 5 }}>
-             <Button   style={styles.button1}  title="נגן"  
-             onPress={() => listenAudiorecord(item.audioname)} /> 
-             </View> 
-          </View>
-            }
-           
-           {item.items.length==0 &&  <Button   style={styles.button1}  title="הוסף"  
-             onPress={() => addChild(index,0,item)} /> }
-         </Text>
-        </View>
-          
-            {item.items && <>
-            {item.items.map((item, index) => (
-                <View key={index} style={{ borderBottomColor: 'black', borderBottomWidth: .5}}>
-                    
-                    {/* <View style = {{flexDirection:'row',justifyContent:'center'}}>
-                      <Text style={{fontSize: 20, marginRight: 50, color: 'blue03'}}>
-                        {item.makchim} <Button style={styles.button1}  title="הוסף" onPress={() => AddModallevel(index,1,item)  } 
-                      /></Text>    
-                   </View>    */}
-
-              
-           <View style = {{flex:1,flexDirection:'row',flexWrap:'wrap',justifyContent:'center'}}>
-         
-            {item.items !=null && 
-               <View style={{ flexDirection:"row" }}> 
-             <View style={{ marginHorizontal: 10,marginTop: 5 }}>
-              <Text style={{fontSize: 20, color: 'green'}}> {item.title} </Text>
-              </View>
-              <View style={{ marginHorizontal: 10,marginTop: 5 }}>
-              <Text style={{fontSize: 20, color: 'blue03'}}> 
-              <GetItemInfo
-             item={item}
-            index={index}
-            level={1}
-          />    מקש {item.makchim} </Text>
-              </View>
-                <View style={{ marginHorizontal: 10,marginTop: 5 }}>
-                 <Button   style={styles.button1}  title="ערוך"  
-                onPress={() => setModalVisible(true)} /> 
-                </View> 
-                <View style={{ marginHorizontal: 10,marginTop: 5 }}>
-                <Button   style={styles.button1}  title="נגן"  
-                onPress={() => listenAudiorecord(item.audioname)} /> 
-                </View> 
-               
-               
-             </View>
-           
-                } 
-         {item.items==null && 
-        
-         <Text style={{fontSize: 20, marginRight: 50, color: 'blue03'}}>
-          <GetItemInfo
-             item={item}
-            index={index}
-            level={1}
-          />  מקש {item.makchim} <Button style={styles.button1}  title="הוסף" onPress={() => AddModallevel(index,1,item)  } 
-          /></Text> 
-         
-         }
-
-           </View>
-
-                     {item.items && <>
-                     {item.items.map((item, index) => (
-                       <View key={index}  style={{ borderBottomColor: 'black', borderBottomWidth: .5}}>
-                         
-       <View style = {{flex:1,flexDirection:'row',flexWrap:'wrap',justifyContent:'center'}}>
-         {item.items !=null && 
-            <View style={{ flexDirection:"row" }}> 
-          <View style={{ marginHorizontal: 10,marginTop: 5 }}>
-           <Text style={{fontSize: 20, color: 'purple'}}> {item.title} </Text>
-           </View>
-           <View style={{ marginHorizontal: 10,marginTop: 5 }}>
-           <Text style={{fontSize: 20, color: 'green'}}>
-           <GetItemInfo
-             item={item}
-            index={index}
-            level={2}
-          />   מקש {item.makchim}  </Text>
-           </View>
-             <View style={{ marginHorizontal: 10,marginTop: 5 }}>
-              <Button   style={styles.button1}  title="ערוך"  
-             onPress={() => setModalVisible(true)} /> 
-             </View> 
-             <View style={{ marginHorizontal: 10,marginTop: 5 }}>
-             <Button   style={styles.button1}  title="נגן"  
-             onPress={() => listenAudiorecord(item.audioname)} /> 
-             </View> 
-          </View>
-        
-             } 
-      {item.items==null &&  <Text style={{fontSize: 20, marginRight: 62, color: 'green'}}>
-      <GetItemInfo
-             item={item}
-            index={index}
-            level={2}
-          />   מקש {item.makchim} <Button style={styles.button1}  title="הוסף" onPress={() => AddModallevel(index,2,item)  } 
-      /></Text>    }
-      </View>
-
-                         
-                           {/* <View style = {{flexDirection:'row',flexWrap:'wrap',justifyContent:'center'}}>
-                           <Text style={{fontSize: 18, marginRight:62,color: 'green'}}>{item.title} <Button   style={styles.button1}  title="הוסף"  
-             onPress={() => addChild( index,2,item)} />   
-             
-                   </Text></View> */}
-
-                   {item.items && <>
-                     {item.items.map((item, index) => (
-                       <View key={index}  style={{ borderBottomColor: 'black', borderBottomWidth: .5}}>
-                        
-                        <View style = {{flex:1,flexDirection:'row',flexWrap:'wrap',justifyContent:'center'}}>
-        
-      <Text style={{fontSize: 20, marginRight: 82, color: 'purple'}}>
-      <GetItemInfo
-             item={item}
-            index={index}
-            level={3}
-          /> מקש  {item.makchim}
-                     
-                      </Text>    
-      </View>
-
-                           {/* <View style = {{flexDirection:'row',flexWrap:'wrap',justifyContent:'center'}}>
-                           <Text style={{fontSize: 16, marginRight:82,color: 'purple'}}>{item.title} <Button   style={styles.button1}  title="הוסף"  
-             onPress={() => addChild( index,3,item)} />   
-           
-                   </Text></View> */}
-                   
- 
-                       </View>
-                    ))}
-                   </>}
-                   </View>
-                    ))}
-                   </>}
-                   
-
-               </View>
-            ))}
-           </>}
-        </View>
-     ))}
-     </ScrollView>
-    
-<View style={{ flexDirection:"row" }}>
-       
-          
-         
-       <View style={{ marginHorizontal: 10,marginTop: 5 }}> 
-         {/* <View style = {{flexDirection:'row',flexWrap:'wrap'}}> */}
-         <Text style={{fontSize: 10, fontWeight: 'bold'}}>שם קובץ </Text><TextInput 
-           style={{ margin: 5, borderWidth: 1, padding: 10, fontSize: 16,width:150 }}
-                        value={selectedText}
-          onChangeText={text => setSelectedText(text)}
-          editable = {false}
-         /></View> 
-          <View style={{ marginHorizontal: 10,marginTop: 5 }}>
-            <Button title="שמור" 
-            //  onPress={() => exportnewCsv()} 
-             style={[ {padding: 20, opacity: isFormValid ? 1 : 0.5 }]} 
-             disabled={!isFormValid} 
-             />
-     </View>
-     <View style={{ marginHorizontal: 10,marginTop: 5 }}>
-            <Button title="בטל" onPress={() => Cancel()} style={{ padding: 20, }} />
-     </View>
-     <View style={{ marginHorizontal: 10,marginTop: 5 }}>
-         <Button title="הוסף" 
-         style={[ {padding: 20, opacity: isToogleOssef ? 1 : 0.5 }]} 
-         disabled={!isToogleOssef} 
-         onPress={() => {
-          setModalVisible(true)
-         
-        }}   />
-     </View>
- </View>
-<View style={{ padding: 20, backgroundColor: 'lightgray' }}>
-       
-       </View>
-       <View style={{ marginTop: 22 }}>
-        <Modal
-          animationType={'slide'}
-          transparent={false}
-          visible={isModalVisible}
-          onRequestClose={() => {
-          
-          }}>
-           <View style={styles.modalView}>
-            <View style={{ flex: 0.1, justifyContent: "flex-start",backgroundColor:'gray'  }} >
-                <TouchableOpacity style={styles.listItem}
-                onPress={() => {
-                 setModalVisible(!isModalVisible);
-                }}>
-                <Text>סגור</Text>
-              </TouchableOpacity>
-            </View>
+  <View style={styles.container}>
+    <View style={styles.inputContainer}>
+      <TextInput
+        autoCapitalize='none'
+        onChangeText={setKeyword}
+        placeholder="Search..."
+        placeholderTextColor="#000"
+        style={styles.input}
+      />
+    </View>
+    <View style={styles.searchActionContainer}>
       
-            <View style={styles.container}>
-      <ProgressSteps>
-        <ProgressStep label="שם תפריט" nextBtnText="הבא"
-         nextBtnTextStyle={buttonTextStyle} 
-         onNext={onNextStep}
-         errors={errors}
-         >
-          <View style={styles.stepContent}>
-          
-            <TextInput
-              style={styles.input}
-              placeholder="שם תפריט"
-              value={step1Data.menuname}
-              onChangeText={text => setStep1Data({ ...step1Data, menuname: text })}
-            />
-            
-            
-          </View>
-        </ProgressStep>
-        <ProgressStep label="הקלטה" nextBtnText="הבא" nextBtnTextStyle={buttonTextStyle}
-        previousBtnText="הקודם" previousBtnTextStyle={buttonTextStyle}
-        onNext={onNextStep1}
-         errors={errors}
-        >
-          <View style={styles.stepContent}>
-        
-            
-            <Dropdown
-          style={[styles.dropdown]}
-          placeholderStyle={styles.placeholderStyle}
-          selectedTextStyle={styles.selectedTextStyle}
-           inputSearchStyle={styles.inputSearchStyle}
-          iconStyle={styles.iconStyle}
-          data={dataddl}
-          
-          maxHeight={300}
-          labelField="label"
-          valueField="value"
-          placeholder={!isFocus ? 'בחר הקלטה' : '...'}
-           value={step2Data.audioname}
-          onFocus={() => setIsFocus(true)}
-          onBlur={() => setIsFocus(false)}
-          onChange={item => {
-            setStep2Data({ ...step2Data, audioname: item.value })
-            setIsFocus(false);
-          }}
-          renderLeftIcon={() => (
-            <AntDesign
-              style={styles.icon}
-              color={isFocus ? 'blue' : 'black'}
-              name="Safety"
-              size={20}
-            />
-          )}
-        />
-          </View>
-        </ProgressStep>
-        <ProgressStep label="בחירת מקשים" 
-        finishBtnText="הפעל" finishBtnTextStyle={buttonTextStyle}
-        previousBtnText="הקודם" previousBtnTextStyle={buttonTextStyle}
-        onSubmit={onSubmit1}
-        >
-          <View style={styles.stepContent}>
-          <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-          <FlatList
-            data={csvData}
-            keyExtractor={(item, index) => index.toString()}
-            
-            renderItem={({ item, index }) => (
-              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                 <View style={{ marginTop: 5 }}>
-           <Button title="מחק"  onPress={() => handleDelete( index)}  style={{ padding: 20, }} />
-       </View>
-
-       <View style={{ marginTop: 5 }}>
-                   <Dropdown key={index}
-                  
-                   data={makachim}
-                 
-                   onChange={(item) => handleOnChange(item,index)}
-                    style={[styles.dropdown1]}
-                    placeholderStyle={styles.placeholderStyle}
-                    selectedTextStyle={styles.selectedTextStyle}
-                     inputSearchStyle={styles.inputSearchStyle}
-                    iconStyle={styles.iconStyle}
-                    maxHeight={300}
-                  labelField="label"
-                  valueField="value"
-                  placeholder={!isFocus ? 'בחר מקש' : '...'}
-                   onFocus={() => setIsFocus(true)}
-                  onBlur={() => setIsFocus(false)}
-                 
-                  renderLeftIcon={() => (
-                    <AntDesign
-                      style={styles.icon}
-                      color={isFocus ? 'blue' : 'black'}
-                      name="Safety"
-                      size={20}
-                    />
-                  )}
-                />
-                </View>
-     <View style={{ marginTop: 5 }}>
-                <Text  style={styles.title}> {handleTitle( index)}    </Text>
-                   
-                 
-                   
-                   </View>
-           
-              </View>
-            
-            )}
-          />
-
-<View style={{ flexDirection:"row" }}>
-<View style={{ marginHorizontal: 10,marginTop: 5 }}>
-           <Button title="הוסף"  onPress={handleAddRow}  style={{ padding: 20, }} />
-       </View>
-  </View>
-            </View>
-
-          </View>
-        </ProgressStep>
-      </ProgressSteps>
+      <TouchableOpacity style={ [styles.searchActionBtn, styles.searchLeftActionBtn,  styles.searchActionBtnActive]} >
+        <Text style={ [styles.searchActionLabel,  styles.searchActionLabelActive]}>תפריט</Text>
+      </TouchableOpacity>
     </View>
-         
-         
-          </View>
-        </Modal>
-        </View>
-     
-       
- 
-
-
-
-
-
-
-     </View>
-    
-
+    <View style={styles.list}>
+      <FlatList
+      //  contentContainerStyle={{flexGrow: 1, justifyContent: 'center'}}
+        data={filterdata}
+        renderItem={renderItems}
+        ItemSeparatorComponent = { listSeparator }
+        // keyExtractor={(item, index) => item.id}
+      />
+    </View>
+  </View>
+  <View style={{ padding: 20, backgroundColor: 'lightgray' }}>
+      {/* Content for the container at the top */}
+    </View>
+  </View>
   );
 };
 
-
-
-export default Menu;
-
-
-const styles = StyleSheet.create({
-  
-  centerElement: {justifyContent: 'center', alignItems: 'center'},
-
-  dropdown: {
-    height: 50,
-    borderColor: 'gray',
-    borderWidth: 0.5,
-    borderRadius: 8,
-    paddingHorizontal: 3,
-    width:'70%'
-  },
-  dropdown1: {
-    height: 50,
-    borderColor: 'gray',
-    borderWidth: 0.5,
-    borderRadius: 8,
-    paddingHorizontal: 3,
-    width:'80%',
-    margin: 5,
-     borderWidth: 1,
-      padding: 10,
-       fontSize: 16,
-  },
-  icon: {
-    marginRight: 5,
-  },
  
-  scrollView:{
-    backgroundColor: "#AAA",
-    marginHorizontal: 20,
-    shadowOpacity: 0.36,
-         shadowRadius: 6.68,
-         elevation: 8,
-
-  },
+const styles = StyleSheet.create({
   container: {
     backgroundColor: '#fff',
     flex: 1,
     flexDirection: 'column',
-
   },
   inputContainer: {
     marginTop: 8,
@@ -969,22 +285,6 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'row',
     justifyContent: 'space-around',
-    alignContent:'center',
-    marginHorizontal: 8,
-    paddingVertical: 12,
-    alignItems: 'center',
-    borderBottomWidth: 1,
-    borderBottomColor: '#ccc',
-    marginLeft:10,
-    marginRight:10,
-   
-
-     
-  },
-  listItem: {
-    flex: 1,
-    flexDirection: 'row',
-    justifyContent: 'space-around',
     justifyContent:'center',
     alignContent:'center',
     marginHorizontal: 8,
@@ -998,11 +298,13 @@ const styles = StyleSheet.create({
 
      
   },
+  
   listItemLabel: {
      //fontSize: 16,
      color: COLORS.secondary,
      fontFamily:FONT.regular,
      fontSize: SIZES.medium,
+     alignItems: 'center',
      marginLeft: 13,
    },
    separator: {
@@ -1010,101 +312,7 @@ const styles = StyleSheet.create({
     width: '100%',
     backgroundColor: '#CCC'
     },
-    centeredView: {
-      flex:1,
-     
-      justifyContent: 'center',
-      alignItems: 'center',
-      marginTop: 22,
-    },
-    modalView: {
-      margin: 20,
-      backgroundColor: 'white',
-      borderRadius: 20,
-      padding: 35,
-      justifyContent:'space-around', 
-       alignItems: 'center',
-      shadowColor: '#000',
-      shadowOffset: {
-        width: 0,
-        height: 2,
-      },
-      shadowOpacity: 0.25,
-      shadowRadius: 4,
-      elevation: 5,
-     flex:1
-        // width: 450,
-        // height: 480
-    },
- 
-    headerText: {
-      textAlign: "center",
-      fontSize: 24,
-    },
-    regularText: {
-      textAlign: "center",
-      fontSize: 14,
-      marginTop: 16,
-    },
-    button: {
-      backgroundColor: "#007ffe",
-      paddingHorizontal: 10,
-      paddingVertical: 8,
-      borderRadius: 8,
-      marginTop: 16,
-      flex: 1,
-      marginHorizontal: 5,
-    },
-    buttonCancel: {
-      backgroundColor: "red",
-    },
-    buttonText: {
-      color: "#FFF",
-      fontSize: 14,
-      textAlign: "center",
-    },
-    title: {
-      fontFamily:FONT.regular,
-      fontSize: SIZES.medium,
-      color: COLORS.secondary
-      
-    },
-      button1: { 
-    backgroundColor: '#aaa', 
-    borderRadius: 8, 
-    paddingVertical: 10, 
-    paddingHorizontal: 20, 
-    alignItems: 'center', 
-    marginTop: 26, 
-    marginBottom: 12,
-   
-    width: 88,
-    height: 58
-  }
+
 });
 
-// const [data, setData] = useState([
- 
-  //   {
-  //     title: 'Software',
-  //     items: [
-  //       {
-  //         title: 'JS',
-         
-  //       },
-  //       {
-  //         title: 'React JS',
-  //         items: [
-  //           {
-  //             title: 'Components',
-              
-  //           },
-  //           {
-  //             title: 'Hooks',
-              
-  //           },
-  //         ],
-  //       },
-  //     ],
-  //   },
-  // ]);
+export default Menu;

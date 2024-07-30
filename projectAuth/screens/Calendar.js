@@ -10,7 +10,7 @@ import axiosInstance from '../helpers/axiosInstance';
   const [state, setState] = React.useState({items: undefined });
  
   const [modalVisible, setModalVisible] = useState(false);
-  const [deletableval, setDeletableval] = useState(false);
+  const [deletableval, setDeletableval] = useState(null);
   const [selected, setSelected] = useState(false);
 
   useEffect(() => {
@@ -28,7 +28,7 @@ import axiosInstance from '../helpers/axiosInstance';
 
   loadItems = async() => {
   
-  const url =`/Webhttp/getgrouptiming`;
+  const url =`/Webhttp/getappliTiming`;
      
   await axiosInstance.get(url)
 
@@ -46,20 +46,7 @@ import axiosInstance from '../helpers/axiosInstance';
      }) 
    }
 
-  const deleterecord = async() =>{
-
-    let deletegrouptimingPost =  {
-      id:deletableval,
-      }
-        let url =`/Webhttp/deletetimimgrecord`
-
-     await axiosInstance.post(url,deletegrouptimingPost)
-  
-     .then(({data}) => {
-      setModalVisible(!modalVisible) 
-      loadItems()    
-      })
-  }
+   
 
 
 
@@ -79,14 +66,29 @@ renderItem = (reservation, isFirst) => {
       testID={testIDs.agenda.ITEM}
       style={[styles.item, { height: reservation.height }]}
       onPress={() => {
-         setDeletableval(reservation.id)
+         console.log(reservation.id)
+        setDeletableval(reservation.id)
 
-         setModalVisible(true)
+         //handleconfirmDelete(reservation.id)
          }}>
-      <Text style={{ fontSize, color }}> קבוצה {reservation.groupname} ב {reservation.date}</Text>
+      <Text style={{ fontSize, color }}>  {reservation.filename} ב {reservation.date}</Text>
     </TouchableOpacity>
   )
 }
+
+// const handleconfirmDelete= (id) => {
+//   Alert.alert(
+//     'confirmation',
+//     'Are you sure to delete', // <- this part is optional, you can pass an empty string
+//     [
+//       {text: 'כן', onPress: async() => deleterecord(id)},
+//       {text: 'לא', onPress: () => console.log('OK Pressed')},
+//     ],
+//     {cancelable: true},
+//   );
+
+// }
+
 
  renderEmptyDate = () => {
   
@@ -110,7 +112,7 @@ renderItem = (reservation, isFirst) => {
       <SafeAreaView style={{flex: 1}}>
          <View style={styles.container}> 
   <Agenda
-
+ 
   testID={testIDs.agenda.CONTAINER}
   items={state.items}
    loadItemsForMonth={loadItems}
@@ -118,38 +120,16 @@ renderItem = (reservation, isFirst) => {
   renderItem={renderItem}
   renderEmptyDate={renderEmptyDate}
   rowHasChanged={rowHasChanged}
-  showClosingKnob={true}
-
+  showClosingKnob={false}
+  onDayPress={(day) => {console.log('selected day', day)}}
   maxData={'2050-01-01'}
   monthFormat={'MMMM yyyy'}
+
  
     
 />
 </View>
-<View style={styles.centeredView}> 
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={modalVisible}
-        onRequestClose={() => {
-          //Alert.alert('Modal has been closed.');
-          setModalVisible(!modalVisible);
-        }}>
-        <View style={styles.centeredView}>
-          <View style={styles.modalView}>
-            <Text style={styles.modalText}>מחוק רשומה </Text>
-            <Pressable
-              style={[styles.button1, styles.buttonClose]}
-              onPress={() =>{
-                deleterecord()
-                     }}
-               >
-              <Text style={styles.textStyle}>הפעל</Text>
-            </Pressable>
-          </View>
-        </View>
-      </Modal>
- </View>
+
       </SafeAreaView>
     )
 

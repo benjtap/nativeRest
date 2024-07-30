@@ -3,15 +3,20 @@ import {createNativeStackNavigator} from  '@react-navigation/native-stack'
 import {
  MENUSAPP,
   LOGOUT,
+  EDITMENUFILES,
+  ADDMENUFILES
    
 } from '../constants/routeNames';
 
 import React, { useState, useEffect } from 'react';
 import { routes,screens } from '../constants/RouteItems';
+import Updatemenu from '../screens/Updatemenu';
+// import Action1 from '../screens/action1';
+ import Addmenu from '../screens/Addmenu';
 
 //import MenuApp from '../screens/MenuApp';
 
-import MenuApp from '../screens/menu';
+import MenuApp from '../screens/Menu';
 
 
 import Logout from '../screens/Logout';
@@ -43,8 +48,9 @@ const MenuNavigator = (props) => {
       headerShown: false,
     }}>
       <MenuStack.Screen name={MENUSAPP} component={MenuApp} />
-    
-    
+      <MenuStack.Screen name={EDITMENUFILES} component={Updatemenu} />
+      <MenuStack.Screen name={ADDMENUFILES} component={Addmenu} />
+
        <MenuStack.Screen name={LOGOUT} 
        component={Logout} 
        options={{

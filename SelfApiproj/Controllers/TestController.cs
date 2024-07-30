@@ -8,6 +8,7 @@ using System.Collections;
 
 
 using Webhttp.Models;
+using static MongoDB.Driver.WriteConcern;
 
 namespace Webhttp.Controllers
 {
@@ -43,49 +44,50 @@ namespace Webhttp.Controllers
 
 
 
-        
 
-        [HttpPost]
-        [Route("createAudiogroups")]
-        public async Task<IActionResult> createAudiogroups(createAudiogroupPost post)
-        {
-            string id = "";
-            var principal = HttpContext.User;
-            if (principal?.Claims != null)
-            {
 
-                var claim = principal.Claims.FirstOrDefault();
+        //[HttpPost]
+        //[Route("createAudiogroups")]
+        //public async Task<IActionResult> createAudiogroups(createAudiogroupPost post)
+        //{
+        //    string id = "";
+        //    var principal = HttpContext.User;
+        //    if (principal?.Claims != null)
+        //    {
 
-                id = claim.Value;
-            }
+        //        var claim = principal.Claims.FirstOrDefault();
 
-               await _mongo.createAudiogroup(post, id);
-            return Ok();
-        }
-        [HttpPost]
-        [Route("creategrouptiming")]
-        public async Task<IActionResult> creategrouptiming(creategrouptimingPost post)
-        {
-            string id = "";
-            var principal = HttpContext.User;
-            if (principal?.Claims != null)
-            {
+        //        id = claim.Value;
+        //    }
 
-                var claim = principal.Claims.FirstOrDefault();
+        //       await _mongo.createAudiogroup(post, id);
+        //    return Ok();
+        //}
+        //[HttpPost]
+        //[Route("creategrouptiming")]
+        //public async Task<IActionResult> creategrouptiming(creategrouptimingPost post)
+        //{
+        //    string id = "";
+        //    var principal = HttpContext.User;
+        //    if (principal?.Claims != null)
+        //    {
 
-                id = claim.Value;
-            }
+        //        var claim = principal.Claims.FirstOrDefault();
 
-            await _mongo.createTiminggroup(post, id);
-            return Ok();
-        }
+        //        id = claim.Value;
+        //    }
+
+        //    await _mongo.createTiminggroup(post, id);
+        //    return Ok();
+        //}
 
         [HttpGet]
-        [Route("getgrouptiming")]
-        public async Task<IActionResult> getgrouptiming()
+        [Route("getappliTiming")]
+        public async Task<IActionResult> getappliTiming()
         {
-            string id = "";
+            Dictionary<string, HashSet<getappliTiming>> res = null;
             var principal = HttpContext.User;
+            string id = "";
             if (principal?.Claims != null)
             {
 
@@ -93,18 +95,49 @@ namespace Webhttp.Controllers
 
                 id = claim.Value;
             }
-           
 
-            Dictionary<string,HashSet<getTiminggroup>> res = await _mongo.getgrouptiming(id); ;
-            //  
+            try
+            {
+                res = await _mongo.getApplicationtiming(id);
+                return Ok(res);
+            }
+            catch (Exception ex )
+            {
+                string message = ex.Message;
+                return Ok(res);
+            }
+          
+            
+          
+         
+        }
+
+
+        [HttpPost]
+        [Route("getMenu")]
+        public async Task<IActionResult> getMenu(getMenuPost post)
+        {
+
+            var principal = HttpContext.User;
+            string id = "";
+
+
+            if (principal?.Claims != null)
+            {
+
+                var claim = principal.Claims.FirstOrDefault();
+
+                id = claim.Value;
+            }
+
+            menuPostMongo res = await _mongo.GetMenu(post.filename,id);
+
             return Ok(res);
         }
 
-
-
         [HttpPost]
-        [Route("creategroups")]
-        public async Task<IActionResult> creategroups(creategroupsPost post)
+        [Route("updatemenu")]
+        public async Task<IActionResult> updatemenu(createmenuPost post)
         {
             string id = "";
             var principal = HttpContext.User;
@@ -113,20 +146,147 @@ namespace Webhttp.Controllers
 
                 var claim = principal.Claims.FirstOrDefault();
 
-                 id = claim.Value;
+                id = claim.Value;
             }
 
-            creategroupsPostui mygroup = new creategroupsPostui
+           
+
+            createMenu mymenu = new createMenu
             {
-                uid = id,
-                name= post.name
+                jsonarr = post.jsonarray,
+                filename = post.filename,
+                uid = id
 
             };
 
-            await _mongo.CreategroupsPost(mygroup);
+            await _mongo.bulkdeleteditmenu(post.filename, id);
+
+            await _mongo.CreateMenu(mymenu);
             return Ok();
         }
 
+
+        [HttpPost]
+        [Route("createmenu")]
+        public async Task<IActionResult> createmenu(createmenuPost post)
+        {
+            string id = "";
+            var principal = HttpContext.User;
+            if (principal?.Claims != null)
+            {
+
+                var claim = principal.Claims.FirstOrDefault();
+
+                id = claim.Value;
+            }
+
+            menuPostMongo res = await _mongo.isfilesmenuExist(id, post.filename);
+            if (res != null)
+                return Ok("message");
+
+            createMenu mymenu = new createMenu
+            {
+                jsonarr = post.jsonarray,
+                filename = post.filename,
+                uid = id
+
+            };
+
+             await _mongo.CreateMenu(mymenu);
+            return Ok();
+        }
+
+
+        [HttpPost]
+        [Route("createapp")]
+        public async Task<IActionResult> createapp(createappPost post)
+        {
+            string id = "";
+            var principal = HttpContext.User;
+            if (principal?.Claims != null)
+            {
+
+                var claim = principal.Claims.FirstOrDefault();
+
+                id = claim.Value;
+            }
+
+            applicationPostMongo res = await _mongo.isfilesappliExist(id, post.filename);
+            if (res != null)
+                return Ok("message");
+
+            createApp myappl = new createApp
+            {
+                isenabled = post.isenabled,
+                filename = post.filename,
+                filecontact = post.filecontact,
+                filemenu = post.filemenu,
+                uid = id,
+                date = post.date
+
+            };
+
+            await _mongo.CreateAppli(myappl);
+
+            await _mongo.CreateAppliMenu(myappl);
+
+            await _mongo.CreateAppliContact(myappl);
+            DateTime date = new DateTime();
+            DateTime.TryParse(post.date, out  date);
+            if (date.Year > 2000)
+            //if (myappl.date!= "0000-01-01T00:00:00.000Z")
+               await _mongo.CreateAppliTiming(myappl);
+
+
+
+            return Ok();
+        }
+
+        [HttpPost]
+        [Route("updateapp")]
+        public async Task<IActionResult> updateapp(createappPost post)
+        {
+            string id = "";
+            var principal = HttpContext.User;
+            if (principal?.Claims != null)
+            {
+
+                var claim = principal.Claims.FirstOrDefault();
+
+                id = claim.Value;
+            }
+
+         
+
+            createApp myappl = new createApp
+            {
+                isenabled = post.isenabled,
+                filename = post.filename,
+                filecontact = post.filecontact,
+                filemenu = post.filemenu,
+                uid = id,
+                date = post.date
+
+            };
+
+            await _mongo.UpdateAppli(myappl);
+
+            await _mongo.UpdateAppliMenu(myappl);
+
+           await _mongo.UpdateAppliContact(myappl);
+
+            DateTime date = new DateTime();
+            DateTime.TryParse(post.date, out date);
+            if (date.Year > 2000)
+                await _mongo.UpdateAppliTiming(myappl);
+            else
+                await _mongo.DeleteAppliTiming(post.filename,id);
+
+
+            return Ok();
+        }
+
+           
 
         [HttpPost]
         [Route("bulkcontacts")]
@@ -171,17 +331,15 @@ namespace Webhttp.Controllers
             return Ok();
         }
 
-
-
-
+        
         [HttpPost]
-        [Route("bulkgroupcontacts")]
-        public async Task<IActionResult> bulkgroupcontacts(createcontactsgroupPost post)
+        [Route("bulkandeditcontacts")]
+        public async Task<IActionResult> bulkandeditcontacts(List<createcontactsPost> post)
         {
+
+
             var principal = HttpContext.User;
             string id = "";
-
-
             if (principal?.Claims != null)
             {
 
@@ -190,107 +348,168 @@ namespace Webhttp.Controllers
                 id = claim.Value;
             }
 
+            string? filename = post.FirstOrDefault().filename;
 
-           await _mongo.bulkgroupcontacts(post,id);
-            return Ok();
-        }
+            await _mongo.bulkdeleteditcontacts(filename, id);
 
-        [HttpPost]
-        [Route("bulkdeletegroupcontacts")]
-        public async Task<IActionResult> bulkdeletegroupcontacts(createcontactsgroupPost post)
-        {
-            var principal = HttpContext.User;
-            string id = "";
+            List<createcontactsPostUid> lst = new List<createcontactsPostUid>();
 
-
-            if (principal?.Claims != null)
+            foreach (createcontactsPost item in post)
             {
+                createcontactsPostUid mycontact = new createcontactsPostUid
+                {
+                    uid = id,
+                    name = item.name,
+                    filename = item.filename,
+                    phone = item.phone
 
-                var claim = principal.Claims.FirstOrDefault();
+                };
+                lst.Add(mycontact);
 
-                id = claim.Value;
             }
 
 
-            await _mongo.bulkdeletegroupcontacts(post, id);
+            await _mongo.bulkcontacts(lst);
             return Ok();
         }
+
+        //[HttpPost]
+        //[Route("bulkgroupcontacts")]
+        //public async Task<IActionResult> bulkgroupcontacts(createcontactsgroupPost post)
+        //{
+        //    var principal = HttpContext.User;
+        //    string id = "";
+
+
+        //    if (principal?.Claims != null)
+        //    {
+
+        //        var claim = principal.Claims.FirstOrDefault();
+
+        //        id = claim.Value;
+        //    }
+
+
+        //   await _mongo.bulkgroupcontacts(post,id);
+        //    return Ok();
+        //}
+
+        //[HttpPost]
+        //[Route("bulkdeletegroupcontacts")]
+        //public async Task<IActionResult> bulkdeletegroupcontacts(createcontactsgroupPost post)
+        //{
+        //    var principal = HttpContext.User;
+        //    string id = "";
+
+
+        //    if (principal?.Claims != null)
+        //    {
+
+        //        var claim = principal.Claims.FirstOrDefault();
+
+        //        id = claim.Value;
+        //    }
+
+
+        //    await _mongo.bulkdeletegroupcontacts(post, id);
+        //    return Ok();
+        //}
 
         [HttpPost]
         [Route("deleteAudiorecord")]
         public async Task<IActionResult> deleteAudiorecordPost(deleteAudioPost post)
         {
 
-            await _mongo.deleteAudiorecordPost(post);
-            return Ok();
+           
+
+            var principal = HttpContext.User;
+            string id = "";
+
+
+            if (principal?.Claims != null)
+            {
+
+                var claim = principal.Claims.FirstOrDefault();
+
+                id = claim.Value;
+            }
+            var res1 = await _mongo.deleteAudiorecordPost(post, id);
+
+            if (res1 == false)
+                return Ok("message");
+
+            IEnumerable res = await _mongo.GetAudio(id);
+            return Ok(res);
+
+         
         }
 
-        [HttpPost]
-        [Route("deletetimimgrecord")]
-        public async Task<IActionResult> deletetimimg(deletetimingPost post)
-        {
+        //[HttpPost]
+        //[Route("deletetimimgrecord")]
+        //public async Task<IActionResult> deletetimimg(deletetimingPost post)
+        //{
 
-            await _mongo.deletetimimg(post);
-            return Ok();
-        }
+        //    await _mongo.deletetimimg(post);
+        //    return Ok();
+        //}
 
-        [HttpPost]
-        [Route("deletegroup")]
-        public async Task<IActionResult> deletegroup(deletegroup post)
-        {
+        //[HttpPost]
+        //[Route("deletegroup")]
+        //public async Task<IActionResult> deletegroup(deletegroup post)
+        //{
             
-            await _mongo.deletegroupPost(post);
-            return Ok();
-        }
+        //    await _mongo.deletegroupPost(post);
+        //    return Ok();
+        //}
 
         
 
 
-        [HttpPost]
-        [Route("getaudiogroup")]
-        public async Task<IActionResult> getaudiogroup(getAudiobyidReq post)
-        {
-            var principal = HttpContext.User;
-            string id = "";
+        //[HttpPost]
+        //[Route("getaudiogroup")]
+        //public async Task<IActionResult> getaudiogroup(getAudiobyidReq post)
+        //{
+        //    var principal = HttpContext.User;
+        //    string id = "";
 
 
-            if (principal?.Claims != null)
-            {
+        //    if (principal?.Claims != null)
+        //    {
 
-                var claim = principal.Claims.FirstOrDefault();
+        //        var claim = principal.Claims.FirstOrDefault();
 
-                id = claim.Value;
-            }
+        //        id = claim.Value;
+        //    }
 
-            AudiogroupMongo res = await _mongo.getAudiobyidPost(post, id); ;
-         //  
-            return Ok(res);
-        }
+        //    AudiogroupMongo res = await _mongo.getAudiobyidPost(post, id); ;
+        // //  
+        //    return Ok(res);
+        //}
 
-        [HttpPost]
-        [Route("getgroupcontacts")]
-        public async Task<IActionResult> getgroupcontacts(createcontactsgroupPost post)
-        {
+        //[HttpPost]
+        //[Route("getgroupcontacts")]
+        //public async Task<IActionResult> getgroupcontacts(createcontactsgroupPost post)
+        //{
 
-            var principal = HttpContext.User;
-            string id = "";
+        //    var principal = HttpContext.User;
+        //    string id = "";
 
 
-            if (principal?.Claims != null)
-            {
+        //    if (principal?.Claims != null)
+        //    {
 
-                var claim = principal.Claims.FirstOrDefault();
+        //        var claim = principal.Claims.FirstOrDefault();
 
-                id = claim.Value;
-            }
+        //        id = claim.Value;
+        //    }
 
-            IEnumerable res = await _mongo.getgroupcontacts(post,id);
-            return Ok(res);
-        }
+        //    IEnumerable res = await _mongo.getgroupcontacts(post,id);
+        //    return Ok(res);
+        //}
 
         [HttpGet]
-        [Route("getcontacts")]
-        public async Task<IActionResult> getcontacts()
+        [Route("getAllfilescontacts")]
+        public async Task<IActionResult> getfilescontacts()
         {
             
             var principal = HttpContext.User;
@@ -305,10 +524,129 @@ namespace Webhttp.Controllers
                  id = claim.Value;
             }
 
-            IEnumerable res = await _mongo.GetcontactsPost(id);
+            IEnumerable res = await _mongo.GetAllfilescontactsPost(id);
           
             return Ok(res);
         }
+
+        [HttpGet]
+        [Route("getAllfilesMenu")]
+        public async Task<IActionResult> getAllfilesMenu()
+        {
+
+            var principal = HttpContext.User;
+            string id = "";
+
+
+            if (principal?.Claims != null)
+            {
+
+                var claim = principal.Claims.FirstOrDefault();
+
+                id = claim.Value;
+            }
+
+            IEnumerable res = await _mongo.getAllfilesMenu(id);
+
+            return Ok(res);
+        }
+
+
+
+        [HttpPost]
+        [Route("deletefilesmenu")]
+        public async Task<IActionResult> deletefilesmenu(getfilemenuPost post)
+        {
+
+            var principal = HttpContext.User;
+            string id = "";
+
+
+            if (principal?.Claims != null)
+            {
+
+                var claim = principal.Claims.FirstOrDefault();
+
+                id = claim.Value;
+            }
+
+            string filename = post.filename;
+
+            
+            
+            var res1 = await _mongo.bulkdeleteditmenu(filename, id);
+            if (res1 == false)
+                return Ok("message");
+
+
+
+            IEnumerable res = await _mongo.getAllfilesMenu(id);
+
+            return Ok(res);
+        }
+        
+
+        [HttpPost]
+        [Route("deletefilesappli")]
+        public async Task<IActionResult> deletefilesappli(getfilecontactsPost post)
+        {
+
+            var principal = HttpContext.User;
+            string id = "";
+
+
+            if (principal?.Claims != null)
+            {
+
+                var claim = principal.Claims.FirstOrDefault();
+
+                id = claim.Value;
+            }
+
+            string filename = post.filename;
+
+          
+
+
+            await _mongo.DeleteAppli(filename, id);
+
+
+            IEnumerable res = await _mongo.GetApplis(id);
+
+            return Ok(res);
+        }
+
+        [HttpPost]
+        [Route("deletefilescontacts")]
+        public async Task<IActionResult> deletefilescontacts(getfilecontactsPost post)
+        {
+
+            var principal = HttpContext.User;
+            string id = "";
+
+
+            if (principal?.Claims != null)
+            {
+
+                var claim = principal.Claims.FirstOrDefault();
+
+                id = claim.Value;
+            }
+
+            string filename = post.filename;
+
+            var res1 = await _mongo.bulkdeleteditcontacts(filename, id);
+            if (res1 == false)
+                return Ok("message");
+
+
+            IEnumerable res = await _mongo.GetAllfilescontactsPost( id);
+
+            return Ok(res);
+        }
+
+
+
         [HttpPost]
         [Route("getfilecontacts")]
         public async Task<IActionResult> getfilecontacts(getfilecontactsPost post)
@@ -359,8 +697,8 @@ namespace Webhttp.Controllers
 
 
         [HttpGet]
-        [Route("getgroups")]
-        public async Task<IActionResult> getgroups()
+        [Route("getapplis")]
+        public async Task<IActionResult> getApplis()
         {
             var principal = HttpContext.User;
             string id = "";
@@ -374,14 +712,50 @@ namespace Webhttp.Controllers
                 id = claim.Value;
             }
 
-            IEnumerable res = await _mongo.getgroupsPost(id);
+            IEnumerable res = await _mongo.GetApplis(id);
 
             return Ok(res);
         }
 
+
+
+        [HttpPost]
+        [Route("getallAppliInfo")]
+        public async Task<IActionResult> getallAppliInfo(getallinfoAppliPost post)
+        {
+            try
+            {
+                var principal = HttpContext.User;
+                string id = "";
+
+
+                if (principal?.Claims != null)
+                {
+
+                    var claim = principal.Claims.FirstOrDefault();
+
+                    id = claim.Value;
+                }
+
+                string filename = post.filename;
+
+                var res = await _mongo.getallAppliInfo(filename, id);
+
+                return Ok(res);
+            }
+            catch (Exception ex)
+            {
+
+                string str = ex.Message;
+                return Ok(null);
+            }
+            
+            
+        }
+
         [HttpPost]
         [Route("uploadAudio")]
-        public IActionResult uploadAudio([FromForm] FormDataAudio formData)
+        public async Task<IActionResult> uploadAudio([FromForm] FormDataAudio formData)
         {
             var principal = HttpContext.User;
             string id = "";
@@ -404,7 +778,12 @@ namespace Webhttp.Controllers
                     avatarFile.CopyTo(stream);
                 }
 
-                createAudio postM = new createAudio
+
+            AudioPostMongo res = await _mongo.isfilesaklataExist(id, Audioname);
+            if (res != null)
+                return Ok("message");
+
+            createAudio postM = new createAudio
                 {
                     uid = id,
                     name = Audioname,

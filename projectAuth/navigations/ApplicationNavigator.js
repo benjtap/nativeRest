@@ -6,6 +6,7 @@ import {
  TASKSAPP,
   APP,
   LOGOUT,
+  ADDAPP
    
 } from '../constants/routeNames';
 
@@ -14,12 +15,13 @@ import { routes,screens } from '../constants/RouteItems';
 
 import Application from '../screens/Application';
 
-// import Action1 from '../screens/action1';
-// import Action3 from '../screens/action3';
+//  import Action1 from '../screens/action1';
+
  import Tasksapp from '../screens/Tasksapp';
 
 
 import Logout from '../screens/Logout';
+import Addapp from '../screens/Addapp';
 
 const showtabdrawer =['AppStack']
 
@@ -48,8 +50,8 @@ const ApplicationNavigator = (props) => {
       headerShown: false,
     }}>
       <AppStack.Screen name={APP} component={Application} />
+      <AppStack.Screen name={ADDAPP} component={Addapp} />
       <AppStack.Screen name={TASKSAPP} component={Tasksapp} />
-    
        <AppStack.Screen name={LOGOUT} 
        component={Logout} 
        options={{

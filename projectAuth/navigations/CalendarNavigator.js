@@ -38,7 +38,7 @@ const CalendarNavigator = (props) => {
       headerShown: false,
     }}>
       <CalendarStack.Screen name={screens.Calendar} component={Calendar} />
-      <CalendarStack.Screen name={screens.Planning} component={Planning} />
+    {/* <CalendarStack.Screen name={screens.Planning} component={Planning} /> * */}
    {/* <CalendarStack.Screen name={LOGOUT} component={Logout} />   */}
     </CalendarStack.Navigator>
   );

@@ -1,11 +1,11 @@
 import  React, { useState, useEffect, useContext, useCallback } from 'react';
-import { StyleSheet, View, TextInput, TouchableOpacity, Text, FlatList, Button } from 'react-native';
+import { StyleSheet, View, TextInput, TouchableOpacity, Text, FlatList, Button,Alert } from 'react-native';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { COLORS, FONT, SIZES } from "../constants";
 
 import axiosInstance from '../helpers/axiosInstance';
-import { routes,screens } from '../constants/RouteItems';
+import { LinearGradient } from "expo-linear-gradient";
 
 
 String.isNullOrEmpty = function(value) {
@@ -74,6 +74,10 @@ let navegState = navigation.getState();
     await axiosInstance.post(url,deletefilescont)
   
      .then(({data}) => {
+      if(data=="message"){
+        alert('File exist in Application, you must remove him before')
+        return;
+      }
             setData(data)
             setLoading(false)
       }).catch((err) => {
@@ -81,7 +85,20 @@ let navegState = navigation.getState();
        })
 
       }
-
+      
+      const handleconfirmDelete= (item) => {
+        Alert.alert(
+          'confirmation',
+          'Are you sure to delete', // <- this part is optional, you can pass an empty string
+          [
+            {text: 'כן', onPress: () => handleDelete(item)},
+            {text: 'לא', onPress: () => console.log('OK Pressed')},
+          ],
+          {cancelable: true},
+        );
+    
+      }
+    
   const fetchfilescontactsDataForPosts = async () => {
     
     setLoading(true)
@@ -91,6 +108,7 @@ let navegState = navigation.getState();
     await axiosInstance.get(url)
   
      .then(({data}) => {
+      
             setData(data)
             setLoading(false)
       }).catch((err) => {
@@ -120,29 +138,35 @@ let navegState = navigation.getState();
         filename: item.filename
       })
     };
+    //onPress={() => handleconfirmDelete( item)} 
+    
+
+    const renderItems =  useCallback(({ item }) => {
+      return (
+        <LinearGradient colors={['#5ED2A0', '#C3CBDC']}> 
+        <View style={{ flex: 1,flexDirection:"row", justifyContent: 'center',
+         alignItems: 'center', }} onPress={selectItem(item)}>
+         
+        <View style={{ width: "14%",margin: 10 }}> 
+        <Button title="מחק"  onPress={() => handleconfirmDelete( item)}   style={styles.button}  />
+           </View>  
+            
+          
+           <View style={{ flex: 1,marginHorizontal: 10,}}>
+           <TouchableOpacity style={styles.listItem} onPress={selectItem(item)}>
+    <Text style={styles.listItemLabel}>{item.filename}</Text>
+   </TouchableOpacity>
+      </View>
+    
+     
+      </View>
+      </LinearGradient>
+      );
+  
+    })
+
 
  
- // useCallback(
-  const renderItems =  useCallback(({ item }) => {
-
-     return (
- 
-    <View style={{ flexDirection:"row" }}>
-       <View style={{ marginHorizontal: 10 }}> 
-       <Button title="מחק"  onPress={() => handleDelete( item)}  style={{ padding: 20, }} />
-        
-        </View> 
-          <View style={{ flex:1,marginHorizontal: 10,}}>
-          <TouchableOpacity style={styles.listItem} onPress={selectItem(item)}>
-   <Text style={styles.listItemLabel}>{item.filename}</Text>
-  </TouchableOpacity>
-     </View>
-     </View>
-
-    );
-
- // }
-  })
 
   return (
     <View style={{ flex: 1 }}>

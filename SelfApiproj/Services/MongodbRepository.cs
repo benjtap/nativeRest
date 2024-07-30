@@ -4,13 +4,16 @@ using MongoDB.Bson;
 using MongoDB.Driver;
 using SelfApiproj.settings;
 using System;
+using System.Runtime;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 using Webhttp.Models;
+
 
 namespace SelfApiproj.Repository
 {
@@ -18,26 +21,31 @@ namespace SelfApiproj.Repository
     {
         private  IMongoCollection<registerPostMongo> registerPostsMon;
         public  IMongoCollection<contactsPostMongo> contactsPostsMon { get; }
-        public IMongoCollection<groupsPostMongo> groupsPostPostsMon { get; }
+
+        public IMongoCollection<menuPostMongo> menuPostsMon { get; }
 
         public IMongoCollection<AudioPostMongo> AudioPostMon { get; }
+        public IMongoCollection<applicationPostMongo> appPostsMon { get; }
 
-        public IMongoCollection<groupcontactsPostMongo> groupcontactsPostMon { get; }
+         public IMongoCollection<applicationMenuPostMongo> applicationMenuPostMon { get; }
 
-        public IMongoCollection<AudiogroupMongo> AudiogroupPostMon { get; }
+        public IMongoCollection<applicationContactsPostMongo> applicationContactsPostMon { get; }
+        
 
-        public IMongoCollection<TiminggroupMongo> TiminggroupPostMon { get; }
+          public IMongoCollection<applicationTimingMongo> ApplicationTimingPostMon { get; }
+
+
         public MongoRepository(IMongoDbSettings settings) {
 
             var database = new MongoClient(settings.ConnectionString).GetDatabase(settings.DatabaseName);
             registerPostsMon = database.GetCollection<registerPostMongo>("user");
             contactsPostsMon = database.GetCollection<contactsPostMongo>("contacts");
-            groupsPostPostsMon = database.GetCollection<groupsPostMongo>("groups");
+            menuPostsMon = database.GetCollection<menuPostMongo>("menu");
+            appPostsMon = database.GetCollection<applicationPostMongo>("application");
             AudioPostMon = database.GetCollection<AudioPostMongo>("Audio");
-            groupcontactsPostMon = database.GetCollection<groupcontactsPostMongo>("groupcontacts");
-            AudiogroupPostMon = database.GetCollection<AudiogroupMongo>("Audiogroup");
-            TiminggroupPostMon = database.GetCollection<TiminggroupMongo>("Timinggroup");
-
+            applicationMenuPostMon = database.GetCollection<applicationMenuPostMongo>("applicationmenu");
+            ApplicationTimingPostMon = database.GetCollection<applicationTimingMongo>("applicationtiming");
+            applicationContactsPostMon = database.GetCollection<applicationContactsPostMongo>("applicationcontact");
         }
 
         public async Task<userPost> Login(loginPost post)
@@ -86,8 +94,114 @@ namespace SelfApiproj.Repository
             await registerPostsMon.InsertOneAsync(postM);
         }
 
-
         
+             public async Task<IEnumerable<contactsfilesPost>> GetAllfilescontactsPost( string id)
+        {
+            var Builder = Builders<contactsPostMongo>.Filter;
+            var query = Builder.Where(r => r.uid == id);
+
+            var myres = await contactsPostsMon.DistinctAsync<string>("filename", query);
+
+
+
+            var res = myres.ToList();
+
+            List<contactsfilesPost> mylist = new List<contactsfilesPost>();
+            foreach (var item in res)
+            {
+                contactsfilesPost mycontacts = new contactsfilesPost
+                {                   
+                    filename = item
+
+                };
+
+                mylist.Add(mycontacts);
+            }
+            return mylist;
+
+        }
+
+
+        public async Task<IEnumerable<menufilesPost>> getAllfilesMenu(string id)
+        {
+            var Builder = Builders<menuPostMongo>.Filter;
+            var query = Builder.Where(r => r.uid == id);
+
+            var myres = await menuPostsMon.DistinctAsync<string>("filename", query);
+
+
+
+            var res = myres.ToList();
+
+            List<menufilesPost> mylist = new List<menufilesPost>();
+            foreach (var item in res)
+            {
+                menufilesPost mymenus = new menufilesPost
+                {
+                    filename = item
+
+                };
+
+                mylist.Add(mymenus);
+            }
+            return mylist;
+
+        }
+
+
+        public async Task<AppliInfoPost> getallAppliInfo(string filename, string id)
+        {
+            var Builder = Builders<applicationPostMongo>.Filter;
+            var query = Builder.Where(r => r.filename == filename) &
+                Builder.Where(r => r.uid == id);
+
+            var myres = await appPostsMon.FindAsync(query);
+
+            var pr=myres.FirstOrDefault();
+
+            bool? isenabled = pr.isenabled;
+
+            var Builder1 = Builders<applicationContactsPostMongo>.Filter;
+            var query1 = Builder1.Where(r => r.fileAppli == filename) &
+                Builder1.Where(r => r.uid == id);
+
+            var myres1 = await applicationContactsPostMon.FindAsync(query1);
+
+            var pr1 = myres1.FirstOrDefault();
+
+            var Builder2 = Builders<applicationMenuPostMongo>.Filter;
+            var query2 = Builder2.Where(r => r.fileAppli == filename) &
+                Builder2.Where(r => r.uid == id);
+
+            var myres2 = await applicationMenuPostMon.FindAsync(query2);
+
+            var pr2 = myres2.FirstOrDefault();
+
+            var Builder3 = Builders<applicationTimingMongo>.Filter;
+            var query3= Builder3.Where(r => r.fileAppli == filename) &
+                Builder3.Where(r => r.uid == id);
+
+            var myres3 = await ApplicationTimingPostMon.FindAsync(query3);
+            var pr3 = myres3.FirstOrDefault();
+
+            string? date = "";
+            if (pr3 == null)
+                date = "0000-01-01T00:00:00.000Z";
+            else
+                date = pr3.date;
+            
+
+            AppliInfoPost myAppliInfoPost = new AppliInfoPost
+            {
+                filecontacts= pr1.fileContacts,
+                filemenu = pr2.fileMenu,
+                isenabled = pr.isenabled,
+                date = date
+            };
+            return myAppliInfoPost;
+
+        }
+
 
         public async Task<IEnumerable<contactsPost>> GetfilecontactsPosts(string filename,string id)
         {
@@ -97,7 +211,7 @@ namespace SelfApiproj.Repository
 
             var myres = await contactsPostsMon.FindAsync(query);
 
-            //var myres = await contactsPostsMon.FindAsync(query);
+           
 
             var res = myres.ToList();
 
@@ -145,29 +259,44 @@ namespace SelfApiproj.Repository
 
         }
 
-        public async Task<IEnumerable<groupsPost>> getgroupsPost(string id)
+        //public async Task<IEnumerable<groupsPost>> getgroupsPost(string id)
+        //{
+
+        //    var query = Builders<groupsPostMongo>.Filter.Where(r => r.uid.ToString() == id);
+
+        //    var myres = await groupsPostPostsMon.FindAsync(query);
+
+        //    var res = myres.ToList();
+
+
+        //    List<groupsPost> mylist = new List<groupsPost>();
+        //    foreach (var item in res)
+        //    {
+        //        groupsPost mygroup = new groupsPost
+        //        {
+        //            id = item.id.ToString(),
+        //            name = item.name
+
+        //        };
+
+        //        mylist.Add(mygroup);
+        //    }
+        //    return mylist;
+
+        //}
+
+
+        public async Task<menuPostMongo> GetMenu(string filename,string id)
         {
+            var query = Builders<menuPostMongo>.Filter.Where(r => r.uid.ToString() == id);
+            query = query & Builders<menuPostMongo>.Filter.Where(r => r.filename == filename);
 
-            var query = Builders<groupsPostMongo>.Filter.Where(r => r.uid.ToString() == id);
+            var myres = await menuPostsMon.FindAsync(query);
 
-            var myres = await groupsPostPostsMon.FindAsync(query);
-
-            var res = myres.ToList();
+            menuPostMongo ret = myres.FirstOrDefault();
 
 
-            List<groupsPost> mylist = new List<groupsPost>();
-            foreach (var item in res)
-            {
-                groupsPost mygroup = new groupsPost
-                {
-                    id = item.id.ToString(),
-                    name = item.name
-
-                };
-
-                mylist.Add(mygroup);
-            }
-            return mylist;
+            return ret;
 
         }
 
@@ -198,37 +327,68 @@ namespace SelfApiproj.Repository
 
         }
 
-        static public Dictionary<string, HashSet<getTiminggroup>> get_dic_Hashet(
-       IEnumerable<TiminggroupMongo> E_row, Dictionary<string, string> dicgroup)
+        public async Task<IEnumerable<AppliPost>> GetApplis(string id)
+        {
+            var query = Builders<applicationPostMongo>.Filter.Where(r => r.uid.ToString() == id);
+
+            var myres = await appPostsMon.FindAsync(query);
+
+            var res = myres.ToList();
+
+
+
+            List<AppliPost> mylist = new List<AppliPost>();
+            foreach (var item in res)
+            {
+                AppliPost myAppli = new AppliPost
+                {
+                    id = item.id.ToString(),
+                   
+                    filename = item.filename,
+
+                    enabled = item.isenabled
+
+                };
+
+                mylist.Add(myAppli);
+            }
+            return mylist;
+
+        }
+
+
+
+        static public Dictionary<string, HashSet<getappliTiming>> get_dic_Hashet(
+       IEnumerable<applicationTimingMongo> E_row, Dictionary<string, string> dicgroup)
         {
 
-            Dictionary<string, HashSet<getTiminggroup>> Dic = new Dictionary<string, HashSet<getTiminggroup>>();
+            Dictionary<string, HashSet<getappliTiming>> Dic = new Dictionary<string, HashSet<getappliTiming>>();
 
             foreach (var item in E_row)
             {
-                HashSet<getTiminggroup> lst_val = null;
+                HashSet<getappliTiming> lst_val = null;
                 DateTime datetimeday = new DateTime(1980, 1, 1);
-               DateTime.TryParse(item.date, out datetimeday);
+                DateTime.TryParse(item.date, out datetimeday);
 
                 string day = datetimeday.ToString("yyyy-MM-dd");
-                 bool found = Dic.TryGetValue(day, out lst_val);
+                bool found = Dic.TryGetValue(day, out lst_val);
 
                 if (found == false)
                 {
-                    lst_val = new HashSet<getTiminggroup>();
+                    lst_val = new HashSet<getappliTiming>();
                     Dic.Add(day, lst_val);
                 }
-                string mygroup="";
-                dicgroup.TryGetValue(item.groupid, out mygroup);
+                string myappli = "";
+                //dicgroup.TryGetValue(item.fileAppli, out myappli);
 
-                getTiminggroup myclass = new getTiminggroup
+                getappliTiming myclass = new getappliTiming
                 {
 
                     id = item.id.ToString(),
                     day = datetimeday.ToString("yyyy-MM-dd"),
-                    groupname = mygroup,
+                    filename = item.fileAppli,
                     date = datetimeday.ToShortTimeString(),
-                    height= 50
+                    height = 50
                 };
 
                 lst_val.Add(myclass);
@@ -237,54 +397,45 @@ namespace SelfApiproj.Repository
             return (Dic);
         }
 
-        public Dictionary<string, string> get_dicgroup(List<groupsPostMongo> lst)
+        public Dictionary<string, string> get_dicappli(List<applicationPostMongo> lst)
         {
-            Dictionary<string, string> dicgroup = new Dictionary<string, string>();
+            Dictionary<string, string> dicappli = new Dictionary<string, string>();
 
             foreach (var item in lst)
             {
 
                 string id = item.id.ToString();
-                string name = item.name;
-                dicgroup.Add(id, name);
+                string name = item.filename;
+                dicappli.Add(id, name);
             }
-           return dicgroup;
+            return dicappli;
         }
 
 
-        public async  Task<Dictionary<string, HashSet<getTiminggroup>>> getgrouptiming(string id)
+        public async  Task<Dictionary<string, HashSet<getappliTiming>>> getApplicationtiming(string id)
         {
-            Dictionary<string, HashSet<getTiminggroup>> mydic = new Dictionary<string, HashSet<getTiminggroup>>();
+            Dictionary<string, HashSet<getappliTiming>> mydic = new Dictionary<string, HashSet<getappliTiming>>();
             try
             {
                
-                var filter1 =  Builders<TiminggroupMongo>.Filter.Where(r => r.uid.ToString() == id);
+                var filter1 =  Builders<applicationTimingMongo>.Filter.Where(r => r.uid.ToString() == id);
                
-                var myres = await TiminggroupPostMon.FindAsync(filter1);
+                var myres = await ApplicationTimingPostMon.FindAsync(filter1);
 
-                IEnumerable<TiminggroupMongo> res = myres.ToList();
+                IEnumerable<applicationTimingMongo> res = myres.ToList();
 
 
-                var query = Builders<groupsPostMongo>.Filter.Where(r => r.uid.ToString() == id);
+               var query = Builders<applicationPostMongo>.Filter.Where(r => r.uid.ToString() == id);
 
-                var myres1 = await groupsPostPostsMon.FindAsync(query);
+                 var myres1 = await appPostsMon.FindAsync(query);
 
-                List<groupsPostMongo> res1 = myres1.ToList();
+                 List<applicationPostMongo> res1 =   myres1.ToList();
 
-                Dictionary<string, string> mygroupdic = get_dicgroup(res1);
+                Dictionary<string, string> myapplidic = get_dicappli(res1);
 
-                mydic = get_dic_Hashet(res, mygroupdic);
+               mydic = get_dic_Hashet(res, myapplidic);
 
-                //Dictionary<string, HashSet<getTiminggroup>> Dic = new Dictionary<string, HashSet<getTiminggroup>>();
-                //foreach (KeyValuePair<string,HashSet<getTiminggroup>> pair in mydic)
-                //{
-                //    string day = pair.Key;
-                //    HashSet<getTiminggroup> hs = pair.Value;
-
-                //    Dic.Add(day, hs);
-
-                //} 
-
+             
 
 
             }
@@ -302,34 +453,20 @@ namespace SelfApiproj.Repository
 
         
 
-        public async Task<IEnumerable<groupcontactsPost>> getgroupcontacts(createcontactsgroupPost post, string id)
+    
+
+        
+
+        public async Task deletefilescontacts(string filename,string id)
         {
 
-            List<groupcontactsPost> mylist = new List<groupcontactsPost>();
             try
             {
-                var filter = Builders<groupcontactsPostMongo>.Filter.Where(r => r.Groupid.ToString() == post.id);
-                filter = filter & Builders<groupcontactsPostMongo>.Filter.Where(r => r.uid.ToString() == id);
-
-                var res = await groupcontactsPostMon.FindAsync(filter); ;
+                var query = Builders<contactsPostMongo>.Filter.Where(r => r.id.ToString() ==id);
+                query = query & Builders<contactsPostMongo>.Filter.Where(r => r.filename == filename );
 
 
-
-                var myres = await res.ToListAsync();
-
-                foreach (var item in myres)
-                {
-                    groupcontactsPost mygroupcontacts = new groupcontactsPost
-                    {
-                        id = item.id.ToString(),
-                        name = item.name,
-                        phone = item.phone
-
-                    };
-
-                    mylist.Add(mygroupcontacts);
-                }
-
+                var DeleteResult =  await contactsPostsMon.DeleteManyAsync(query);
             }
             catch (Exception ex)
             {
@@ -337,92 +474,208 @@ namespace SelfApiproj.Repository
                 string msg = ex.Message;
             }
 
-            return mylist;
+
+
         }
 
-        public async Task<AudiogroupMongo> getAudiobyidPost(getAudiobyidReq post, string id)
-        {
-            var Builder = Builders<AudiogroupMongo>.Filter;
-
-            var query = Builder.Where(r => r.groupid == post.groupid)
-                & Builder.Where(r => r.uid == id); ;
-
-            var myres = await AudiogroupPostMon.FindAsync(query);
-
-
-            var reponse = myres.FirstOrDefault();
-            return reponse;
-        }
-
-        public async Task deletegroupPost(deletegroup post)
-        {
-
-            try
-            {
-                var query = Builders<groupsPostMongo>.Filter.Where(r => r.id.ToString() == post.id);
-
-                var DeleteResult = await groupsPostPostsMon.DeleteOneAsync(query);
-            }
-            catch (Exception ex)
-            {
-
-                string msg = ex.Message;
-            }
-        }
-
-        public async Task deleteAudiorecordPost(deleteAudioPost post)
+        public  async Task<bool> deleteAudiorecordPost(deleteAudioPost post,string id)
         {
 
             try
             {
                 var query = Builders<AudioPostMongo>.Filter.Where(r => r.id.ToString() == post.id);
 
-                var DeleteResult = await AudioPostMon.DeleteOneAsync(query);
+                var Result = await AudioPostMon.FindAsync(query);
+
+                var presult = Result.FirstOrDefault();
+
+                var fname = presult.filename;
+
+                var Builder = Builders<menuPostMongo>.Filter;
+                var query1 = Builder.Where(r => r.uid == id);
+
+               
+                var Result1 = await menuPostsMon.FindAsync(query1);
+
+                var res = Result1.ToList();
+
+                bool isexists = false;
+                foreach (var item in res)
+                {
+                    if(item.jsonarray.Contains(fname))
+                    {
+                        isexists = true;
+                        return false;   
+
+                    }
+
+                }
+
+                     var DeleteResult = await AudioPostMon.DeleteOneAsync(query);
+
+                return true;
             }
             catch (Exception ex)
-            {
-
-                string msg = ex.Message;
+            {  string msg = ex.Message;
+                return false;
             }
 
 
 
         }
-        public async Task deletetimimg(deletetimingPost post)
-        {
-
-            try
-            {
-                var query = Builders<TiminggroupMongo>.Filter.Where(r => r.id.ToString() == post.id);
-
-                var DeleteResult = await TiminggroupPostMon.DeleteOneAsync(query);
-            }
-            catch (Exception ex)
-            {
-
-                string msg = ex.Message;
-            }
 
 
-
-        }
         
 
-        public async Task bulkdeletegroupcontacts(createcontactsgroupPost post, string id)
+             public async Task<bool> bulkdeleteditcontacts(string filename, string id)
         {
+            var Builder1 = Builders<applicationContactsPostMongo>.Filter;
+            var query1 = Builder1.Where(r => r.fileContacts == filename) &
+                Builder1.Where(r => r.uid == id);
+
+            var filenameList = await applicationContactsPostMon.FindAsync(query1);
+
+            var fList = filenameList.FirstOrDefault();
+
+
+            if (fList != null)
+            {
+                return false;
+            }
 
 
 
-            var Builder = Builders<groupcontactsPostMongo>.Filter;
-            var query = Builder.Where(r => r.Groupid == post.id) &
+            var Builder = Builders<contactsPostMongo>.Filter;
+            var query = Builder.Where(r => r.filename == filename) &
                                Builder.Where(r => r.uid == id);
 
-            var personsDeleteResult = await groupcontactsPostMon.DeleteManyAsync(query);
+            var personsDeleteResult = await contactsPostsMon.DeleteManyAsync(query);
 
+            return true;
+
+        }
+
+        public async Task DeleteAppliTiming(string filename, string id)
+        {
+
+            var Builder3 = Builders<applicationTimingMongo>.Filter;
+            var query3 = Builder3.Where(r => r.fileAppli == filename) &
+                               Builder3.Where(r => r.uid == id);
+
+            await ApplicationTimingPostMon.DeleteManyAsync(query3);
+
+        }
+
+
+        public async Task DeleteAppli(string filename, string id)
+        {
+          
+
+            var Builder = Builders<applicationPostMongo>.Filter;
+            var query = Builder.Where(r => r.filename == filename) &
+                               Builder.Where(r => r.uid == id);
+
+                  await appPostsMon.DeleteManyAsync(query);
+
+
+            var Builder1 = Builders<applicationMenuPostMongo>.Filter;
+            var query1 = Builder1.Where(r => r.fileAppli == filename) &
+                               Builder1.Where(r => r.uid == id);
+
+            await applicationMenuPostMon.DeleteManyAsync(query1);
+
+
+            var Builder2 = Builders<applicationContactsPostMongo>.Filter;
+            var query2 = Builder2.Where(r => r.fileAppli == filename) &
+                               Builder2.Where(r => r.uid == id);
+
+            await applicationContactsPostMon.DeleteManyAsync(query2);
+
+            var Builder3 = Builders<applicationTimingMongo>.Filter;
+            var query3 = Builder3.Where(r => r.fileAppli == filename) &
+                               Builder3.Where(r => r.uid == id);
+
+            await ApplicationTimingPostMon.DeleteManyAsync(query3);
+
+
+        }
+        public async Task<bool> bulkdeleteditmenu(string filename, string id)
+        {
+
+            var Builder1 = Builders<applicationMenuPostMongo>.Filter;
+            var query1 = Builder1.Where(r => r.fileMenu == filename) &
+                Builder1.Where(r => r.uid == id);
+
+            var filenameList = await applicationMenuPostMon.FindAsync(query1);
+
+            var fList = filenameList.FirstOrDefault();
+
+            if (fList != null)
+            {
+                return false;
+            }
+
+            var Builder = Builders<menuPostMongo>.Filter;
+            var query = Builder.Where(r => r.filename == filename) &
+                               Builder.Where(r => r.uid == id);
+
+            var personsDeleteResult = await menuPostsMon.DeleteManyAsync(query);
+
+            return true;
+
+        }
+
+        
+
+              public async Task<AudioPostMongo> isfilesaklataExist(string id, string name)
+        {
+
+            var filter = new BsonDocument();
+
+            var Builder = Builders<AudioPostMongo>.Filter;
+            var query = Builder.Where(r => r.name == name) &
+                Builder.Where(r => r.uid == id);
+
+            var filenameList = await AudioPostMon.FindAsync(query);
+            var reponse = filenameList.FirstOrDefault();
+            return reponse;
 
 
         }
 
+
+        
+
+             public async Task<applicationPostMongo> isfilesappliExist(string id, string filename)
+        {
+
+            var filter = new BsonDocument();
+
+            var Builder = Builders<applicationPostMongo>.Filter;
+            var query = Builder.Where(r => r.filename == filename) &
+                Builder.Where(r => r.uid == id);
+
+            var filenameList = await appPostsMon.FindAsync(query);
+            var reponse = filenameList.FirstOrDefault();
+            return reponse;
+
+
+        }
+        public async Task<menuPostMongo> isfilesmenuExist(string id, string filename)
+        {
+
+            var filter = new BsonDocument();
+
+            var Builder = Builders<menuPostMongo>.Filter;
+            var query = Builder.Where(r => r.filename == filename) &
+                Builder.Where(r => r.uid == id);
+
+            var filenameList = await menuPostsMon.FindAsync(query);
+            var reponse = filenameList.FirstOrDefault();
+            return reponse;
+
+           
+        }
 
         public async Task<contactsPostMongo> isfilescontactExist(string id, string filename)
         {
@@ -437,7 +690,7 @@ namespace SelfApiproj.Repository
             var reponse = filenameList.FirstOrDefault();
             return reponse;
 
-            // var categoriesList = await contactsPostsMon.DistinctAsync<string>("filename", query);
+       
         }
 
         public async Task bulkcontacts(List<createcontactsPostUid> post)
@@ -461,78 +714,8 @@ namespace SelfApiproj.Repository
             await contactsPostsMon.InsertManyAsync(lst);
         }
 
-        public async Task CreategroupsPost(creategroupsPostui post)
-        {
-            groupsPostMongo postM = new groupsPostMongo
-            {
-                name = post.name,
-                uid = post.uid
-
-            };
-
-            await groupsPostPostsMon.InsertOneAsync(postM);
-        }
-        public async Task createAudiogroup(createAudiogroupPost post, string id)
-        {
-
-            //var query = Builders<AudiogroupMongo>.Filter.Where(r => r.groupid.ToString() == post.groupid);
-
-            var filter = Builders<AudiogroupMongo>.Filter.Where(r => r.groupid.ToString() == post.groupid);
-            filter = filter & Builders<AudiogroupMongo>.Filter.Where(r => r.uid.ToString() == id);
-
-
-
-            var DeleteResult = await AudiogroupPostMon.DeleteOneAsync(filter);
-
-            AudiogroupMongo postM = new AudiogroupMongo
-            {
-                uid = id,
-                groupid = post.groupid,
-                audioid = post.audioid
-
-            };
-
-            await AudiogroupPostMon.InsertOneAsync(postM);
-        }
-
-        public async Task createTiminggroup(creategrouptimingPost post, string id)
-        {
-
-
-            TiminggroupMongo postM = new TiminggroupMongo
-            {
-                uid = id,
-                groupid = post.groupid,
-                date = post.date
-
-            };
-
-            await TiminggroupPostMon.InsertOneAsync(postM);
-        }
         
-        public async Task bulkgroupcontacts(createcontactsgroupPost post, string id)
-        {
-            List<contactsPostMongo> lst = await contactsPostsMon.Find(x => true).ToListAsync();
-
-            List<groupcontactsPostMongo> lstgrpcontacts = new List<groupcontactsPostMongo>();
-
-            foreach (var contact in lst)
-            {
-                groupcontactsPostMongo postM = new groupcontactsPostMongo
-                {
-                    uid = id,
-                    Groupid = post.id,
-                    name = contact.name,
-                    phone = contact.phone,
-
-                };
-                lstgrpcontacts.Add(postM);
-            }
-
-
-            await groupcontactsPostMon.InsertManyAsync(lstgrpcontacts);
-        }
-
+        
         public async Task CreateAudio(createAudio post)
         {
             AudioPostMongo postM = new AudioPostMongo
@@ -544,49 +727,225 @@ namespace SelfApiproj.Repository
             };
             await AudioPostMon.InsertOneAsync(postM);
         }
+
+
+        public async Task CreateAppliMenu(createApp post)
+        {
+            applicationMenuPostMongo postM = new applicationMenuPostMongo
+            {
+                uid = post.uid,
+                fileAppli = post.filename,
+                fileMenu = post.filemenu
+
+            };
+            await applicationMenuPostMon.InsertOneAsync(postM);
+        }
+
+
+        
+
+        public async Task CreateAppliContact(createApp post)
+        {
+            applicationContactsPostMongo postM = new applicationContactsPostMongo
+            {
+                uid = post.uid,
+                fileAppli = post.filename,
+                fileContacts = post.filecontact
+
+            };
+            await applicationContactsPostMon.InsertOneAsync(postM);
+        }
+
+
+        public async Task CreateAppliTiming(createApp post)
+        {
+
+
+            applicationTimingMongo postM = new applicationTimingMongo
+            {
+                uid = post.uid,
+                fileAppli = post.filename,
+                date = post.date
+
+            };
+
+            await ApplicationTimingPostMon.InsertOneAsync(postM);
+        }
+
+        public async Task CreateAppli(createApp post)
+        {
+            applicationPostMongo postM = new applicationPostMongo
+            {
+                uid = post.uid,
+                isenabled= post.isenabled,
+                filename = post.filename
+
+            };
+            await appPostsMon.InsertOneAsync(postM);
+        }
+
+        public async Task UpdateAppli(createApp post)
+        {
+           
+            var Builder = Builders<applicationPostMongo>.Filter;
+           
+            var query = Builder.Where(r => r.uid == post.uid) &
+                              Builder.Where(r => r.filename == post.filename);
+
+
+            var update = Builders<applicationPostMongo>.Update
+               .Set(pn => pn.isenabled, post.isenabled);
+
+           await appPostsMon.UpdateOneAsync(query, update);
+
+        }
+        public async Task UpdateAppliMenu(createApp post)
+        {
+          
+            var Builder = Builders<applicationMenuPostMongo>.Filter;
+
+            var query = Builder.Where(r => r.uid == post.uid) &
+                              Builder.Where(r => r.fileAppli == post.filename);
+
+
+            var update = Builders<applicationMenuPostMongo>.Update
+               .Set(pn => pn.fileMenu, post.filemenu);
+
+            await applicationMenuPostMon.UpdateOneAsync(query, update);
+
+        }
+
+        public async Task UpdateAppliTiming(createApp post)
+        {
+
+            var Builder = Builders<applicationTimingMongo>.Filter;
+
+            var query = Builder.Where(r => r.uid == post.uid) &
+                              Builder.Where(r => r.fileAppli == post.filename);
+
+
+            var filenameList = await ApplicationTimingPostMon.FindAsync(query);
+            var response = filenameList.FirstOrDefault();
+            if (response == null)
+            {
+                applicationTimingMongo postM = new applicationTimingMongo
+                {
+                    uid = post.uid,
+                    fileAppli = post.filename,
+                    date = post.date
+
+                };
+
+                await ApplicationTimingPostMon.InsertOneAsync(postM);
+                return;
+            }
+
+            var update = Builders<applicationTimingMongo>.Update
+               .Set(pn => pn.date, post.date);
+
+            await ApplicationTimingPostMon.UpdateOneAsync(query, update);
+
+        }
+
+        
+
+        public async Task UpdateAppliContact(createApp post)
+        {
+
+            var Builder = Builders<applicationContactsPostMongo>.Filter;
+
+            var query = Builder.Where(r => r.uid == post.uid) &
+                              Builder.Where(r => r.fileAppli == post.filename);
+
+
+            var update = Builders<applicationContactsPostMongo>.Update
+               .Set(pn => pn.fileContacts, post.filecontact);
+
+            await applicationContactsPostMon.UpdateOneAsync(query, update);
+
+        }
+
+        
+
+        public async Task CreateMenu(createMenu post)
+        {
+            menuPostMongo postM = new menuPostMongo
+            {
+                uid = post.uid,
+                jsonarray = post.jsonarr,
+                filename = post.filename
+
+            };
+            await menuPostsMon.InsertOneAsync(postM);
+        }
+
     }
 
+  
+}
 
-    public interface IMongoRepository
+
+public interface IMongoRepository
     {
         Task<userPost> Login(loginPost post);
 
         Task createregisterPost(createregisterPost post);
         Task<IEnumerable<contactsPost>> GetcontactsPost(string id);
 
-        Task<IEnumerable<contactsPost>> GetfilecontactsPosts(string filename, string id);
+        Task<IEnumerable<menufilesPost>> getAllfilesMenu(string id);
 
-        Task<IEnumerable<groupsPost>> getgroupsPost(string id);
+    Task<IEnumerable<contactsfilesPost>> GetAllfilescontactsPost(string id);
+
+    Task<IEnumerable<contactsPost>> GetfilecontactsPosts(string filename, string id);
+
+    Task<AppliInfoPost> getallAppliInfo(string filename, string id);
+
+    Task<IEnumerable<AppliPost>> GetApplis(string id);
+
+     
 
          Task<IEnumerable<AudioPost>> GetAudio(string id);
 
-        Task<IEnumerable<groupcontactsPost>> getgroupcontacts(createcontactsgroupPost post, string id);
+    
+       Task<bool> deleteAudiorecordPost(deleteAudioPost post, string id);
 
-        Task<Dictionary<string,HashSet<getTiminggroup>>> getgrouptiming(string id);
-        //
-
-        Task<AudiogroupMongo> getAudiobyidPost(getAudiobyidReq post, string id);
-
-        Task deletegroupPost(deletegroup post);
-
-        Task deleteAudiorecordPost(deleteAudioPost post);
-
-        Task deletetimimg(deletetimingPost post);
-
-        Task bulkdeletegroupcontacts(createcontactsgroupPost post, string id);
-
+        Task deletefilescontacts(string filename, string id);
+       
         Task bulkcontacts(List<createcontactsPostUid> post);
 
         Task<contactsPostMongo> isfilescontactExist(string id, string filename);
 
-        Task CreategroupsPost(creategroupsPostui post);
+        Task<menuPostMongo> isfilesmenuExist(string id, string filename);
 
-        Task createAudiogroup(createAudiogroupPost post, string id);
+       Task<applicationPostMongo> isfilesappliExist(string id, string filename);
 
-        Task createTiminggroup(creategrouptimingPost post, string id);
+    Task<AudioPostMongo> isfilesaklataExist(string id, string name);
 
-        Task bulkgroupcontacts(createcontactsgroupPost post, string id);
+    Task<bool> bulkdeleteditcontacts(string filename, string id);
+
+       Task<bool> bulkdeleteditmenu(string filename, string id);
+
+    Task<Dictionary<string, HashSet<getappliTiming>>> getApplicationtiming(string id);
+
+
 
         Task CreateAudio(createAudio post);
-    }
+        Task<menuPostMongo> GetMenu(string filename, string id);
+       Task CreateMenu(createMenu post);
+
+      Task CreateAppli(createApp post);
+
+    Task UpdateAppli(createApp post);
+    Task CreateAppliMenu(createApp post);
+   Task UpdateAppliMenu(createApp post);
+    Task CreateAppliContact(createApp post);
+    Task UpdateAppliContact(createApp post);
+    Task CreateAppliTiming(createApp post);
+   Task UpdateAppliTiming(createApp post);
+
+
+    Task DeleteAppli(string filename, string id);
+
+    Task DeleteAppliTiming(string filename, string id);
 }
+

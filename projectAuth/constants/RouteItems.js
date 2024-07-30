@@ -12,8 +12,10 @@ export const screens = {
   Contact: 'Contact',
   ACTION1: 'ACTION1',
   ADDCONTACTFILES: 'ADDCONTACTFILES',
-  ACTION4: 'ACTION4',
-  Planning: 'Planning',
+  ADDMENUFILES: 'ADDMENUFILES',
+  ADDAUDIO: 'ADDAUDIO',
+  ADDAPP: 'ADDAPP',
+  // Planning: 'Planning',
   TASKSAPP:'TASKSAPP',
   GROUPMEMBERS: 'GROUPMEMBERS',
   HelpStack: 'HelpStack',
@@ -59,6 +61,15 @@ export const routes = [
       <Icon name="address-book" size={30} color={focused ? '#AAAAEE' : '#000'} />,
   },
   {
+    name: screens.ADDAPP,
+    focusedRoute: screens.AppStack,
+    title: 'אפליקציה חדשה',
+    showInTab: false,
+    showInDrawer: true,
+    icon: (focused) =>
+      <Icon name="file-sound-o" size={30} color={focused ? '#AAAAEE' : '#000'} />,
+  },
+  {
     name: screens.MenuTab,
     focusedRoute: screens.MenuTab,
     title: 'תפריט',
@@ -82,6 +93,15 @@ export const routes = [
     title:  'תפריט',
     showInTab: true,
     showInDrawer: false,
+    icon: (focused) =>
+      <Icon name="list" size={30} color={focused ? '#AAAAEE' : '#000'} />,
+  },
+  {
+    name: screens.ADDMENUFILES,
+    focusedRoute: screens.MenuStack,
+    title: 'תפריט חדש',
+    showInTab: false,
+    showInDrawer: true,
     icon: (focused) =>
       <Icon name="list" size={30} color={focused ? '#AAAAEE' : '#000'} />,
   },
@@ -152,9 +172,9 @@ export const routes = [
   },
 
   {
-    name: screens.ACTION4,
+    name: screens.ADDAUDIO,
     focusedRoute: screens.AudioStack,
-    title: 'יצירה הקלטה',
+    title: 'הקלטה חדשה',
     showInTab: false,
     showInDrawer: true,
     icon: (focused) =>
@@ -178,14 +198,14 @@ export const routes = [
     icon: (focused) =>
       <Icon name="calendar" size={30} color={focused ? '#AAAAEE' : '#000'} />,
   },
-  {
-    name: screens.Planning,
-    focusedRoute: screens.CalendarStack,
-    title: 'יצירה תזמון',
-    showInTab: false,
-    showInDrawer: true,
-    icon: (focused) =>
-      <Icon name="calendar" size={30} color={focused ? '#AAAAEE' : '#000'} />,
-  }
+  // {
+  //   name: screens.Planning,
+  //   focusedRoute: screens.CalendarStack,
+  //   title: 'תזמון חדש',
+  //   showInTab: false,
+  //   showInDrawer: true,
+  //   icon: (focused) =>
+  //     <Icon name="calendar" size={30} color={focused ? '#AAAAEE' : '#000'} />,
+  // }
   
 ]

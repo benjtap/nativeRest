@@ -12,15 +12,12 @@ import {
 
 
 
-const showtabdrawer =['Contacts','Application','MENUSAPP','Audio']
+const showtabdrawer =['Contacts','Application','MENUSAPP','Audio','MenuStack', 'ContactStack','AudioStack']
 
 const CustomDrawerContent = (props) => {
   const currentRouteName = props.nav()?.getCurrentRoute()?.name
- 
- // const showtabdrawer =['Contacts','Application','MENUSAPP','Audio']
 
- //if (currentRouteName ==='Contacts' ||currentRouteName ==='Application' ||currentRouteName ==='MENUSAPP' ||currentRouteName ==='Audio')
-    return (
+  return (
     <DrawerContentScrollView {...props}>
       {
         routes.filter(route => route.showInDrawer).map((route) => {

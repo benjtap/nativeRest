@@ -26,8 +26,51 @@ namespace Webhttp.Models
         public string id { get; set; }
 
     }
+    public class menuPostMongo
+    {
+        public ObjectId id { get; set; }
 
-    
+        public string? uid { get; set; }
+      
+        public string? filename { get; set; }
+        public string? jsonarray { get; set; }
+    }
+
+
+    public class applicationContactsPostMongo
+    {
+        public ObjectId id { get; set; }
+
+        public string? uid { get; set; }
+
+        public string? fileAppli { get; set; }
+
+        public string? fileContacts { get; set; }
+
+    }
+
+    public class applicationMenuPostMongo
+    {
+        public ObjectId id { get; set; }
+
+        public string? uid { get; set; }
+
+        public string? fileAppli { get; set; }
+
+        public string? fileMenu { get; set; }
+       
+    }
+
+    public class applicationPostMongo
+    {
+        public ObjectId id { get; set; }
+
+        public string? uid { get; set; }
+
+        public string? filename { get; set; }
+        public bool? isenabled { get; set; }
+    }
+
     public class contactsPostMongo
     {
         public ObjectId id { get; set; }
@@ -76,28 +119,28 @@ namespace Webhttp.Models
         public string? filename { get; set; }
     }
 
-    public class AudiogroupMongo
+    //public class AudiogroupMongo
+    //{
+    //    public ObjectId id { get; set; }
+
+    //    public string uid { get; set; }
+    //    public string groupid { get; set; }
+    //    public string audioid { get; set; }
+    //}
+
+    public class applicationTimingMongo
     {
         public ObjectId id { get; set; }
 
         public string uid { get; set; }
-        public string groupid { get; set; }
-        public string audioid { get; set; }
-    }
-
-    public class TiminggroupMongo
-    {
-        public ObjectId id { get; set; }
-
-        public string uid { get; set; }
-        public string groupid { get; set; }
+        public string fileAppli { get; set; }
         public string date { get; set; }
     }
 
-    public class getTiminggroup
+    public class getappliTiming
     {
         public string id { get; set; }
-        public string groupname { get; set; }
+        public string filename { get; set; }
         public string date { get; set; }
         public int height { get; set; }
         public string day { get; set; }
@@ -112,40 +155,61 @@ namespace Webhttp.Models
         public string? filename { get; set; }
     }
 
-
-
-    public class groupcontactsPostMongo
-    {
-        public ObjectId id { get; set; }
-        public string Groupid { get; set; }
-
-        public string uid { get; set; }
-
-        public string? name { get; set; }
-
-        public string? phone { get; set; }
-    }
-
-    public class groupcontactsPost
+    public class AppliPost
     {
         public string id { get; set; }
-        public string Groupid { get; set; }
-
-        public string uid { get; set; }
-
-        public string? name { get; set; }
-
-        public string? phone { get; set; }
+        public bool? enabled { get; set; }
+        public string? filename { get; set; }
     }
 
+    //public class groupcontactsPostMongo
+    //{
+    //    public ObjectId id { get; set; }
+    //    public string Groupid { get; set; }
 
-    public class groupsPost
-    {
-        public string id { get; set; }
+    //    public string uid { get; set; }
 
-        public string? name { get; set; }
+    //    public string? name { get; set; }
+
+    //    public string? phone { get; set; }
+    //}
+
+    //public class groupcontactsPost
+    //{
+    //    public string id { get; set; }
+    //    public string Groupid { get; set; }
+
+    //    public string uid { get; set; }
+
+    //    public string? name { get; set; }
+
+    //    public string? phone { get; set; }
+    //}
+
+
+    //public class groupsPost
+    //{
+    //    public string id { get; set; }
+
+    //    public string? name { get; set; }
        
+    //}
+
+    public class AppliInfoPost
+    {
+        public string id { get; set; }
+
+        public string? uid { get; set; }
+
+        public string? filecontacts { get; set; }
+
+        public string? filemenu { get; set; }
+
+        public string? date { get; set; } = null;
+
+        public bool? isenabled { get; set; } 
     }
+
 
     public class contactsPost
     {
@@ -156,6 +220,28 @@ namespace Webhttp.Models
         public string? name { get; set; }
 
         public string? phone { get; set; }
+    }
+
+    public class contactsfilesPost
+    {
+        public string id { get; set; }
+
+        public string? uid { get; set; }
+
+        public string? filename { get; set; }
+
+       
+    }
+
+    public class menufilesPost
+    {
+        public string id { get; set; }
+
+        public string? uid { get; set; }
+
+        public string? filename { get; set; }
+
+
     }
 
     public class createcontactsPost
@@ -228,6 +314,26 @@ namespace Webhttp.Models
         public string? filename { get; set; }
     }
 
+    public class createMenu
+    {
+        public string? jsonarr { get; set; }
+        public string? uid { get; set; }
+        public string? filename { get; set; }
+    }
+
+    public class createApp
+    {
+        public bool? isenabled { get; set; }
+        public string? uid { get; set; }
+        public string? filename { get; set; }
+
+        public string? date { get; set; }
+        public string? filemenu { get; set; }
+        public string? filecontact { get; set; }
+
+
+    }
+
     public class createcontactsgroupPost
     {
         public string id { get; set; }
@@ -240,6 +346,24 @@ namespace Webhttp.Models
 
     }
 
+
+    public class getallinfoAppliPost
+    {
+        public string? filename { get; set; }
+
+    }
+
+    public class getfilemenuPost
+    {
+        public string? filename { get; set; }
+
+    }
+    public class getMenuPost
+    {
+        public string? filename { get; set; }
+
+    }
+
     public class getAudiobyidReq
     {
         public string groupid { get; set; }
@@ -247,19 +371,36 @@ namespace Webhttp.Models
     }
 
 
-    public class creategrouptimingPost
-    {
-        public string groupid { get; set; }
-        public string date { get; set; }
-    }
-    public class createAudiogroupPost
-    {
-        public string groupid { get; set; }
-        public string audioid { get; set; }
-    }
+    //public class creategrouptimingPost
+    //{
+    //    public string groupid { get; set; }
+    //    public string date { get; set; }
+    //}
+    //public class createAudiogroupPost
+    //{
+    //    public string groupid { get; set; }
+    //    public string audioid { get; set; }
+    //}
     public class creategroupsPost
     {
      public string? name { get; set; }
+    }
+
+    public class createmenuPost
+    {
+        public string? filename { get; set; }
+        public string? jsonarray { get; set; }
+    }
+
+    public class createappPost
+    {
+        public string? filename { get; set; }
+
+        public string? filemenu { get; set; }
+
+        public string? date { get; set; }
+        public string? filecontact { get; set; }
+        public bool? isenabled { get; set; }
     }
 
     public class creategroupsPostui

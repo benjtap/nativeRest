@@ -5,7 +5,7 @@ import {createNativeStackNavigator} from  '@react-navigation/native-stack'
 
 import {
   AUDIO,
-  ACTION4,
+  ADDAUDIO,
   AUDIODETAILS,
   AUDIOGROUPMEMBERS,
   LOGOUT
@@ -15,7 +15,7 @@ import {
 import { routes,screens } from '../constants/RouteItems';
 
 import Audio from '../screens/Audio' ;
-import Action4 from '../screens/action4';
+import Addaudio from '../screens/Addaudio';
 import Audiodetails from '../screens/Audiodetails';
 import AudioGroupMembers from '../screens/AudioGroupMembers';
 
@@ -45,7 +45,7 @@ const AudioNavigator = (props) => {
       headerShown: false,
     }}>
       <AudioStack.Screen name={screens.Audio} component={Audio} />
-      <AudioStack.Screen name={screens.ACTION4} component={Action4} />
+      <AudioStack.Screen name={screens.ADDAUDIO} component={Addaudio} />
        <AudioStack.Screen name={screens.Audiodetails} component={Audiodetails} />
    
  {/* <AudioStack.Screen name={LOGOUT} component={Logout} />    */}

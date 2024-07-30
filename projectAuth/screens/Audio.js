@@ -1,20 +1,22 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 
 //import {useFocusEffect} from  '@react-navigation/native-stack'
  
-import { StyleSheet, View, TextInput, TouchableOpacity, Text, FlatList, Image } from 'react-native';
+import { StyleSheet, View, TextInput, TouchableOpacity, Text, FlatList, Button,Alert } from 'react-native';
 
 import { COLORS, FONT, SIZES } from "../constants";
 
 import axiosInstance from '../helpers/axiosInstance';
 
-
+import { Audio } from 'expo-av';
+import * as FileSystem from 'expo-file-system';
+import { LinearGradient } from "expo-linear-gradient";
 
 String.isNullOrEmpty = function(value) {
   return !(typeof value === "string" && value.length > 0);
 }
 
-const Audio = (props) => {
+const myAudio = (props) => {
   const { navigation } = props;
 
   
@@ -65,6 +67,31 @@ async function runQuerygroup() {
 
  
 
+  const deleteAudiorecord= async (item) => {
+    const oparamid = item.id ;
+
+    
+
+    let deleteAudiorecordPost =  {
+      id:oparamid
+        }
+
+
+let url = `/Webhttp/deleteAudiorecord`
+  await axiosInstance.post(url,deleteAudiorecordPost)
+
+  .then(({data}) => {
+
+    if(data=="message"){
+      alert('File exist in Menu, you must remove him before')
+      return;
+    }
+    setData(data)
+   })
+
+  };
+        
+
   const searchAudios = () => {
     const limit = 30;
     fetchAudiosDataForPosts();
@@ -85,8 +112,29 @@ async function runQuerygroup() {
     };
 
 
-
-
+    const listenAudiorecord = async(item) => {
+      const limit = 30;
+      
+       const filename = item.filename ;
+       console.log(filename)
+       const playbackObject = new Audio.Sound();
+          await playbackObject.loadAsync({ uri: FileSystem.documentDirectory + 'recordings/' + `${filename}` });
+          await playbackObject.playAsync();
+  
+       
+      };
+      const handleconfirmDelete= (item) => {
+        Alert.alert(
+          'confirmation',
+          'Are you sure to delete', // <- this part is optional, you can pass an empty string
+          [
+            {text: 'כן', onPress: () => handleDelete(item)},
+            {text: 'לא', onPress: () => console.log('OK Pressed')},
+          ],
+          {cancelable: true},
+        );
+    
+      }
 
   const updateSelectedType = (selectedType) => () => {
     setSelectedType(() => selectedType);
@@ -103,21 +151,49 @@ async function runQuerygroup() {
       })
    }
     
-
-
- 
-
-  const renderItems = ({ item }) => {
-
-  
-    return (
-    <TouchableOpacity style={styles.listItem} onPress={selectItem(item)}>
-    <Text style={styles.listItemLabel}>{item.name}</Text>
-    </TouchableOpacity>
+  const handleDelete= (item) => {
+    Alert.alert(
+      'confirmation',
+      'Are you sure to delete', // <- this part is optional, you can pass an empty string
+      [
+        {text: 'כן', onPress: () => deleteAudiorecord(item)},
+        {text: 'לא', onPress: () => console.log('OK Pressed')},
+      ],
+      {cancelable: true},
     );
 
- }
+  }
+
  
+
+ 
+const renderItems =  useCallback(({ item }) => {
+  return (
+    <LinearGradient colors={['#5ED2A0', '#C3CBDC']}> 
+    <View style={{ flex: 1,flexDirection:"row", justifyContent: 'center',
+     alignItems: 'center', }} >
+     
+    <View style={{ width: "14%",margin: 10 }}> 
+    <Button title="מחק"  onPress={() => handleconfirmDelete( item)}   style={styles.button}  />
+       </View>  
+        
+       <View style={{ width: "14%",margin: 10 }}> 
+    <Button title="נגן"  onPress={() => listenAudiorecord( item)}   style={styles.button}  />
+       </View>  
+        
+       <View style={{ flex: 1,marginHorizontal: 10,}}>
+       <TouchableOpacity style={styles.listItem} >
+<Text style={styles.listItemLabel}>{item.name}</Text>
+</TouchableOpacity>
+  </View>
+
+ 
+  </View>
+  </LinearGradient>
+  );
+
+})
+
 
   return (
     <View style={{ flex: 1 }}>
@@ -342,4 +418,4 @@ async function runQuerygroup() {
 //   }
 // });
 
-export default Audio;
+export default myAudio;

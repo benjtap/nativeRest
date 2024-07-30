@@ -8,6 +8,7 @@ import {useRoute} from '@react-navigation/native';
 import { routes,screens } from '../constants/RouteItems';
 
 const Updatecontactfiles = (props) => {
+  
   const { navigation } = props;
   const [fileUri, setFileUri] = useState(null);
   const [fileindex, setFileindex] = useState(0);

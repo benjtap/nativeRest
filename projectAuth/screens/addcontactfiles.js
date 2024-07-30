@@ -16,9 +16,7 @@ const Addcontactfiles = (props) => {
 
 
   useEffect(() => {
-//     routes.map((record) => (
-//       record.showInDrawer =false
-//  ))
+
     validateForm();
     setStatusPicked(3)
 
@@ -89,6 +87,11 @@ const Addcontactfiles = (props) => {
           "Content-Type": "application/json;charset=UTF-8",
         },
       }) .then((res) => {
+
+        if(res.data=="message"){
+          alert('File name must be unique')
+          return;
+        }
         navigation.navigate('Contacts')
       })
 
@@ -139,10 +142,9 @@ const Addcontactfiles = (props) => {
 
          }
       });
-  
-      
-
+   
   }
+
   function findDuplicatesOptimized(array) {
     const duplicates = [];
     const frequencyMap = {};

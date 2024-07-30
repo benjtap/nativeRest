@@ -1,12 +1,12 @@
 import  React, { useState, useEffect, useContext, useCallback } from 'react';
-import { StyleSheet, View, TextInput, TouchableOpacity, Text, FlatList, ActivityIndicator } from 'react-native';
+import { StyleSheet, View, TextInput, TouchableOpacity, Text, FlatList, Button,Alert } from 'react-native';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { COLORS, FONT, SIZES } from "../constants";
 
 import axiosInstance from '../helpers/axiosInstance';
 
-
+import { LinearGradient } from "expo-linear-gradient";
 
 String.isNullOrEmpty = function(value) {
   return !(typeof value === "string" && value.length > 0);
@@ -30,7 +30,7 @@ const Appli = (props) => {
  
  const filterdata= React.useMemo(() =>{
 
-return data.filter(post =>  post.name.toLowerCase().includes(keyword.toLowerCase()))
+return data.filter(post =>  post.filename.toLowerCase().includes(keyword.toLowerCase()))
 
 },[data,keyword])
   
@@ -44,14 +44,12 @@ return data.filter(post =>  post.name.toLowerCase().includes(keyword.toLowerCase
     const unsubscribe = navigation.addListener('focus', () => {
        
     
-      searchGroups();
+      searchAppli();
     
     });
 
-    // if (selectedType === 0) {
-    //   searchContacts();
-    // } else {
-      searchGroups();
+    
+    searchAppli();
     
 
     return unsubscribe;
@@ -62,29 +60,26 @@ return data.filter(post =>  post.name.toLowerCase().includes(keyword.toLowerCase
 
  
     
+  const searchAppli = () => {
+    const limit = 30;
+    fetchAppliDataForPosts();
+   };
 
-  const fetchgroupsDataForPosts = async () => {
-    
-    setLoading(true)
-    const url =`/Webhttp/getgroups`;
-  
-      
+  const fetchAppliDataForPosts = async () => {
+
+    let url = `/Webhttp/getapplis`
     await axiosInstance.get(url)
-  
-     .then(({data}) => {
-            setData(data)
-            setLoading(false)
-      }).catch((err) => {
-        
-       })
-   
-   }
-  
 
-  const searchGroups = () => {
+    .then(({data}) => {
+
       
-    fetchgroupsDataForPosts();
-  };
+       setData(data)
+    
+     }).catch((err) => {
+        
+     })
+
+    };
 
 
   
@@ -98,22 +93,85 @@ return data.filter(post =>  post.name.toLowerCase().includes(keyword.toLowerCase
 
   const selectItem = (item) => () => {
      navigation.navigate('TASKSAPP', {
-        id: item.id ,name: item.name
+   filename: item.filename
       })
     
     
   };
 
+
+  const handleDelete = async (item) => {
+    const url =`/Webhttp/deletefilesappli`;
+    var deletefilescont =
+    { 
+     "filename": item.filename
+     }
+    
+      
+    await axiosInstance.post(url,deletefilescont)
+  
+     .then(({data}) => {
+            setData(data)
+            setLoading(false)
+      }).catch((err) => {
+        
+       })
+
+      }
+
+  const handleconfirmDelete= (item) => {
+    Alert.alert(
+      'confirmation',
+      'Are you sure to delete', // <- this part is optional, you can pass an empty string
+      [
+        {text: 'כן', onPress: () => handleDelete(item)},
+        {text: 'לא', onPress: () => console.log('OK Pressed')},
+      ],
+      {cancelable: true},
+    );
+
+  }
  
+  const Renderfield= ({item}) => {
+
+  if (item.enabled)
+    return ("פעיל")
+  else
+  return ("לא פעיל")
+
+  }
+
  // useCallback(
   const renderItems =  useCallback(({ item }) => {
     return (
-    <TouchableOpacity style={styles.listItem} onPress={selectItem(item)}>
-    <Text style={styles.listItemLabel}>{item.name}</Text>
-    </TouchableOpacity>
+      <LinearGradient colors={['#5ED2A0', '#C3CBDC']}> 
+      <View style={{ flex: 1,flexDirection:"row", justifyContent: 'center',
+       alignItems: 'center', }}>
+       
+      <View style={{ width: "14%",margin: 10 }}> 
+      <Button title="מחק"  onPress={() => handleconfirmDelete( item)}   style={styles.button}  />
+         </View>  
+          <View style={[{ width: "14%", margin: 10 }]}> 
+     <Button title="מייד רץ"  onPress={() => handleconfirmDelete( item)}  style={styles.button} /> 
+   
+       
+         </View>  
+        
+         <View style={{ flex: 1,marginHorizontal: 10,}}>
+         <TouchableOpacity style={styles.listItem} onPress={selectItem(item)}>
+  <Text style={styles.listItemLabel}>{item.filename}</Text>
+ </TouchableOpacity>
+    </View>
+    <View style={{marginHorizontal: 10,}}>
+         <TouchableOpacity style={styles.listItem} onPress={selectItem(item)}>
+  <Text style={styles.listItemLabel}><Renderfield item={item} /></Text>
+ </TouchableOpacity>
+    </View>
+   
+    </View>
+    </LinearGradient>
     );
 
- // }
   })
 
   return (
@@ -145,7 +203,8 @@ return data.filter(post =>  post.name.toLowerCase().includes(keyword.toLowerCase
           data={filterdata}
           renderItem={renderItems}
           ItemSeparatorComponent = { listSeparator }
-          keyExtractor={(item, index) => item.id}
+         
+          // keyExtractor={(item, index) => item.id}  <View style={{ flexDirection:"column" }}>
         />
       </View>
     </View>
@@ -231,8 +290,8 @@ const styles = StyleSheet.create({
     marginHorizontal: 8,
     paddingVertical: 12,
     alignItems: 'center',
-    borderBottomWidth: 1,
-    borderBottomColor: '#ccc',
+    // borderBottomWidth: 1,
+    // borderBottomColor: '#ccc',
     marginLeft:10,
     marginRight:10,
    
