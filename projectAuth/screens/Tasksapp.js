@@ -102,10 +102,17 @@ const [didFetch,setDidFetch] = useState(false)
 
 
   const oparamname = route.params?.filename ? route.params.filename : {};
+  const oparamname1 = route.params?.monitor ? route.params.monitor : {};
 
 useEffect(() => {
   if(!didFetch){
    
+    if(oparamname1==true){
+    
+      setSelectedType(0)
+    }
+     
+
     setTitle(oparamname);
     fetchafatsaDataForPosts();
     fetchmenuDataForPosts();
@@ -154,7 +161,9 @@ const handleSubmit = async() => {
    "filename":oparamname,
    "filemenu":valuemenu,
    "filecontact" :valueafatsa,
-   "date":selectedDate
+   "date":selectedDate,
+   "is2run":false,
+   "isrunning":false
    }
   const url =`/Webhttp/updateapp`;
 
@@ -480,8 +489,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-around',
     alignContent:'center',
-    alignItems: 'center',
-    borderBottomWidth: 1,
+    alignItems: 'center'
+    
      
   },
   title: {

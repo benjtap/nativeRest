@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
 
 namespace Webhttp.Models
 {
@@ -69,6 +70,10 @@ namespace Webhttp.Models
 
         public string? filename { get; set; }
         public bool? isenabled { get; set; }
+
+        public bool? is2run { get; set; }
+
+        public bool? isrunning { get; set; }
     }
 
     public class contactsPostMongo
@@ -307,6 +312,7 @@ namespace Webhttp.Models
        
     }
 
+  
     public class createAudio
     {
         public string? name { get; set; }
@@ -324,6 +330,9 @@ namespace Webhttp.Models
     public class createApp
     {
         public bool? isenabled { get; set; }
+
+        public bool? is2run { get; set; }
+        public bool? isrunning { get; set; }
         public string? uid { get; set; }
         public string? filename { get; set; }
 
@@ -395,12 +404,12 @@ namespace Webhttp.Models
     public class createappPost
     {
         public string? filename { get; set; }
-
         public string? filemenu { get; set; }
-
         public string? date { get; set; }
         public string? filecontact { get; set; }
         public bool? isenabled { get; set; }
+        public bool? is2run { get; set; }
+        public bool? isrunning { get; set; }
     }
 
     public class creategroupsPostui

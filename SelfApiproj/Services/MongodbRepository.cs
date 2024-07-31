@@ -13,6 +13,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using Webhttp.Models;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 
 namespace SelfApiproj.Repository
@@ -34,6 +35,7 @@ namespace SelfApiproj.Repository
 
           public IMongoCollection<applicationTimingMongo> ApplicationTimingPostMon { get; }
 
+        public  IMongoCollection<BsonDocument> collectionaudioconvert { get; } 
 
         public MongoRepository(IMongoDbSettings settings) {
 
@@ -46,6 +48,8 @@ namespace SelfApiproj.Repository
             applicationMenuPostMon = database.GetCollection<applicationMenuPostMongo>("applicationmenu");
             ApplicationTimingPostMon = database.GetCollection<applicationTimingMongo>("applicationtiming");
             applicationContactsPostMon = database.GetCollection<applicationContactsPostMongo>("applicationcontact");
+
+            collectionaudioconvert = database.GetCollection<BsonDocument>("audio_convert");
         }
 
         public async Task<userPost> Login(loginPost post)
@@ -451,27 +455,86 @@ namespace SelfApiproj.Repository
 
         }
 
-        
 
-    
 
         
 
-        public async Task deletefilescontacts(string filename,string id)
+              public async Task<bool> deletefilesMenu(string filename, string id)
         {
 
             try
             {
-                var query = Builders<contactsPostMongo>.Filter.Where(r => r.id.ToString() ==id);
-                query = query & Builders<contactsPostMongo>.Filter.Where(r => r.filename == filename );
+
+                var Builder1 = Builders<applicationMenuPostMongo>.Filter;
+                var query1 = Builder1.Where(r => r.fileMenu == filename) &
+                    Builder1.Where(r => r.uid == id);
+
+                var filenameList = await applicationMenuPostMon.FindAsync(query1);
+
+                var fList = filenameList.FirstOrDefault();
 
 
-                var DeleteResult =  await contactsPostsMon.DeleteManyAsync(query);
+                if (fList != null)
+                {
+                    return false;
+                }
+
+
+                var query = Builders<menuPostMongo>.Filter.Where(r => r.id.ToString() == id);
+                query = query & Builders<menuPostMongo>.Filter.Where(r => r.filename == filename);
+
+
+                var DeleteResult = await menuPostsMon.DeleteManyAsync(query);
+
+                return true;
             }
             catch (Exception ex)
             {
 
                 string msg = ex.Message;
+
+                return false;
+            }
+
+
+
+        }
+
+        public async Task<bool> deletefilescontacts(string filename,string id)
+        {
+
+            try
+            {
+
+                var Builder1 = Builders<applicationContactsPostMongo>.Filter;
+                var query1 = Builder1.Where(r => r.fileContacts == filename) &
+                    Builder1.Where(r => r.uid == id);
+
+                var filenameList = await applicationContactsPostMon.FindAsync(query1);
+
+                var fList = filenameList.FirstOrDefault();
+
+
+                if (fList != null)
+                {
+                    return false;
+                }
+
+
+                var query = Builders<contactsPostMongo>.Filter.Where(r => r.id.ToString() ==id);
+                query = query & Builders<contactsPostMongo>.Filter.Where(r => r.filename == filename );
+
+
+                var DeleteResult =  await contactsPostsMon.DeleteManyAsync(query);
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+
+                string msg = ex.Message;
+
+                return false;
             }
 
 
@@ -527,22 +590,9 @@ namespace SelfApiproj.Repository
 
         
 
-             public async Task<bool> bulkdeleteditcontacts(string filename, string id)
+             public async Task bulkdeleteditcontacts(string filename, string id)
         {
-            var Builder1 = Builders<applicationContactsPostMongo>.Filter;
-            var query1 = Builder1.Where(r => r.fileContacts == filename) &
-                Builder1.Where(r => r.uid == id);
-
-            var filenameList = await applicationContactsPostMon.FindAsync(query1);
-
-            var fList = filenameList.FirstOrDefault();
-
-
-            if (fList != null)
-            {
-                return false;
-            }
-
+           
 
 
             var Builder = Builders<contactsPostMongo>.Filter;
@@ -551,7 +601,7 @@ namespace SelfApiproj.Repository
 
             var personsDeleteResult = await contactsPostsMon.DeleteManyAsync(query);
 
-            return true;
+            
 
         }
 
@@ -566,6 +616,23 @@ namespace SelfApiproj.Repository
 
         }
 
+
+        
+       public async Task updaterunappli(string filename, string id)
+        {
+
+
+           var Builder = Builders<applicationPostMongo>.Filter;
+           var query = Builder.Where(r => r.filename == filename) &
+                       Builder.Where(r => r.uid == id);
+
+            var update = Builders<applicationPostMongo>.Update
+                .Set(pn => pn.is2run, true);
+
+            await appPostsMon.UpdateOneAsync(query, update);
+
+
+        }
 
         public async Task DeleteAppli(string filename, string id)
         {
@@ -693,8 +760,16 @@ namespace SelfApiproj.Repository
        
         }
 
-        public async Task bulkcontacts(List<createcontactsPostUid> post)
+        public async Task bulkcontacts(List<createcontactsPostUid> post,
+            string filename, string id)
         {
+
+            var query = Builders<contactsPostMongo>.Filter.Where(r => r.uid == id);
+            query = query & Builders<contactsPostMongo>.Filter.Where(r => r.filename == filename);
+
+
+            var DeleteResult = await contactsPostsMon.DeleteManyAsync(query);
+
             List<contactsPostMongo> lst = new List<contactsPostMongo>();
 
 
@@ -714,8 +789,8 @@ namespace SelfApiproj.Repository
             await contactsPostsMon.InsertManyAsync(lst);
         }
 
-        
-        
+
+
         public async Task CreateAudio(createAudio post)
         {
             AudioPostMongo postM = new AudioPostMongo
@@ -726,7 +801,30 @@ namespace SelfApiproj.Repository
 
             };
             await AudioPostMon.InsertOneAsync(postM);
+
+
+            var Builder = Builders<AudioPostMongo>.Filter;
+            var query = Builder.Where(r => r.filename == post.filename) &
+                Builder.Where(r => r.uid == post.uid);
+
+            var filenameList = await AudioPostMon.FindAsync(query);
+            var reponse = filenameList.FirstOrDefault();
+            var myid = reponse.id.ToString();
+
+            var doc = new BsonDocument{
+                                     { "insert_date",   DateTime.Now },
+                                       { "filename",post.filename },
+                                         { "id",  myid }
+                                       };
+
+
+            collectionaudioconvert.InsertOne(doc);
+        
+        
         }
+
+            
+        
 
 
         public async Task CreateAppliMenu(createApp post)
@@ -778,7 +876,9 @@ namespace SelfApiproj.Repository
             {
                 uid = post.uid,
                 isenabled= post.isenabled,
-                filename = post.filename
+                filename = post.filename,
+                is2run= post.is2run,
+                isrunning= post.isrunning,
 
             };
             await appPostsMon.InsertOneAsync(postM);
@@ -867,8 +967,14 @@ namespace SelfApiproj.Repository
 
         
 
-        public async Task CreateMenu(createMenu post)
+        public async Task CreateMenu(createMenu post, string filename, string id)
         {
+            var query = Builders<menuPostMongo>.Filter.Where(r => r.uid == id);
+            query = query & Builders<menuPostMongo>.Filter.Where(r => r.filename == filename);
+
+
+            var DeleteResult = await menuPostsMon.DeleteManyAsync(query);
+
             menuPostMongo postM = new menuPostMongo
             {
                 uid = post.uid,
@@ -909,9 +1015,11 @@ public interface IMongoRepository
     
        Task<bool> deleteAudiorecordPost(deleteAudioPost post, string id);
 
-        Task deletefilescontacts(string filename, string id);
-       
-        Task bulkcontacts(List<createcontactsPostUid> post);
+        Task<bool> deletefilescontacts(string filename, string id);
+
+       Task<bool> deletefilesMenu(string filename, string id);
+
+       Task bulkcontacts(List<createcontactsPostUid> post,string filename,string id);
 
         Task<contactsPostMongo> isfilescontactExist(string id, string filename);
 
@@ -921,9 +1029,11 @@ public interface IMongoRepository
 
     Task<AudioPostMongo> isfilesaklataExist(string id, string name);
 
-    Task<bool> bulkdeleteditcontacts(string filename, string id);
+      //Task bulkdeleteditcontacts(string filename, string id);
 
-       Task<bool> bulkdeleteditmenu(string filename, string id);
+       //Task bulkdeleteditmenu(string filename, string id);
+
+
 
     Task<Dictionary<string, HashSet<getappliTiming>>> getApplicationtiming(string id);
 
@@ -931,7 +1041,7 @@ public interface IMongoRepository
 
         Task CreateAudio(createAudio post);
         Task<menuPostMongo> GetMenu(string filename, string id);
-       Task CreateMenu(createMenu post);
+       Task CreateMenu(createMenu post,string filename, string id);
 
       Task CreateAppli(createApp post);
 
@@ -945,6 +1055,8 @@ public interface IMongoRepository
 
 
     Task DeleteAppli(string filename, string id);
+
+    Task updaterunappli(string filename, string id);
 
     Task DeleteAppliTiming(string filename, string id);
 }

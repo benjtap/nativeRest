@@ -98,7 +98,28 @@ return data.filter(post =>  post.filename.toLowerCase().includes(keyword.toLower
     
     
   };
+  const handleRun = async (item) => {
+    const url =`/Webhttp/updaterunappli`;
+   
+    var updaterunappli =
+    { 
+     "filename": item.filename
+     }
+    
+      
+    await axiosInstance.post(url,updaterunappli)
+  
+     .then(({data}) => {
+      navigation.navigate('TASKSAPP', {
+        filename: item.filename,
+        monitor:true
+           })
 
+      }).catch((err) => {
+        
+       })
+
+      }
 
   const handleDelete = async (item) => {
     const url =`/Webhttp/deletefilesappli`;
@@ -117,6 +138,28 @@ return data.filter(post =>  post.filename.toLowerCase().includes(keyword.toLower
         
        })
 
+      }
+
+      
+
+      const handleconfirmRun= (item) => {
+
+        if (!item.enabled){
+          alert('put status to enabled')
+          return;
+        }
+         
+
+        Alert.alert(
+          'confirmation',
+          'Are you sure to run the application', // <- this part is optional, you can pass an empty string
+          [
+            {text: 'כן', onPress: () => handleRun(item)},
+            {text: 'לא', onPress: () => console.log('OK Pressed')},
+          ],
+          {cancelable: true},
+        );
+    
       }
 
   const handleconfirmDelete= (item) => {
@@ -152,7 +195,7 @@ return data.filter(post =>  post.filename.toLowerCase().includes(keyword.toLower
       <Button title="מחק"  onPress={() => handleconfirmDelete( item)}   style={styles.button}  />
          </View>  
           <View style={[{ width: "14%", margin: 10 }]}> 
-     <Button title="מייד רץ"  onPress={() => handleconfirmDelete( item)}  style={styles.button} /> 
+     <Button title="מייד רץ"  onPress={() => handleconfirmRun( item)}  style={styles.button} /> 
    
        
          </View>  

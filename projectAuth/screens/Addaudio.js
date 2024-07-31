@@ -1,6 +1,13 @@
 import { Text, TouchableOpacity, View, StyleSheet, TextInput,Button } from 'react-native';
 import React, { useState, useEffect ,useCallback } from 'react';
-import { Audio } from 'expo-av';
+import { Audio, InterruptionModeIOS, InterruptionModeAndroid } from 'expo-av';
+import {
+  AndroidAudioEncoder,
+  AndroidOutputFormat,
+  IOSAudioQuality,
+  IOSOutputFormat,
+  Recording,
+} from 'expo-av/build/Audio'
 import * as FileSystem from 'expo-file-system';
 import { FontAwesome } from '@expo/vector-icons';
 import { COLORS, FONT, SIZES } from "../constants";
@@ -75,17 +82,48 @@ const validateForm = () => {
       // if (audioPermission) {
 
       if (permissionResponse.status !== 'granted') {
+        // await Audio.setAudioModeAsync({
+        //   allowsRecordingIOS: true,
+        //   playsInSilentModeIOS: true
+        // })
+
         await Audio.setAudioModeAsync({
           allowsRecordingIOS: true,
-          playsInSilentModeIOS: true
-        })
+          interruptionModeIOS: InterruptionModeIOS.DoNotMix,
+          playsInSilentModeIOS: true,
+          shouldDuckAndroid: true,
+          interruptionModeAndroid: InterruptionModeAndroid.DoNotMix,
+          playThroughEarpieceAndroid: false,
+          staysActiveInBackground: true,
+        });
       }
 
-      const newRecording = new Audio.Recording();
+      
+
+      //const newRecording = new Audio.Recording();
+      const { recording } = await Audio.Recording.createAsync({
+        isMeteringEnabled: true,
+        android: {
+          ...Audio.RecordingOptionsPresets.HIGH_QUALITY.android,
+          extension: '.m4a',
+          outputFormat: AndroidOutputFormat.DEFAULT,
+          audioEncoder: AndroidAudioEncoder.DEFAULT,
+        },
+        ios: {
+          ...Audio.RecordingOptionsPresets.HIGH_QUALITY.ios,
+          extension: '.m4a',
+          outputFormat: IOSOutputFormat.LINEARPCM,
+        },
+        web: {
+          mimeType: 'audio/wav',
+          bitsPerSecond: 128000,
+        },
+      });
+      setRecording(recording);
       console.log('Starting Recording')
-      await newRecording.prepareToRecordAsync(Audio.RECORDING_OPTIONS_PRESET_HIGH_QUALITY);
-      await newRecording.startAsync();
-      setRecording(newRecording);
+      // await newRecording.prepareToRecordAsync(Audio.RECORDING_OPTIONS_PRESET_HIGH_QUALITY);
+      // await newRecording.startAsync();
+     
       setRecordingStatus('recording');
 
     } catch (error) {
@@ -102,7 +140,7 @@ const validateForm = () => {
         const recordingUri = recording.getURI();
 
         // Create a file name for the recording
-        const fileName = `recording-${Date.now()}.caf`;
+        const fileName = `recording-${Date.now()}.m4a`;
        
         setFileName(fileName)
 

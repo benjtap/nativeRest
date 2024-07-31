@@ -128,7 +128,7 @@ let url = `/Webhttp/deleteAudiorecord`
           'confirmation',
           'Are you sure to delete', // <- this part is optional, you can pass an empty string
           [
-            {text: 'כן', onPress: () => handleDelete(item)},
+            {text: 'כן', onPress: () => deleteAudiorecord(item)},
             {text: 'לא', onPress: () => console.log('OK Pressed')},
           ],
           {cancelable: true},
@@ -151,18 +151,18 @@ let url = `/Webhttp/deleteAudiorecord`
       })
    }
     
-  const handleDelete= (item) => {
-    Alert.alert(
-      'confirmation',
-      'Are you sure to delete', // <- this part is optional, you can pass an empty string
-      [
-        {text: 'כן', onPress: () => deleteAudiorecord(item)},
-        {text: 'לא', onPress: () => console.log('OK Pressed')},
-      ],
-      {cancelable: true},
-    );
+  // const handleDelete= (item) => {
+  //   Alert.alert(
+  //     'confirmation',
+  //     'Are you sure to delete', // <- this part is optional, you can pass an empty string
+  //     [
+  //       {text: 'כן', onPress: () => },
+  //       {text: 'לא', onPress: () => console.log('OK Pressed')},
+  //     ],
+  //     {cancelable: true},
+  //   );
 
-  }
+  // }
 
  
 

@@ -169,7 +169,9 @@ const handleSubmit = async() => {
    "filename":name,
    "filemenu":valuemenu,
    "filecontact" :valueafatsa,
-   "date":selectedDate
+   "date":selectedDate,
+   "is2run":false,
+   "isrunning":false
    }
   const url =`/Webhttp/createapp`;
 

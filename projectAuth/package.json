@@ -69,6 +69,7 @@
     "react-native": "0.74.1",
     "react-native-animatable": "^1.4.0",
     "react-native-animated-multistep": "^1.1.1",
+    "react-native-audio-record": "^0.2.2",
     "react-native-calendar-picker": "^6.1.5",
     "react-native-calendars": "^1.1304.1",
     "react-native-contacts": "^7.0.8",

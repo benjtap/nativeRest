@@ -159,9 +159,9 @@ namespace Webhttp.Controllers
 
             };
 
-            await _mongo.bulkdeleteditmenu(post.filename, id);
+        
 
-            await _mongo.CreateMenu(mymenu);
+            await _mongo.CreateMenu(mymenu, post.filename, id);
             return Ok();
         }
 
@@ -192,7 +192,7 @@ namespace Webhttp.Controllers
 
             };
 
-             await _mongo.CreateMenu(mymenu);
+             await _mongo.CreateMenu(mymenu, post.filename,id);
             return Ok();
         }
 
@@ -221,6 +221,8 @@ namespace Webhttp.Controllers
                 filename = post.filename,
                 filecontact = post.filecontact,
                 filemenu = post.filemenu,
+                is2run = post.is2run,
+                isrunning = post.isrunning,
                 uid = id,
                 date = post.date
 
@@ -265,7 +267,9 @@ namespace Webhttp.Controllers
                 filecontact = post.filecontact,
                 filemenu = post.filemenu,
                 uid = id,
-                date = post.date
+                date = post.date,
+                is2run = post.is2run,
+                isrunning= post.isrunning
 
             };
 
@@ -327,7 +331,7 @@ namespace Webhttp.Controllers
             }
 
 
-            await _mongo.bulkcontacts(lst);
+            await _mongo.bulkcontacts(lst,filename,id);
             return Ok();
         }
 
@@ -350,7 +354,7 @@ namespace Webhttp.Controllers
 
             string? filename = post.FirstOrDefault().filename;
 
-            await _mongo.bulkdeleteditcontacts(filename, id);
+           // await _mongo.bulkdeleteditcontacts(filename, id);
 
             List<createcontactsPostUid> lst = new List<createcontactsPostUid>();
 
@@ -369,7 +373,9 @@ namespace Webhttp.Controllers
             }
 
 
-            await _mongo.bulkcontacts(lst);
+
+
+            await _mongo.bulkcontacts(lst,filename,id);
             return Ok();
         }
 
@@ -574,7 +580,7 @@ namespace Webhttp.Controllers
 
             
             
-            var res1 = await _mongo.bulkdeleteditmenu(filename, id);
+            var res1 = await _mongo.deletefilesMenu(filename, id);
             if (res1 == false)
                 return Ok("message");
 
@@ -584,7 +590,36 @@ namespace Webhttp.Controllers
 
             return Ok(res);
         }
-        
+
+        [HttpPost]
+        [Route("updaterunappli")]
+        public async Task<IActionResult> updaterunappli(getfilecontactsPost post)
+        {
+
+            var principal = HttpContext.User;
+            string id = "";
+
+
+            if (principal?.Claims != null)
+            {
+
+                var claim = principal.Claims.FirstOrDefault();
+
+                id = claim.Value;
+            }
+
+            string filename = post.filename;
+
+
+
+
+            await _mongo.updaterunappli(filename, id);
+
+
+
+            return Ok();
+          
+        }
 
         [HttpPost]
         [Route("deletefilesappli")]
@@ -635,7 +670,7 @@ namespace Webhttp.Controllers
 
             string filename = post.filename;
 
-            var res1 = await _mongo.bulkdeleteditcontacts(filename, id);
+            var res1 = await _mongo.deletefilescontacts(filename, id);
             if (res1 == false)
                 return Ok("message");
 
