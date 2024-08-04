@@ -1,5 +1,5 @@
-import { Text, TouchableOpacity, View, StyleSheet, TextInput,Button } from 'react-native';
-import React, { useState, useEffect ,useCallback } from 'react';
+import { Text, TouchableOpacity, View, StyleSheet, TextInput,Button,AppState } from 'react-native';
+import React, { useState, useEffect  ,useRef } from 'react';
 import { Audio, InterruptionModeIOS, InterruptionModeAndroid } from 'expo-av';
 import {
   AndroidAudioEncoder,
@@ -19,6 +19,9 @@ import mime from "mime";
 
 export default  function  Addaudio(props) {
   const { navigation } = props;
+
+  const appState = useRef(AppState.currentState);
+
   const [errors, setErrors] = useState({}); 
   //const [selectedText, setSelectedText] = useState(null);
   const [isFormValid, setIsFormValid] = useState(false); 
@@ -62,14 +65,34 @@ const validateForm = () => {
 }
 
 
+const alertUser = e => {
+  e.preventDefault()
+  e.returnValue = ''
+}
 
   useEffect(() => {
-       
-       validateForm();     // Call function to get permission
+
+
+    
+ validateForm();
+ return () => {
+  if (recording) {
+    const audioUri =  stopRecording(recording);
+}}
+
+    // window.addEventListener('beforeunload', alertUser)
+    // window.addEventListener('unload', handleEndConcert)
+    // return () => {
+    //   window.removeEventListener('beforeunload', alertUser)
+    //   window.removeEventListener('unload', handleEndConcert)
+    //   handleEndConcert()
+    // }
+            // Call function to get permission
  
   }, [name,recordingStatus]);
  
 
+ 
 
   async function startRecording() {
     try {
@@ -219,10 +242,16 @@ formData.append('Audioname',name)
   navigation.navigate('Audio')
 })
 
-
-   
-
 }; 
+
+const Handlecancel= async() => { 
+  console.log('Handlecancel')
+       if (recording) {
+       const audioUri = await stopRecording(recording);
+       
+    }
+    navigation.navigate('Audio')
+  }
 
 return (
   <View style={{ flex: 1 }}>
@@ -252,7 +281,12 @@ return (
           disabled={!isFormValid} />
    </View>
    <View style={{ marginHorizontal: 10,marginTop: 5 }}>
-          <Button title="בטל" onPress={() =>  navigation.navigate('Audio')} style={{ padding: 20, }} />
+          <Button title="בטל" 
+           onPress={() => Handlecancel()}
+          // onPress={() =>  navigation.navigate('Audio')} 
+          
+          
+          style={{ padding: 20, }} />
    </View>
    
 </View>

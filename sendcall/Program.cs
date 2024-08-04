@@ -14,6 +14,12 @@ using System.Net;
 using AsterNET.ARI.Models;
 using AsterNET.ARI;
 using static System.Runtime.InteropServices.JavaScript.JSType;
+using System.Reflection;
+using Newtonsoft.Json.Linq;
+using System.Threading.Channels;
+using System.Reflection.Emit;
+using System.Threading;
+using Amazon.Auth.AccessControlPolicy;
 //using static System.Runtime.InteropServices.JavaScript.JSType;
 
 
@@ -49,20 +55,17 @@ public static class DB
     public static ConcurrentDictionary<string,  AriClient> dicclient = new ConcurrentDictionary<string, AriClient>();
 
     public static ConcurrentDictionary<string, string> dicchannel = new ConcurrentDictionary<string, string>();
-    public enum type_step
-    {
-        initial = 1,
-        send_sms = 3,
-        shortner = 2
-    }
 
-
+    public static ConcurrentDictionary<string, int> dicmenulevel = new ConcurrentDictionary<string, int>();
    
+    public static ConcurrentDictionary<string, CancellationTokenSource> diccancelationtasks = new ConcurrentDictionary<string, CancellationTokenSource>();
 
    
 
 
-   
+
+
+
 
     public static Dictionary<string, string> get_dic_file(List<BsonDocument> lst)
     {
@@ -177,7 +180,330 @@ public static class DB
 
 
 
-   
+
+    private static async Task GetFromQueueevent(int processid)
+    {
+
+
+        KeyValuePair<Tuple<string, string>, Tuple<object, object>> data;
+
+
+
+    bool success = bQueueevent.TryTake(out data);
+
+
+        while (success)
+        {
+
+            Tuple<string, string> tpl = data.Key;
+
+            Tuple<object, object>  item = data.Value;
+
+
+            string Channelid = tpl.Item1;
+
+            if (tpl.Item2== "StasisStartEvent")
+            {
+                IAriClient sender = (IAriClient)item.Item1;
+
+                StasisStartEvent e = (StasisStartEvent)item.Item2;
+
+                string Appname = e.Application;
+               
+                   bool Isaudio = false;
+               string audio = getAudioMenubyApp(Appname, Channelid,out Isaudio);
+
+
+                if (string.IsNullOrEmpty(audio) == false)
+                {
+                    await sender.Channels.AnswerAsync(Channelid);
+
+                    await sender.Channels.PlayAsync(Channelid, "sound:"+ audio);
+                    CancellationTokenSource source;
+                    bool found=  diccancelationtasks.TryGetValue(Channelid, out source);
+
+                    if (found)
+                    {
+                        CancellationToken Token = source.Token;
+                        try
+                        {
+                             Task.Delay(30000).ContinueWith(
+                                async task =>
+                                {
+                                    await sender.Channels.PlayAsync(Channelid, "sound:goodbye");
+                                    await sender.Channels.HangupAsync(Channelid, "normal");
+                                }
+                                , Token);
+                        }
+                        catch (OperationCanceledException)
+                        {
+
+                        }
+                    }
+
+
+
+                }
+          
+            }
+            if (tpl.Item2 == "ChannelDtmfReceivedEvent")
+            {
+               
+                
+                IAriClient sender = (IAriClient)item.Item1;
+
+
+                ChannelDtmfReceivedEvent e = (ChannelDtmfReceivedEvent)item.Item2;
+
+                string Appname = e.Application;
+
+                CancellationTokenSource source;
+                bool found = diccancelationtasks.TryGetValue(Channelid, out source);
+
+                if (found)
+                   source.Cancel();
+                
+
+                    bool Isaudio = false;
+                string audio = getAudioMenubyApp(Appname, Channelid, out Isaudio,e.Digit);
+
+                if (string.IsNullOrEmpty(audio) == false && Isaudio)
+                {
+
+                    await sender.Channels.PlayAsync(Channelid, "sound:" + audio);
+                    CancellationToken Token = source.Token;
+                    try
+                    {
+                         Task.Delay(30000).ContinueWith(
+                            async task =>
+                            {
+                                await sender.Channels.PlayAsync(Channelid, "sound:goodbye");
+                                await sender.Channels.HangupAsync(Channelid, "normal");
+                            }
+                            , Token);
+                    }
+                    catch (OperationCanceledException)
+                    {
+
+                    }
+
+                }
+
+                else
+                {
+                    await sender.Channels.PlayAsync(Channelid, "sound:goodbye");
+                    await sender.Channels.HangupAsync(Channelid, "normal");
+                }
+
+            }
+
+            if (tpl.Item2 == "ChannelDtmfReceivedEventWrong")
+            {
+                IAriClient sender = (IAriClient)item.Item1;
+
+                ChannelDtmfReceivedEvent e = (ChannelDtmfReceivedEvent)item.Item2;
+
+                string Appname = e.Application;
+
+                string audiowrong = "";
+
+               await sender.Channels.PlayAsync(Channelid, "sound:" + audiowrong);
+             
+
+            }
+
+            
+            success = bQueueevent.TryTake(out data);
+        }
+
+    }
+
+
+    public static string getAudioMenubyApp(string Appname,string Channelid,out bool Isaudio,string digit = "")
+    {
+        string retaudio="";
+         Isaudio = false;
+       
+        string[] stringSeparators = new string[] { "!!!!" };
+        var result = Appname.Split(stringSeparators, StringSplitOptions.None);
+
+        Tuple<string, string> mytpl = new Tuple<string, string>(result[0], result[1]);
+        applicationMenuPostMongo myapplimenu;
+        bool found = Dicapplication_Menu.TryGetValue(mytpl, out myapplimenu);
+        if (found)
+        {
+            //  mymenu.
+            Tuple<string, string> mytplmenu = new Tuple<string, string>(myapplimenu.fileMenu, myapplimenu.uid);
+            menuPostMongo mymenu;
+            bool foundMenu = DicMenu.TryGetValue(mytplmenu, out mymenu);
+            if (foundMenu)
+            {
+                JArray textArray = JArray.Parse(mymenu.jsonarray);
+                int level;
+                bool foundmenu = dicmenulevel.TryGetValue(Channelid, out level);
+                string audioname = "";
+                string makchim = "";
+                if (level == 0)
+                    foreach (var jobj in textArray.OfType<JObject>())
+                    {
+                        audioname = jobj.GetValue("audioname").ToString();
+                        makchim = "";
+                        Isaudio = true;
+                        break;
+
+                    }
+                else if (level == 1)
+                    foreach (var jobj in textArray.OfType<JObject>())
+                    {
+                        if (jobj["items"] != null)
+                        {
+                            foreach (var address in jobj["items"])
+                            {
+                                if (address["items"] != null)
+                                {
+                                    audioname = address.Value<string>("audioname");
+                                    makchim = address.Value<string>("makchim");
+                                    if (makchim == digit)
+                                        Isaudio = true;
+
+                                    break;
+                                }
+                            }
+                        }
+
+                    }
+                else if (level == 2)
+                    foreach (var jobj in textArray.OfType<JObject>())
+                    {
+                        if (jobj["items"] != null)
+                        {
+                            foreach (var address in jobj["items"])
+                            {
+                                if (address["items"] != null)
+                                {
+                                    foreach (var address1 in address["items"])
+                                    {
+                                        //Level2
+                                        if (address1["items"] != null)
+                                        {
+                                            audioname = address1.Value<string>("audioname");
+                                            makchim = address1.Value<string>("makchim");
+                                            if (makchim == digit)
+                                                Isaudio = true;
+                                            break;
+
+                                        }
+
+                                    }
+                                }
+                            }
+                        }
+
+                    }
+
+
+
+
+
+                Tuple<string, string> tpl = new Tuple<string, string>(audioname, result[1]);
+                AudioPostMongo myaudio;
+                bool foundAudio= DicAudio.TryGetValue(tpl, out myaudio);
+               if(foundAudio)
+                retaudio = myaudio.id.ToString();
+
+               
+            }
+
+        }
+        return retaudio;
+    }
+
+
+    public static List<string> getdigitMenubylevel_byApp(string Appname, string Channelid)
+    {
+        string ret = "";
+
+        string[] stringSeparators = new string[] { "!!!!" };
+        var result = Appname.Split(stringSeparators, StringSplitOptions.None);
+
+        Tuple<string, string> mytpl = new Tuple<string, string>(result[0], result[1]);
+        applicationMenuPostMongo myapplimenu;
+        List<string> listmakchim = new List<string>();
+        bool found = Dicapplication_Menu.TryGetValue(mytpl, out myapplimenu);
+        if (found)
+        {
+            Tuple<string, string> mytplmenu = new Tuple<string, string>(myapplimenu.fileMenu, myapplimenu.uid);
+            menuPostMongo mymenu;
+            bool foundMenu = DicMenu.TryGetValue(mytplmenu, out mymenu);
+            if (foundMenu)
+            {
+                JArray textArray = JArray.Parse(mymenu.jsonarray);
+                int level;
+                bool foundmenulevel = dicmenulevel.TryGetValue(Channelid, out level);
+
+                foreach (var jobj in textArray.OfType<JObject>())
+                {
+                    string name = jobj.GetValue("title").ToString();
+                    if (jobj["items"] != null)
+                    {
+                        if (level == 0)
+                            foreach (var address in jobj["items"])
+                            {
+                                var makchim = address.Value<string>("makchim");
+                                listmakchim.Add(makchim);
+
+                            }
+                        else if (level == 1)
+                            foreach (var address in jobj["items"])
+                            {
+
+                                if (address["items"] != null)
+                                {
+                                    foreach (var address1 in address["items"])
+                                    {
+                                        var makchim1 = address1.Value<string>("makchim"); //Level2
+                                        listmakchim.Add(makchim1);
+
+                                    }
+                                }
+
+                            }
+
+                        else if (level == 2)
+                            foreach (var address in jobj["items"])
+                            {
+
+                                if (address["items"] != null)
+                                {
+                                    foreach (var address1 in address["items"])
+                                    {
+                                      
+                                        if (address1["items"] != null)
+                                        {
+                                            foreach (var address2 in address1["items"])
+                                            {
+                                                var makchim2 = address2.Value<string>("makchim"); //Level2
+                                                listmakchim.Add(makchim2);
+
+                                            }
+                                           
+
+                                        }
+
+                                    }
+                                }
+
+                            }
+                    }
+
+                }
+
+
+            }
+
+        }
+        return listmakchim;
+    }
 
 
     private static async Task GetFromQueueinitial(int processid )
@@ -207,8 +533,6 @@ public static class DB
 
         success = bQueueinitial.TryTake(out data);
         }
-
-
 
     }
 
@@ -293,6 +617,36 @@ public static class DB
    
         }
     }
+
+    static void dequeue_thread_event()
+    {
+        try
+        {
+
+            Task readerOne = Task.Run(() => GetFromQueueevent(1));
+            Task readerTwo = Task.Run(() => GetFromQueueevent(2));
+            Task readerThree = Task.Run(() => GetFromQueueevent(3));
+            Task readerFour = Task.Run(() => GetFromQueueevent(4));
+            Task readerFive = Task.Run(() => GetFromQueueevent(5));
+            Task readerSix = Task.Run(() => GetFromQueueevent(6));
+            Task readerSeven = Task.Run(() => GetFromQueueevent(7));
+            Task readerEight = Task.Run(() => GetFromQueueevent(8));
+
+            Task.WaitAll(readerOne, readerTwo, readerThree,
+                readerFour, readerFive, readerSix, readerSeven, readerEight);  //
+
+
+
+
+
+        }
+        catch (Exception ex)
+        {
+            string msg = ex.Message;
+
+        }
+    }
+
 
     public static async void start_senddata_thread()
     {
@@ -393,6 +747,10 @@ public static class DB
 
            dequeue_thread_initial();
 
+
+
+            dequeue_thread_event();
+
         }
         catch (Exception ex)
         {
@@ -420,7 +778,7 @@ public static class DB
         ActionClient.OnStasisEndEvent += c_OnStasisEndEvent;
         ActionClient.OnChannelDtmfReceivedEvent += ActionClientOnChannelDtmfReceivedEvent;
         ActionClient.OnChannelHangupRequestEvent += c_OnStasisHangupEvent;
-        //ActionClient.OnConnectionStateChanged += ActionClientOnConnectionStateChanged;
+     
         ActionClient.Connect();
 
         string[] stringSeparators = new string[] { "!!!!" };
@@ -453,6 +811,8 @@ public static class DB
         // set running to true;
 
         dicclient.TryAdd(appname, myclient);
+
+        
 
         Tuple<string, AriClient> tpl = new Tuple<string, AriClient>(appname, myclient);
 
@@ -490,7 +850,30 @@ public static class DB
         var result = e.Application.Split(stringSeparators, StringSplitOptions.None);
 
         string phone = "";
-        dicchannel.TryGetValue(e.Channel.Id, out phone);
+        bool foundchannel = dicchannel.TryGetValue(e.Channel.Id, out phone);
+        if (foundchannel == false)
+            return;
+
+
+         List<string> digits = getdigitMenubylevel_byApp(e.Application, e.Channel.Id);
+
+        if (digits.Contains(e.Digit) == false)
+        {
+            Tuple<string, string> tplkey1 = new Tuple<string, string>(e.Channel.Id, "ChannelDtmfReceivedEventWrong");
+            Tuple<object, object> tplvalue1 = new Tuple<object, object>(sender, e);
+
+            KeyValuePair<Tuple<string, string>, Tuple<object, object>> kvp1 =
+                new KeyValuePair<Tuple<string, string>, Tuple<object, object>>(tplkey1, tplvalue1);
+
+            bQueueevent.TryAdd(kvp1);
+            return;
+        }
+           
+
+         int level = 0;
+       bool foundmenulevel = dicmenulevel.TryGetValue(e.Channel.Id, out level);
+        if (foundmenulevel)
+            dicmenulevel[e.Channel.Id] += 1;
 
         string mydate = DateTime.Now.ToString();
 
@@ -499,6 +882,7 @@ public static class DB
                                         { "application",result[0] },
                                         { "phone", phone },
                                         { "mydate", mydate },
+                                        { "level", level+1 },
                                         { "event",   "ChannelDtmfReceivedEvent" },
                                         {  "digit",e.Digit }
                                       };
@@ -520,9 +904,7 @@ public static class DB
 
     private async static void c_OnStasisStartEvent(IAriClient sender, StasisStartEvent e)
       {
-
-
-       
+ 
          Tuple<string, string> tplkey = new Tuple<string, string>(e.Channel.Id, "StasisStartEvent");
 
         Tuple<object, object> tplvalue = new Tuple<object, object>(sender, e);
@@ -534,7 +916,16 @@ public static class DB
 
 
         dicchannel.TryAdd(e.Channel.Id, e.Args[0]);
+
+        dicmenulevel.TryAdd(e.Channel.Id, 0);
+
         
+        
+       
+        CancellationTokenSource source = new CancellationTokenSource();
+
+        diccancelationtasks.TryAdd(e.Channel.Id, source);
+
 
         string[] stringSeparators = new string[] { "!!!!" };
         var result = e.Application.Split(stringSeparators, StringSplitOptions.None);

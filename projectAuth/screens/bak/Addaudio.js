@@ -141,7 +141,11 @@ const validateForm = () => {
     }
   }
 
- 
+  const Handlecancel= async() => { 
+console.log('Handlecancel')
+    // if (recording) {
+    //          const audioUri =  stopRecording(recording);
+  }
 
 const handleSubmit = async() => { 
   
@@ -214,7 +218,15 @@ return (
           disabled={!isFormValid} />
    </View>
    <View style={{ marginHorizontal: 10,marginTop: 5 }}>
-          <Button title="בטל" onPress={() =>  navigation.navigate('Audio')} style={{ padding: 20, }} />
+          <Button title="בטל" 
+          onPress={() => Handlecancel()}
+          // onPress={() =>{
+          //     if (recording) {
+          //       const audioUri =  stopRecording(recording);
+          //       // if(audioUri)
+          //       // navigation.navigate('Audio')
+          // }  }}
+           style={{ padding: 20, }} />
    </View>
    
 </View>
