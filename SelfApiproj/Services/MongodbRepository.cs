@@ -13,7 +13,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using Webhttp.Models;
-using static System.Runtime.InteropServices.JavaScript.JSType;
+using Newtonsoft.Json.Linq;
+using System.Threading.Channels;
+
 
 
 namespace SelfApiproj.Repository
@@ -35,7 +37,9 @@ namespace SelfApiproj.Repository
 
           public IMongoCollection<applicationTimingMongo> ApplicationTimingPostMon { get; }
 
-        public  IMongoCollection<BsonDocument> collectionaudioconvert { get; } 
+        public  IMongoCollection<BsonDocument> collectionaudioconvert { get; }
+
+        public IMongoCollection<BsonDocument> collectionevent { get; }
 
         public MongoRepository(IMongoDbSettings settings) {
 
@@ -48,7 +52,7 @@ namespace SelfApiproj.Repository
             applicationMenuPostMon = database.GetCollection<applicationMenuPostMongo>("applicationmenu");
             ApplicationTimingPostMon = database.GetCollection<applicationTimingMongo>("applicationtiming");
             applicationContactsPostMon = database.GetCollection<applicationContactsPostMongo>("applicationcontact");
-
+            collectionevent = database.GetCollection<BsonDocument>("BSevent");
             collectionaudioconvert = database.GetCollection<BsonDocument>("audio_convert");
         }
 
@@ -149,6 +153,199 @@ namespace SelfApiproj.Repository
                 mylist.Add(mymenus);
             }
             return mylist;
+
+        }
+
+        public async Task<List<AppliEventPost>> getallAppliEvent(string filename, string id)
+        {
+          
+
+
+            var myres = collectionevent.FindAsync(_ => true);
+            List<BsonDocument> res = myres.Result.ToList();
+
+            List<AppliEventPost> lst = new List<AppliEventPost>();
+            foreach (BsonDocument item in res)
+            {
+                AppliEventPost myAppliEventPost = new AppliEventPost
+                {
+
+                    ChannelId = item["ChannelId"] == BsonNull.Value ? "" : item["ChannelId"].AsString,
+
+                    uid = item["uid"] == BsonNull.Value ? "" : item["uid"].AsString,
+
+                    application = item["application"] == BsonNull.Value ? "" : item["application"].AsString,
+
+                    phone = item["phone"] == BsonNull.Value ? "" : item["phone"].AsString,
+
+                    date = item["mydate"] == BsonNull.Value ? "" : item["mydate"].AsString,
+
+                    events = item["event"] == BsonNull.Value ? "" : item["event"].AsString,
+
+
+                    datebeginstasis = item["event"].AsString == "StasisStartEvent" ? item["mydate"].AsString : "",
+
+                    dateendstasis = item["event"].AsString == "StasisEndEvent" ? item["mydate"].AsString : "",
+
+                    digit = item["event"].AsString == "ChannelDtmfReceivedEvent" ? item["digit"].AsString : "",
+
+                    levelmenu = item["event"].AsString == "ChannelDtmfReceivedEvent" ? item["level"].AsInt32 : -1,
+
+
+
+                };
+
+                lst.Add(myAppliEventPost);
+
+            }
+
+            Dictionary<Tuple<string, string>, Dictionary<string, AppliEventPost>> dic =
+      new Dictionary<Tuple<string, string>, Dictionary<string, AppliEventPost>>();
+
+            foreach (AppliEventPost item in lst)
+            {
+
+                Tuple<string, string> tpl = new Tuple<string, string>(item.application, item.uid);
+
+                Dictionary<string, AppliEventPost> dicinternal;
+                bool rc = dic.TryGetValue(tpl, out dicinternal);
+
+                if (rc == false)
+                {
+                    dicinternal = new Dictionary<string, AppliEventPost>();
+                    dic.Add(tpl, dicinternal);
+                }
+
+                AppliEventPost myapp;
+                bool found = dicinternal.TryGetValue(item.ChannelId, out myapp);
+
+                if (found == false)
+                {
+                    myapp = new AppliEventPost();
+                    dicinternal.TryAdd(item.ChannelId, myapp);
+                }
+
+                myapp.diclevelname = await getdicMenunamelevel_byApp(item.application, item.uid);
+
+                myapp.isrunning = await getrunning_byApp(item.application, item.uid);
+                myapp.phone = item.phone;
+
+                myapp.ChannelId = item.ChannelId;
+
+                if (item.events == "StasisStartEvent")
+                    myapp.datebeginstasis = item.date;
+
+
+                if (item.events == "ChannelDtmfReceivedEvent")
+                {
+                    Tuple<int?, string> mytpl = new Tuple<int?, string>(item.levelmenu, item.digit);
+
+                    myapp.Tplleveldigits.Add(mytpl);
+
+                }
+
+
+                if (item.events == "StasisEndEvent")
+                    myapp.dateendstasis = item.dateendstasis;
+
+            }
+
+            Tuple<string, string> mytpl1 = new Tuple<string, string>(filename,  id);
+
+            Dictionary<string, AppliEventPost> mydic;
+
+
+            bool foundapi = dic.TryGetValue(mytpl1,out mydic);
+
+            if (foundapi == false)
+                return null;
+
+            List<AppliEventPost> mylst = [.. mydic.Values];
+            
+            return mylst;
+        }
+
+
+        async Task<bool> getrunning_byApp(string Appname, string uid)
+        {
+            Dictionary<int, string> dicpair = new Dictionary<int, string>();
+
+            var Builder2 = Builders<applicationPostMongo>.Filter;
+            var query2 = Builder2.Where(r => r.filename == Appname) &
+                Builder2.Where(r => r.uid == uid);
+
+            var myres2 = await appPostsMon.FindAsync(query2);
+
+            var res = myres2.FirstOrDefault();
+
+            bool isrunning =(bool)res.isrunning;
+
+       return isrunning;
+
+
+
+        }
+
+
+
+
+            public async  Task<Dictionary<int, string>> getdicMenunamelevel_byApp(string Appname, string uid)
+        {
+            Dictionary<int, string> dicpair = new Dictionary<int, string>();
+
+            var Builder2 = Builders<applicationMenuPostMongo>.Filter;
+            var query2 = Builder2.Where(r => r.fileAppli == Appname) &
+                Builder2.Where(r => r.uid == uid);
+
+            var myres2 = await applicationMenuPostMon.FindAsync(query2);
+
+            var pr2 = myres2.FirstOrDefault();
+
+            var Builder3 = Builders<menuPostMongo>.Filter;
+            var query3 = Builder3.Where(r => r.filename == pr2.fileMenu) &
+                Builder3.Where(r => r.uid == uid);
+
+            var resmenu = await menuPostsMon.FindAsync(query3);
+
+
+
+
+            menuPostMongo memu = resmenu.FirstOrDefault();
+
+            var jsonarray = memu.jsonarray;
+
+            JArray textArray = JArray.Parse(memu.jsonarray);
+
+
+
+            foreach (var jobj in textArray.OfType<JObject>())
+            {
+                string title = jobj.GetValue("title").ToString();
+                dicpair[1] = title;
+                if (jobj["items"] != null)
+                {
+
+                    foreach (var address in jobj["items"])
+                    {
+                        string title1 = address.Value<string>("title");
+                        dicpair[2] = title1;
+                        if (address["items"] != null)
+                        {
+
+                            foreach (var address1 in address["items"])
+                            {
+                                string title2 = address1.Value<string>("title");
+                                dicpair[3] = title2;
+
+
+                            }
+                        }
+                    }
+                }
+
+            }
+
+            return dicpair;
 
         }
 
@@ -1005,6 +1202,8 @@ public interface IMongoRepository
     Task<IEnumerable<contactsPost>> GetfilecontactsPosts(string filename, string id);
 
     Task<AppliInfoPost> getallAppliInfo(string filename, string id);
+
+    Task<List<AppliEventPost>> getallAppliEvent(string filename, string id);
 
     Task<IEnumerable<AppliPost>> GetApplis(string id);
 

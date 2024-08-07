@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { StyleSheet, View, TextInput, TouchableOpacity, Text, Button,Switch } from 'react-native';
+import React, { useState, useEffect,useCallback } from 'react';
+import { StyleSheet, View, TextInput, TouchableOpacity, Text, Button,Switch,RefreshControl,FlatList } from 'react-native';
 import {useRoute} from '@react-navigation/native';
 import { COLORS, FONT, SIZES } from "../constants";
 import axiosInstance from '../helpers/axiosInstance';
@@ -7,7 +7,7 @@ import { Dropdown } from 'react-native-element-dropdown';
 import moment from "moment";
 import AntDesign from '@expo/vector-icons/AntDesign';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
-
+import { LinearGradient } from "expo-linear-gradient";
 const Tasksapp = (props) => {
   const { navigation } = props;
 
@@ -21,10 +21,8 @@ const Tasksapp = (props) => {
 //   // data that will be shown on the list, data could be the list of users, or the list of groups.
   const [data, setData] = useState([]);
    const [title, setTitle] = useState("");
-const [loading, setLoading] = useState(false)
-const [error, setError] = useState("");
 
-  const [errors, setErrors] = useState({}); 
+// const [refreshing, setRefreshing] = useState(false);
   const [isFocusafatsa, setIsFocusafatsa] = useState(false);
   const [isFocusafmenu, setIsFocusmenu] = useState(false);
   const [valueafatsa, setValueafatsa] = useState(null);
@@ -39,80 +37,26 @@ const [isEnabled, setIsEnabled] = useState(false);
 const toggleSwitch = () => setIsEnabled(previousState => !previousState);
 const [didFetch,setDidFetch] = useState(false)
 
-
-
-  
-
-  
-
-  // const RenderViewButton = () => {
-  //   if (selectedType === 0){
-  //   return(
-
-  //     <View style={styles.Viewitem}>
-  //    <View style={styles.fixToText}>
-  //     <Text style={styles.title}>
-  //     This action copy all the client contact to this groups.
-  //   </Text>
-  //   </View>
-  //   <View style={styles.fixToText}>
-  //     <Button   style={styles.button1}  title="הפעל"  
-  //     onPress={() => handlecreatecontactgroupsDataForPosts()}
-  //    />
-  //   </View>
-  //   </View>
-  //   );
-  //   } else if(selectedType === 2){
-  //     return(
-
-  //       <View style={styles.Viewitem}>
-  //      <View style={styles.fixToText}>
-  //       <Text style={styles.title}>
-  //       This action delete all the client contact of this groups.
-  //     </Text>
-  //     </View>
-  //     <View style={styles.fixToText}>
-  //       <Button   style={styles.button1}  title="הפעל"  
-  //       onPress={() => handledeleteallcontactgroupsDataForPosts ()}
-  //      />
-  //     </View>
-  //     </View>
-  //     );
-  //   }
-  //   else if(selectedType === 3){
-  //     return(
-
-  //       <View style={styles.Viewitem}>
-  //      <View style={styles.fixToText}>
-  //       <Text style={styles.title}>
-  //       This action delete  this groups.
-  //     </Text>
-  //     </View>
-  //     <View style={styles.fixToText}>
-  //       <Button   style={styles.button1}  title="הפעל"  
-  //       onPress={() => handledeletegroupsDataForPosts()}
-  //      />
-  //     </View>
-  //     </View>
-  //     );
-  //   }
-    
-  // }
- 
-
+const error = console.error;
+console.error = (...args) => {
+  if (/defaultProps/.test(args[0])) return;
+  error(...args);
+};
 
   const oparamname = route.params?.filename ? route.params.filename : {};
   const oparamname1 = route.params?.monitor ? route.params.monitor : {};
+
+  var dicmenu=[]
 
 useEffect(() => {
   if(!didFetch){
    
     if(oparamname1==true){
     
-      setSelectedType(0)
+      setSelectedType(2)
     }
      
-
+    if(selectedType==3){
     setTitle(oparamname);
     fetchafatsaDataForPosts();
     fetchmenuDataForPosts();
@@ -121,13 +65,84 @@ useEffect(() => {
     setDidFetch(true)
     
     }
-
   
+  }
+   if(selectedType==2){
+   
+    const interval = setInterval(() => {
+      fetchData();
+    }, 1000)
+    return () => clearInterval(interval)
+   }
 
-  //fetchgroupsDataForPosts();
+}, [title,selectedType]);
 
-}, [title]);
+
  
+
+const fetchData = async () => {
+  try {
+   
+    let url = `/Webhttp/getallApplievent`
+
+    let getallinfoAppliPost =  {
+      filename:oparamname
+        }
+  
+    await axiosInstance.post(url,getallinfoAppliPost)
+  
+      .then( ({data}) => {
+     
+       
+       setData(data )
+
+
+   
+        var stam = 0;;
+
+      })
+
+  } catch (error) {
+    console.log(error)
+  }
+};
+
+
+
+
+const renderItems = ({ item }) => {
+
+ 
+  return (
+    <LinearGradient colors={['#5ED2A0', '#C3CBDC']}> 
+    <View style={{ flex: 1,flexDirection:"row", justifyContent: 'center',
+     alignItems: 'center', }} >
+     
+    <View style={{ width: "14%",margin: 10 }}> 
+    <Text style={styles.listItemLabel}>{item.application}</Text>
+       </View>  
+        
+      
+       {/* <View style={{ flex: 1,marginHorizontal: 10,}}>
+       <TouchableOpacity style={styles.listItem} onPress={selectItem(item)}>
+<Text style={styles.listItemLabel}>{item.filename}</Text>
+</TouchableOpacity>
+  </View> */}
+
+ 
+  </View>
+  </LinearGradient>
+  );
+
+}
+
+// const onRefresh = () => {
+//   setRefreshing(true);
+//   fetchData();
+//   setTimeout(() => {
+//     setRefreshing(false);
+//   }, 1000); // Refresh indicator will be visible for at least 1 second
+// };
 
  
 const fetchappliDataForPosts = async () => {
@@ -241,16 +256,47 @@ const fetchmenuDataForPosts = async () => {
 };
 
 
-  const onKeywordChanged = (keyword) => {
-   // setKeyword(() => keyword);
-  };
+
+
+const GetItemInfo = ({item}) => {
+
+var isrunning
+
+for( var p in item){
+var pindex = item[p]
+
+isrunning = pindex.isrunning
+dicmenu= pindex.diclevelname
+}
+
+var strrunning=isrunning==true ? "רץ " : " לא רץ"
+
+return(
+<Text style={styles.title}> {strrunning}</Text>
+)
+}
+
+
+const GetnameMenuInfo = ({item}) => {
+  
+  var name = dicmenu[item]
+  
+  return(
+    name
+  )
+  }
+  
+  
+
 
   const updateSelectedType = (selectedType) => () => {
    setSelectedType(() => selectedType);
   };
 
 
-
+  const listSeparator = () => {
+    return <View style={ styles.separator } />
+    }
 
  
       const handleConfirm = (date) => {
@@ -271,7 +317,7 @@ const fetchmenuDataForPosts = async () => {
     <View style={{ padding: 20, backgroundColor: 'lightgray' }}>
       {/* Content for the container at the top */}
     </View>
-     <View style={styles.container}>
+     <View style={styles.container1}>
     <View style={styles.Viewitem}><Text style={styles.title}>{title} אפליקציה</Text>
      </View>
        <View style={styles.searchActionContainer}>
@@ -280,16 +326,70 @@ const fetchmenuDataForPosts = async () => {
         </TouchableOpacity>
         
 
-        <TouchableOpacity style={[styles.searchActionBtn, styles.searchRightActionBtn, selectedType === 0 && styles.searchActionBtnActive]} onPress={updateSelectedType(0)}>
-          <Text style={[styles.searchActionLabel, selectedType === 0 && styles.searchActionLabelActive]}>מוניטורים</Text>
+        <TouchableOpacity style={[styles.searchActionBtn, styles.searchRightActionBtn, selectedType === 2 && styles.searchActionBtnActive]} onPress={updateSelectedType(2)}>
+          <Text style={[styles.searchActionLabel, selectedType === 2 && styles.searchActionLabelActive]}>מוניטורים</Text>
         </TouchableOpacity>
       </View>
       <View style={{  justifyContent: 'center', alignItems: 'center' }}> 
       {selectedType===2 && 
-     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>  
+    <View style={{ marginHorizontal: 10,marginTop: 5 }}>
+
+
+
+<View style={styles.container}>
+      <View style={styles.header}>
        
+        <View style={{ flex: 1,flexDirection:"row", justifyContent: 'center',
+           alignItems: 'center', }}>
+        <GetItemInfo
+             item={data}
+           /> 
+        </View>
+      </View>
+   
+ <FlatList
+        data={data}
+        renderItem={({ item }) => (
+          <LinearGradient colors={['#5ED2A0', '#C3CBDC']}> 
+          <View style={{ flex: 1,flexDirection:"row", justifyContent: 'center',
+           alignItems: 'center', }} >
+             <View style={{ flexDirection:"column", justifyContent: 'left',
+           alignItems: 'center' }} >
+             <Text style={styles.itemText}>{item.phone}</Text>
+
+             {item.tplleveldigits.map((item, index) => (
+       
+       <View style={styles.item}>
+       <Text style={styles.itemText}><GetnameMenuInfo   item={item.item1}  /></Text>
+       <Text style={styles.itemText}>מקש  {item.item2}</Text>
+
+       </View>
+    
+      ))} 
+           </View>
+          <View style={styles.item}>
+          <Text style={styles.itemText}> התחלת הרצה {item.datebeginstasis}</Text>
+          <Text style={styles.itemText}> סוף הרצה {item.dateendstasis}</Text>
+          </View>
+
+      
+      
+
+        </View>
+        </LinearGradient>
           
-         
+        )}
+         keyExtractor={(item) => item.ChannelId}
+        //  refreshControl={
+        //   <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        // }
+      />
+
+
+     
+    </View>
+ 
+
         
         </View>
      }
@@ -366,12 +466,12 @@ const fetchmenuDataForPosts = async () => {
         </View>
         
         </View>
-        <Text style={{ fontSize: 24, fontWeight: 'bold', marginBottom: 20 }}>
+        <Text style={{ fontSize: 24, fontWeight: 'bold', marginBottom: 20,marginHorizontal:40 }}>
         {selectedDate.getFullYear()>10 ? selectedDate.toLocaleDateString()  + " " + selectedDate.toLocaleTimeString() : 'No date selected'}
         </Text>
         <View style={{ flexDirection:"row" }}>
         
-       <View style={{ marginHorizontal: 10,marginTop: 5 }}>
+       <View style={{ marginHorizontal: 30,marginTop: 5 }}>
         <Button title="בחר תאריך" 
         onPress={() => {
           setSelectedDate(new Date())
@@ -380,7 +480,7 @@ const fetchmenuDataForPosts = async () => {
         
          />
         </View>
-        <View style={{ marginHorizontal: 10,marginTop: 5 }}>
+        <View style={{ marginHorizontal: 30,marginTop: 5 }}>
         <Button title="בטל תאריך"
         onPress={() =>  setSelectedDate(new Date("0000-1-1"))}
      />
@@ -423,12 +523,12 @@ const fetchmenuDataForPosts = async () => {
        
       
        
-        <View style={{ marginHorizontal: 10,marginTop: 5 }}>
+        <View style={{ marginHorizontal: 50,marginTop: 5 }}>
           <Button title="שמור"  onPress={() => handleSubmit()} 
           style={[styles.button1]} 
           />
    </View>
-   <View style={{ marginHorizontal: 10,marginTop: 5 }}>
+   <View style={{ marginHorizontal: 50,marginTop: 5 }}>
           <Button title="בטל" onPress={() =>  navigation.navigate('Application')} style={{ padding: 20, }} />
    </View>
    
@@ -457,7 +557,58 @@ const fetchmenuDataForPosts = async () => {
 
 
 const styles = StyleSheet.create({
+
   container: {
+    flex: 1,
+    flexDirection: 'column',
+    alignItems: 'stretch',
+  },
+  header: {
+    height: 80,
+    backgroundColor: '#fff',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ccc',
+  },
+  logo: {
+    width: 120,
+    height: 40,
+  },
+  navButtons: {
+    flexDirection: 'row',
+  },
+  item: {
+    height: 60,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ccc',
+    paddingHorizontal: 16,
+    justifyContent: 'center',
+  },
+  itemText: {
+    fontSize: 16,
+  },
+ 
+  
+  footer: {
+    height: 80,
+    backgroundColor: '#fff',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderTopWidth: 1,
+    borderTopColor: '#ccc',
+  },
+  footerText: {
+    fontSize: 18,
+  },
+
+
+
+
+  container1: {
     backgroundColor: '#fff',
     flex: 1,
     flexDirection: 'column',
@@ -573,7 +724,7 @@ const styles = StyleSheet.create({
   listItemLabel: {
     color: COLORS.secondary,
     fontFamily:FONT.regular,
-    fontSize: SIZES.medium,
+    fontSize: SIZES.small,
     marginLeft: 13,
    },
    dropdown: {

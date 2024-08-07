@@ -87,14 +87,14 @@ namespace Webhttp.Models
         public string? phone { get; set; }
     }
 
-    public class groupsPostMongo
-    {
-        public ObjectId id { get; set; }
-        public string? uid { get; set; }
-        public string? name { get; set; }
+    //public class groupsPostMongo
+    //{
+    //    public ObjectId id { get; set; }
+    //    public string? uid { get; set; }
+    //    public string? name { get; set; }
 
        
-    }
+    //}
 
     public class registerPostMongo
     {
@@ -214,6 +214,42 @@ namespace Webhttp.Models
 
         public bool? isenabled { get; set; } 
     }
+
+    public class AppliEventPost
+    {
+        public string ChannelId { get; set; }
+
+        public string? uid { get; set; }
+
+        public string application { get; set; }
+        public string? phone { get; set; }
+
+        public string? datebeginstasis { get; set; }
+
+        public string? dateendstasis { get; set; }
+
+        public List<Tuple<int?, string>> Tplleveldigits { get; set; }
+
+        public Dictionary<int, string> diclevelname { get; set; }
+
+        public int? levelmenu { get; set; }
+        public string? digit { get; set; }
+        public string? events { get; set; }
+
+        public string? date { get; set; } = null;
+
+        public bool? isrunning { get; set; }
+
+        public AppliEventPost()
+        {
+
+            this.Tplleveldigits = new List<Tuple<int?, string>>();
+            this.diclevelname = new Dictionary<int, string>();
+        }
+
+    }
+
+
 
 
     public class contactsPost

@@ -755,6 +755,41 @@ namespace Webhttp.Controllers
 
 
         [HttpPost]
+        [Route("getallApplievent")]
+        public async Task<IActionResult> getallApplievent(getallinfoAppliPost post)
+        {
+            try
+            {
+                var principal = HttpContext.User;
+                string id = "";
+
+
+                if (principal?.Claims != null)
+                {
+
+                    var claim = principal.Claims.FirstOrDefault();
+
+                    id = claim.Value;
+                }
+
+                string filename = post.filename;
+
+                IEnumerable res = await _mongo.getallAppliEvent(filename, id);
+
+                return Ok(res);
+            }
+            catch (Exception ex)
+            {
+
+                string str = ex.Message;
+                return Ok(null);
+            }
+
+
+        }
+
+
+        [HttpPost]
         [Route("getallAppliInfo")]
         public async Task<IActionResult> getallAppliInfo(getallinfoAppliPost post)
         {

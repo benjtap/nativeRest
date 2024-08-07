@@ -20,6 +20,7 @@ using System.Threading.Channels;
 using System.Reflection.Emit;
 using System.Threading;
 using Amazon.Auth.AccessControlPolicy;
+using MongoDB.Driver.Core.Bindings;
 //using static System.Runtime.InteropServices.JavaScript.JSType;
 
 
@@ -38,7 +39,8 @@ public static class DB
      
     static IMongoCollection<applicationContactsPostMongo> applicationContactsPostMo = database.GetCollection<applicationContactsPostMongo>("applicationcontact");
 
-    static IMongoCollection<BsonDocument> collectionevent= database.GetCollection<BsonDocument>("collectionevent");
+    static IMongoCollection<BsonDocument> collectionevent= database.GetCollection<BsonDocument>("BSevent");
+    static IMongoCollection<BsonDocument> collectioneventhistory = database.GetCollection<BsonDocument>("collectioneventhistory");
 
     public static Dictionary<Tuple<string, string>, applicationContactsPostMongo> Dicapplication_contact;
     public static Dictionary<Tuple<string, string>, List<contactsPostMongo>> Diccontacts;
@@ -218,6 +220,8 @@ public static class DB
                 {
                     await sender.Channels.AnswerAsync(Channelid);
 
+                     
+
                     await sender.Channels.PlayAsync(Channelid, "sound:"+ audio);
                     CancellationTokenSource source;
                     bool found=  diccancelationtasks.TryGetValue(Channelid, out source);
@@ -230,7 +234,7 @@ public static class DB
                              Task.Delay(30000).ContinueWith(
                                 async task =>
                                 {
-                                    await sender.Channels.PlayAsync(Channelid, "sound:goodbye");
+                                   // await sender.Channels.PlayAsync(Channelid, "sound:goodbye");
                                     await sender.Channels.HangupAsync(Channelid, "normal");
                                 }
                                 , Token);
@@ -249,9 +253,10 @@ public static class DB
             if (tpl.Item2 == "ChannelDtmfReceivedEvent")
             {
                
-                
+
                 IAriClient sender = (IAriClient)item.Item1;
 
+                ///sender.Channels.StartSilence(Channelid);
 
                 ChannelDtmfReceivedEvent e = (ChannelDtmfReceivedEvent)item.Item2;
 
@@ -260,38 +265,36 @@ public static class DB
                 CancellationTokenSource source;
                 bool found = diccancelationtasks.TryGetValue(Channelid, out source);
 
-                if (found)
-                   source.Cancel();
-                
+                //if (found)
+                //    source.Cancel();
 
-                    bool Isaudio = false;
-                string audio = getAudioMenubyApp(Appname, Channelid, out Isaudio,e.Digit);
 
-                if (string.IsNullOrEmpty(audio) == false && Isaudio)
+                CancellationToken Token = source.Token;
+                try
                 {
-
-                    await sender.Channels.PlayAsync(Channelid, "sound:" + audio);
-                    CancellationToken Token = source.Token;
-                    try
-                    {
-                         Task.Delay(30000).ContinueWith(
-                            async task =>
-                            {
-                                await sender.Channels.PlayAsync(Channelid, "sound:goodbye");
-                                await sender.Channels.HangupAsync(Channelid, "normal");
-                            }
-                            , Token);
-                    }
-                    catch (OperationCanceledException)
-                    {
-
-                    }
+                    Task.Delay(30000).ContinueWith(
+                       async task =>
+                       {
+                          // await sender.Channels.PlayAsync(Channelid, "sound:goodbye");
+                           await sender.Channels.HangupAsync(Channelid, "normal");
+                       }
+                       , Token);
+                }
+                catch (OperationCanceledException)
+                {
 
                 }
 
+
+                bool Isaudio = false;
+                string audio = getAudioMenubyApp(Appname, Channelid, out Isaudio,e.Digit);
+
+                if (string.IsNullOrEmpty(audio) == false && Isaudio)
+                     await sender.Channels.PlayAsync(Channelid, "sound:" + audio);
+                  
                 else
                 {
-                    await sender.Channels.PlayAsync(Channelid, "sound:goodbye");
+                  // await sender.Channels.PlayAsync(Channelid, "sound:goodbye");
                     await sender.Channels.HangupAsync(Channelid, "normal");
                 }
 
@@ -305,15 +308,91 @@ public static class DB
 
                 string Appname = e.Application;
 
-                string audiowrong = "";
+                string audiowrong = "wrong";
 
                await sender.Channels.PlayAsync(Channelid, "sound:" + audiowrong);
-             
+                CancellationTokenSource source;
+                bool found = diccancelationtasks.TryGetValue(Channelid, out source);
+
+                if (found)
+                    source.Cancel();
+                CancellationToken Token = source.Token;
+                try
+                {
+                    Task.Delay(30000).ContinueWith(
+                       async task =>
+                       {
+                          // await sender.Channels.PlayAsync(Channelid, "sound:goodbye");
+                           await sender.Channels.HangupAsync(Channelid, "normal");
+                       }
+                       , Token);
+                }
+                catch (OperationCanceledException)
+                {
+
+                }
+            }
+
+            if (tpl.Item2 == "StasisEndEvent")
+            {
+
+                Tuple<string, string> tpl1 = data.Key;
+
+                Tuple<object, object> item1= data.Value;
+
+                StasisEndEvent e = (StasisEndEvent)item1.Item2;
+
+                string Appname = e.Application;
+
+                
+
+                AriClient myclient;
+                bool found = dicclient.TryGetValue(Appname, out myclient);
+                if (found)
+                {
+                    try
+                    {
+                      
+
+                      //  dicclient.TryRemove(e.Application, out myclient);
+                       
+
+                        // Reset 2run and is running
+                      
+                    }
+                    catch (Exception ex)
+                    {
+                        string msg =ex.Message;
+                        
+                    }
+                 
+                }
 
             }
 
-            
-            success = bQueueevent.TryTake(out data);
+            if (tpl.Item2 == "HangupEvent")
+            {
+                Tuple<string, string> tpl1 = data.Key;
+
+                Tuple<object, object> item1 = data.Value;
+
+                ChannelHangupRequestEvent e = (ChannelHangupRequestEvent)item1.Item2;
+
+                string Appname = e.Application;
+
+
+                string pt;
+                dicchannel.TryRemove(e.Channel.Id, out pt);
+                int level;
+                dicmenulevel.TryRemove(e.Channel.Id, out level);
+
+                CancellationTokenSource source;
+                diccancelationtasks.TryRemove(e.Channel.Id, out source);
+
+            }
+                
+
+                success = bQueueevent.TryTake(out data);
         }
 
     }
@@ -636,8 +715,7 @@ public static class DB
                 readerFour, readerFive, readerSix, readerSeven, readerEight);  //
 
 
-
-
+            
 
         }
         catch (Exception ex)
@@ -719,6 +797,12 @@ public static class DB
              DicAudio=
               get_dic_audio(lst_Audio.ToList());
 
+
+            
+
+
+
+
             var listAPI = new List<string>();
             foreach (KeyValuePair<Tuple<string, string>, applicationPostMongo> pair  in DicApplication)
             {
@@ -734,7 +818,17 @@ public static class DB
                 bool running= myappli.isrunning == null ? false : myappli.isrunning.Value;
 
                 if (running== true)
+                {
                     continue;
+                }
+                else
+                {
+                    var filter = Builders<BsonDocument>.Filter.Eq("application", Appuid.Item1)
+                        & Builders<BsonDocument>.Filter.Eq("uid", Appuid.Item2);
+
+                    var result1 = collectionevent.DeleteMany(filter);
+                }
+                    
                 
 
                 listAPI.Add(Appuid.Item1+"!!!!"+ Appuid.Item2);
@@ -751,6 +845,26 @@ public static class DB
 
             dequeue_thread_event();
 
+
+            foreach (var item in listAPI)
+            {
+               
+                
+                string[] stringSeparators = new string[] { "!!!!" };
+                var result = item.Split(stringSeparators, StringSplitOptions.None);
+
+                var Builder = Builders<applicationPostMongo>.Filter;
+                var query = Builder.Where(r => r.filename == result[0]) &
+                            Builder.Where(r => r.uid == result[1]);
+
+                var update = Builders<applicationPostMongo>.Update
+                    .Set(pn => pn.is2run, false)
+                    .Set(pn => pn.isrunning, false);
+
+                await appPostsMon.UpdateOneAsync(query, update);
+            }
+           
+
         }
         catch (Exception ex)
         {
@@ -764,7 +878,7 @@ public static class DB
     static async  Task ReadFromAddress(string AppName)
     {
 
-     
+        
 
         AriClient ActionClient  = new AriClient(new StasisEndpoint("127.0.0.1", 8088, "asterisk", "asterisk"), AppName);
 
@@ -795,6 +909,8 @@ public static class DB
             .Set(pn => pn.isrunning, true);
 
         await appPostsMon.UpdateOneAsync(query, update);
+
+        //
     }
 
 
@@ -875,7 +991,7 @@ public static class DB
         if (foundmenulevel)
             dicmenulevel[e.Channel.Id] += 1;
 
-        string mydate = DateTime.Now.ToString();
+        string mydate = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
 
         var doc = new BsonDocument{
                                           { "uid", result[1] },
@@ -883,12 +999,14 @@ public static class DB
                                         { "phone", phone },
                                         { "mydate", mydate },
                                         { "level", level+1 },
+                                        { "ChannelId", e.Channel.Id },
                                         { "event",   "ChannelDtmfReceivedEvent" },
                                         {  "digit",e.Digit }
                                       };
 
 
         collectionevent.InsertOne(doc);
+       collectioneventhistory.InsertOne(doc);
 
         Tuple<string, string> tplkey = new Tuple<string, string>(e.Channel.Id, "ChannelDtmfReceivedEvent");
 
@@ -930,7 +1048,7 @@ public static class DB
         string[] stringSeparators = new string[] { "!!!!" };
         var result = e.Application.Split(stringSeparators, StringSplitOptions.None);
 
-        string mydate = DateTime.Now.ToString();
+        string mydate = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
 
 
         var doc = new BsonDocument{
@@ -938,12 +1056,13 @@ public static class DB
                                         { "application",result[0] },
                                         { "phone", e.Args[0] },
                                          { "mydate", mydate },
+                                          { "ChannelId", e.Channel.Id },
                                         { "event",   "StasisStartEvent" }
                                       };
 
 
          collectionevent.InsertOne(doc);
-
+       collectioneventhistory.InsertOne(doc);
 
     }
 static async void c_OnStasisEndEvent(object sender, AsterNET.ARI.Models.StasisEndEvent e)
@@ -952,7 +1071,7 @@ static async void c_OnStasisEndEvent(object sender, AsterNET.ARI.Models.StasisEn
         var result = e.Application.Split(stringSeparators, StringSplitOptions.None);
 
 
-            string mydate = DateTime.Now.ToString();
+            string mydate = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
         string phone = "";
         dicchannel.TryGetValue(e.Channel.Id, out phone);
 
@@ -961,11 +1080,13 @@ static async void c_OnStasisEndEvent(object sender, AsterNET.ARI.Models.StasisEn
                                         { "application",result[0] },
                                         { "phone", phone },
                                          { "mydate", mydate },
+                                          { "ChannelId", e.Channel.Id },
                                         { "event",   "StasisEndEvent" }
                                       };
 
 
         collectionevent.InsertOne(doc);
+        //collectioneventhistory.InsertOne(doc);
 
         Tuple<string, string> tplkey = new Tuple<string, string>(e.Channel.Id, "StasisEndEvent");
 
@@ -975,6 +1096,8 @@ static async void c_OnStasisEndEvent(object sender, AsterNET.ARI.Models.StasisEn
             new KeyValuePair<Tuple<string, string>, Tuple<object, object>>(tplkey, tplvalue);
 
         bQueueevent.TryAdd(kvp);
+     
+           
     }
     
     private async static void c_OnStasisHangupEvent(IAriClient sender, ChannelHangupRequestEvent e)
@@ -984,18 +1107,20 @@ static async void c_OnStasisEndEvent(object sender, AsterNET.ARI.Models.StasisEn
 
         string phone = "";
         dicchannel.TryGetValue(e.Channel.Id, out phone);
-        string mydate = DateTime.Now.ToString();
+        string mydate = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
 
         var doc = new BsonDocument{
                                           { "uid", result[1] },
                                         { "application",result[0] },
                                         { "phone", phone },
                                           { "mydate", mydate },
+                                           { "ChannelId", e.Channel.Id },
                                         { "event",   "HangupEvent" }
                                       };
 
 
         collectionevent.InsertOne(doc);
+        collectioneventhistory.InsertOne(doc);
 
         Tuple<string, string> tplkey = new Tuple<string, string>(e.Channel.Id, "HangupEvent");
 

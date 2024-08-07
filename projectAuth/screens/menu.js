@@ -1,7 +1,7 @@
 import  React, { useState, useEffect, useContext, useCallback } from 'react';
 import { StyleSheet, View, TextInput, TouchableOpacity, Text, FlatList, Button,Alert } from 'react-native';
 
-import AsyncStorage from '@react-native-async-storage/async-storage';
+
 import { COLORS, FONT, SIZES } from "../constants";
 
 import axiosInstance from '../helpers/axiosInstance';
@@ -153,6 +153,8 @@ let navegState = navigation.getState();
   // })
 
   const renderItems =  useCallback(({ item }) => {
+
+    console.log(item)
     return (
       <LinearGradient colors={['#5ED2A0', '#C3CBDC']}> 
       <View style={{ flex: 1,flexDirection:"row", justifyContent: 'center',
